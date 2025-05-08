@@ -1,0 +1,479 @@
+---
+layout: base.njk
+title: "CEO & Founder Dashboard"
+description: "A clear, Web2-first roadmap for the Musical Wisdom blog — built to start earning, build community, and grow sustainably."
+---
+
+{% macro departmentTabs() %}
+<div class="sm:hidden mb-4">
+  <select
+    id="department-select"
+    data-select='{
+      "placeholder": "Select department...",
+      "toggleTag": "<button type=\"button\" aria-expanded=\"false\"><span class=\"me-2 flex\" data-icon></span><span class=\"text-base-content\" data-title></span></button>",
+      "toggleClasses": "advance-select-toggle items-center",
+      "dropdownClasses": "advance-select-menu max-h-96 overflow-y-auto bg-base-100 shadow-lg rounded-lg border border-base-300",
+      "optionClasses": "advance-select-option selected:select-active",
+      "optionTemplate": "<div><div class=\"flex items-center\"><div class=\"me-2 flex\" data-icon></div><div class=\"font-semibold text-base-content\" data-title></div></div><div class=\"mt-1.5 text-sm text-base-content/80\" data-description></div></div>",
+      "extraMarkup": "<span class=\"icon-[tabler--caret-up-down] shrink-0 size-4 text-base-content absolute top-1/2 end-3 -translate-y-1/2\"></span>"
+    }'
+    class="hidden"
+  >
+    <option value="">Choose department...</option>
+    <option 
+      value="#tabs-department-executive-content" 
+      selected
+      data-select-option='{
+        "description": "Executive leadership and strategic decisions",
+        "icon": "<span class=\"icon-[tabler--brain] shrink-0 size-4 text-primary\"></span>"
+      }'
+    >
+      Executive
+    </option>
+    <option 
+      value="#tabs-department-marketing-content"
+      data-select-option='{
+        "description": "Marketing campaigns and brand management",
+        "icon": "<span class=\"icon-[tabler--chart-line] shrink-0 size-4 text-primary\"></span>"
+      }'
+    >
+      Marketing
+    </option>
+    <option 
+      value="#tabs-department-product-content"
+      data-select-option='{
+        "description": "Product strategy and roadmap",
+        "icon": "<span class=\"icon-[tabler--tools] shrink-0 size-4 text-primary\"></span>"
+      }'
+    >
+      Product
+    </option>
+    <option 
+      value="#tabs-department-engineering-content"
+      data-select-option='{
+        "description": "Technical development and infrastructure",
+        "icon": "<span class=\"icon-[tabler--device-laptop] shrink-0 size-4 text-primary\"></span>"
+      }'
+    >
+      Engineering
+    </option>
+    <option 
+      value="#tabs-department-design-content"
+      data-select-option='{
+        "description": "UI/UX design and visual assets",
+        "icon": "<span class=\"icon-[tabler--palette] shrink-0 size-4 text-primary\"></span>"
+      }'
+    >
+      Design
+    </option>
+    <option 
+      value="#tabs-department-support-content"
+      data-select-option='{
+        "description": "Customer support and community",
+        "icon": "<span class=\"icon-[tabler--message-circle] shrink-0 size-4 text-primary\"></span>"
+      }'
+    >
+      Support
+    </option>
+    <option 
+      value="#tabs-department-sales-content"
+      data-select-option='{
+        "description": "Sales and business development",
+        "icon": "<span class=\"icon-[tabler--cash] shrink-0 size-4 text-primary\"></span>"
+      }'
+    >
+      Sales
+    </option>
+    <option 
+      value="#tabs-department-finance-content"
+      data-select-option='{
+        "description": "Financial management and accounting",
+        "icon": "<span class=\"icon-[tabler--receipt] shrink-0 size-4 text-primary\"></span>"
+      }'
+    >
+      Finance
+    </option>
+    <option 
+      value="#tabs-department-legal-content"
+      data-select-option='{
+        "description": "Legal compliance and contracts",
+        "icon": "<span class=\"icon-[tabler--scale] shrink-0 size-4 text-primary\"></span>"
+      }'
+    >
+      Legal
+    </option>
+    <option 
+      value="#tabs-department-hr-content"
+      data-select-option='{
+        "description": "Human resources and culture",
+        "icon": "<span class=\"icon-[tabler--users] shrink-0 size-4 text-primary\"></span>"
+      }'
+    >
+      HR
+    </option>
+  </select>
+</div>
+
+<nav class="tabs overflow-x-auto space-x-1 p-1 hidden sm:flex sm:justify-center" aria-label="Department Tabs" role="tablist" aria-orientation="horizontal" data-tab-select="#department-select">
+  <button type="button" class="btn btn-text active-tab:bg-primary active-tab:text-white text-secondary hover:text-secondary active hover:bg-secondary/20" id="tabs-department-executive" data-tab="#tabs-department-executive-content" aria-controls="tabs-department-executive-content" role="tab" aria-selected="true">
+    <span class="icon-[tabler--brain] size-5 shrink-0"></span>
+    <span class="hidden sm:inline">Executive</span>
+  </button>
+  <button type="button" class="btn btn-text active-tab:bg-primary active-tab:text-white text-secondary hover:text-secondary hover:bg-secondary/20" id="tabs-department-marketing" data-tab="#tabs-department-marketing-content" aria-controls="tabs-department-marketing-content" role="tab" aria-selected="false">
+    <span class="icon-[tabler--chart-line] size-5 shrink-0"></span>
+    <span class="hidden sm:inline">Marketing</span>
+  </button>
+  <button type="button" class="btn btn-text active-tab:bg-primary active-tab:text-white text-secondary hover:text-secondary hover:bg-secondary/20" id="tabs-department-product" data-tab="#tabs-department-product-content" aria-controls="tabs-department-product-content" role="tab" aria-selected="false">
+    <span class="icon-[tabler--tools] size-5 shrink-0"></span>
+    <span class="hidden sm:inline">Product</span>
+  </button>
+  <button type="button" class="btn btn-text active-tab:bg-primary active-tab:text-white text-secondary hover:text-secondary hover:bg-secondary/20" id="tabs-department-engineering" data-tab="#tabs-department-engineering-content" aria-controls="tabs-department-engineering-content" role="tab" aria-selected="false">
+    <span class="icon-[tabler--device-laptop] size-5 shrink-0"></span>
+    <span class="hidden sm:inline">Engineering</span>
+  </button>
+  <button type="button" class="btn btn-text active-tab:bg-primary active-tab:text-white text-secondary hover:text-secondary hover:bg-secondary/20" id="tabs-department-design" data-tab="#tabs-department-design-content" aria-controls="tabs-department-design-content" role="tab" aria-selected="false">
+    <span class="icon-[tabler--palette] size-5 shrink-0"></span>
+    <span class="hidden sm:inline">Design</span>
+  </button>
+  <button type="button" class="btn btn-text active-tab:bg-primary active-tab:text-white text-secondary hover:text-secondary hover:bg-secondary/20" id="tabs-department-support" data-tab="#tabs-department-support-content" aria-controls="tabs-department-support-content" role="tab" aria-selected="false">
+    <span class="icon-[tabler--message-circle] size-5 shrink-0"></span>
+    <span class="hidden sm:inline">Support</span>
+  </button>
+  <button type="button" class="btn btn-text active-tab:bg-primary active-tab:text-white text-secondary hover:text-secondary hover:bg-secondary/20" id="tabs-department-sales" data-tab="#tabs-department-sales-content" aria-controls="tabs-department-sales-content" role="tab" aria-selected="false">
+    <span class="icon-[tabler--cash] size-5 shrink-0"></span>
+    <span class="hidden sm:inline">Sales</span>
+  </button>
+  <button type="button" class="btn btn-text active-tab:bg-primary active-tab:text-white text-secondary hover:text-secondary hover:bg-secondary/20" id="tabs-department-finance" data-tab="#tabs-department-finance-content" aria-controls="tabs-department-finance-content" role="tab" aria-selected="false">
+    <span class="icon-[tabler--receipt] size-5 shrink-0"></span>
+    <span class="hidden sm:inline">Finance</span>
+  </button>
+  <button type="button" class="btn btn-text active-tab:bg-primary active-tab:text-white text-secondary hover:text-secondary hover:bg-secondary/20" id="tabs-department-legal" data-tab="#tabs-department-legal-content" aria-controls="tabs-department-legal-content" role="tab" aria-selected="false">
+    <span class="icon-[tabler--scale] size-5 shrink-0"></span>
+    <span class="hidden sm:inline">Legal</span>
+  </button>
+  <button type="button" class="btn btn-text active-tab:bg-primary active-tab:text-white text-secondary hover:text-secondary hover:bg-secondary/20" id="tabs-department-hr" data-tab="#tabs-department-hr-content" aria-controls="tabs-department-hr-content" role="tab" aria-selected="false">
+    <span class="icon-[tabler--users] size-5 shrink-0"></span>
+    <span class="hidden sm:inline">HR</span>
+  </button>
+</nav>
+
+<div class="mt-3">
+  <div id="tabs-department-executive-content" role="tabpanel" aria-labelledby="tabs-department-executive">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Executive Card -->
+      <div class="card bg-base-100 shadow-xl">
+        <div class="card-body">
+          <div class="flex items-center gap-2 mb-4">
+            <span class="icon-[tabler--brain] text-2xl text-primary"></span>
+            <h2 class="card-title">Executive / Leadership</h2>
+          </div>
+          <ul class="space-y-2">
+            <li class="flex items-center gap-2">
+              <span class="icon-[tabler--target] text-primary"></span>
+              <span>Sets the vision and strategy</span>
+            </li>
+            <li class="flex items-center gap-2">
+              <span class="icon-[tabler--checkbox] text-primary"></span>
+              <span>Makes key business decisions</span>
+            </li>
+            <li class="flex items-center gap-2">
+              <span class="icon-[tabler--eye] text-primary"></span>
+              <span>Oversees all departments</span>
+            </li>
+            <li class="flex items-center gap-2">
+              <span class="icon-[tabler--users] text-primary"></span>
+              <span>Often includes CEO, COO, CFO, etc.</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Marketing Card -->
+      <div class="card bg-base-100 shadow-xl">
+        <div class="card-body">
+          <div class="flex items-center gap-2 mb-4">
+            <span class="icon-[tabler--chart-line] text-2xl text-primary"></span>
+            <h2 class="card-title">Marketing</h2>
+          </div>
+          <ul class="space-y-2">
+            <li class="flex items-center gap-2">
+              <span class="icon-[tabler--speakerphone] text-primary"></span>
+              <span>Promotes the product or service</span>
+            </li>
+            <li class="flex items-center gap-2">
+              <span class="icon-[tabler--brand-tabler] text-primary"></span>
+              <span>Manages brand identity</span>
+            </li>
+            <li class="flex items-center gap-2">
+              <span class="icon-[tabler--broadcast] text-primary"></span>
+              <span>Runs campaigns, SEO, social media, email, PR</span>
+            </li>
+            <li class="flex items-center gap-2">
+              <span class="icon-[tabler--chart-bar] text-primary"></span>
+              <span>Tracks customer acquisition & engagement</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Product Card -->
+      <div class="card bg-base-100 shadow-xl">
+        <div class="card-body">
+          <div class="flex items-center gap-2 mb-4">
+            <span class="icon-[tabler--tools] text-2xl text-primary"></span>
+            <h2 class="card-title">Product</h2>
+          </div>
+          <ul class="space-y-2">
+            <li class="flex items-center gap-2">
+              <span class="icon-[tabler--clipboard-check] text-primary"></span>
+              <span>Defines what is being built and why</span>
+            </li>
+            <li class="flex items-center gap-2">
+              <span class="icon-[tabler--road] text-primary"></span>
+              <span>Owns product strategy and roadmap</span>
+            </li>
+            <li class="flex items-center gap-2">
+              <span class="icon-[tabler--message-circle] text-primary"></span>
+              <span>Works with users to gather feedback</span>
+            </li>
+            <li class="flex items-center gap-2">
+              <span class="icon-[tabler--arrows-right-left] text-primary"></span>
+              <span>Bridges between tech and business</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Engineering Card -->
+      <div class="card bg-base-100 shadow-xl">
+        <div class="card-body">
+          <div class="flex items-center gap-2 mb-4">
+            <span class="icon-[tabler--device-laptop] text-2xl text-primary"></span>
+            <h2 class="card-title">Engineering / Development</h2>
+          </div>
+          <ul class="space-y-2">
+            <li class="flex items-center gap-2">
+              <span class="icon-[tabler--code] text-primary"></span>
+              <span>Builds and maintains the website/app/platform</span>
+            </li>
+            <li class="flex items-center gap-2">
+              <span class="icon-[tabler--shield-check] text-primary"></span>
+              <span>Ensures performance, security, and scalability</span>
+            </li>
+            <li class="flex items-center gap-2">
+              <span class="icon-[tabler--server] text-primary"></span>
+              <span>Manages infrastructure, DevOps, and tech stack</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Design Card -->
+      <div class="card bg-base-100 shadow-xl">
+        <div class="card-body">
+          <div class="flex items-center gap-2 mb-4">
+            <span class="icon-[tabler--palette] text-2xl text-primary"></span>
+            <h2 class="card-title">Design / UX</h2>
+          </div>
+          <ul class="space-y-2">
+            <li class="flex items-center gap-2">
+              <span class="icon-[tabler--brush] text-primary"></span>
+              <span>Designs interfaces, logos, and visuals</span>
+            </li>
+            <li class="flex items-center gap-2">
+              <span class="icon-[tabler--user-check] text-primary"></span>
+              <span>Ensures great user experience (UX)</span>
+            </li>
+            <li class="flex items-center gap-2">
+              <span class="icon-[tabler--users] text-primary"></span>
+              <span>Works closely with product and engineering</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Support Card -->
+      <div class="card bg-base-100 shadow-xl">
+        <div class="card-body">
+          <div class="flex items-center gap-2 mb-4">
+            <span class="icon-[tabler--message-circle] text-2xl text-primary"></span>
+            <h2 class="card-title">Customer Support / Community</h2>
+          </div>
+          <ul class="space-y-2">
+            <li class="flex items-center gap-2">
+              <span class="icon-[tabler--help] text-primary"></span>
+              <span>Answers questions from users</span>
+            </li>
+            <li class="flex items-center gap-2">
+              <span class="icon-[tabler--bug] text-primary"></span>
+              <span>Manages feedback and bug reports</span>
+            </li>
+            <li class="flex items-center gap-2">
+              <span class="icon-[tabler--users] text-primary"></span>
+              <span>Builds a healthy user community</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Sales Card -->
+      <div class="card bg-base-100 shadow-xl">
+        <div class="card-body">
+          <div class="flex items-center gap-2 mb-4">
+            <span class="icon-[tabler--cash] text-2xl text-primary"></span>
+            <h2 class="card-title">Sales</h2>
+          </div>
+          <ul class="space-y-2">
+            <li class="flex items-center gap-2">
+              <span class="icon-[tabler--heart-handshake] text-primary"></span>
+              <span>Reaches out to partners, sponsors, clients</span>
+            </li>
+            <li class="flex items-center gap-2">
+              <span class="icon-[tabler--building-store] text-primary"></span>
+              <span>Handles B2B sales, partnerships, licensing</span>
+            </li>
+            <li class="flex items-center gap-2">
+              <span class="icon-[tabler--chart-line] text-primary"></span>
+              <span>Works closely with marketing</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Finance Card -->
+      <div class="card bg-base-100 shadow-xl">
+        <div class="card-body">
+          <div class="flex items-center gap-2 mb-4">
+            <span class="icon-[tabler--receipt] text-2xl text-primary"></span>
+            <h2 class="card-title">Finance & Accounting</h2>
+          </div>
+          <ul class="space-y-2">
+            <li class="flex items-center gap-2">
+              <span class="icon-[tabler--calculator] text-primary"></span>
+              <span>Tracks income, expenses, profits</span>
+            </li>
+            <li class="flex items-center gap-2">
+              <span class="icon-[tabler--file-invoice] text-primary"></span>
+              <span>Manages payroll, invoices, taxes</span>
+            </li>
+            <li class="flex items-center gap-2">
+              <span class="icon-[tabler--report-analytics] text-primary"></span>
+              <span>Handles financial reporting and fundraising data</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Legal Card -->
+      <div class="card bg-base-100 shadow-xl">
+        <div class="card-body">
+          <div class="flex items-center gap-2 mb-4">
+            <span class="icon-[tabler--scale] text-2xl text-primary"></span>
+            <h2 class="card-title">Legal</h2>
+          </div>
+          <ul class="space-y-2">
+            <li class="flex items-center gap-2">
+              <span class="icon-[tabler--shield-check] text-primary"></span>
+              <span>Ensures compliance (data, privacy, contracts)</span>
+            </li>
+            <li class="flex items-center gap-2">
+              <span class="icon-[tabler--file-text] text-primary"></span>
+              <span>Manages contracts and performance</span>
+            </li>
+            <li class="flex items-center gap-2">
+              <span class="icon-[tabler--copyright] text-primary"></span>
+              <span>Manages IP (copyrights, trademarks, etc.)</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- HR Card -->
+      <div class="card bg-base-100 shadow-xl">
+        <div class="card-body">
+          <div class="flex items-center gap-2 mb-4">
+            <span class="icon-[tabler--users] text-2xl text-primary"></span>
+            <h2 class="card-title">Human Resources (HR)</h2>
+          </div>
+          <ul class="space-y-2">
+            <li class="flex items-center gap-2">
+              <span class="icon-[tabler--user-plus] text-primary"></span>
+              <span>Recruits, hires, and onboards staff</span>
+            </li>
+            <li class="flex items-center gap-2">
+              <span class="icon-[tabler--file-text] text-primary"></span>
+              <span>Manages contracts and performance</span>
+            </li>
+            <li class="flex items-center gap-2">
+              <span class="icon-[tabler--heart] text-primary"></span>
+              <span>Fosters company culture</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="tabs-department-marketing-content" class="hidden" role="tabpanel" aria-labelledby="tabs-department-marketing">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Marketing Card -->
+      <!-- Marketing content -->
+    </div>
+  </div>
+  <div id="tabs-department-product-content" class="hidden" role="tabpanel" aria-labelledby="tabs-department-product">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Product Card -->
+      <!-- Product content -->
+    </div>
+  </div>
+  <div id="tabs-department-engineering-content" class="hidden" role="tabpanel" aria-labelledby="tabs-department-engineering">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Engineering Card -->
+      <!-- Engineering content -->
+    </div>
+  </div>
+  <div id="tabs-department-design-content" class="hidden" role="tabpanel" aria-labelledby="tabs-department-design">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Design Card -->
+      <!-- Design content -->
+    </div>
+  </div>
+  <div id="tabs-department-support-content" class="hidden" role="tabpanel" aria-labelledby="tabs-department-support">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Support Card -->
+      <!-- Support content -->
+    </div>
+  </div>
+  <div id="tabs-department-sales-content" class="hidden" role="tabpanel" aria-labelledby="tabs-department-sales">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Sales Card -->
+      <!-- Sales content -->
+    </div>
+  </div>
+  <div id="tabs-department-finance-content" class="hidden" role="tabpanel" aria-labelledby="tabs-department-finance">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Finance Card -->
+      <!-- Finance content -->
+    </div>
+  </div>
+  <div id="tabs-department-legal-content" class="hidden" role="tabpanel" aria-labelledby="tabs-department-legal">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Legal Card -->
+      <!-- Legal content -->
+    </div>
+  </div>
+  <div id="tabs-department-hr-content" class="hidden" role="tabpanel" aria-labelledby="tabs-department-hr">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- HR Card -->
+      <!-- HR content -->
+    </div>
+  </div>
+</div>
+{% endmacro %}
+
+<div class="container mx-auto px-4 py-8 bg-base-200 rounded-lg shadow-xl">
+  <h1 class="text-4xl font-bold mb-8 text-center text-primary">Company Departments Dashboard</h1>
+  <p class="text-lg mb-8 text-center text-secondary">As a solo founder, you'll be wearing many hats. Use this dashboard to organize your work by department.</p>
+  
+  {{ departmentTabs() }}
+</div>
+

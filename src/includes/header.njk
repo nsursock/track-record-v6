@@ -1,0 +1,142 @@
+<div class="relative h-16 w-full">
+  <!-- Sticky navbar -->
+  <nav class="navbar bg-base-100 md:h-15 absolute start-0 top-0 z-1 shadow-base-300/20 shadow-sm">
+    <div class="w-full md:flex md:items-center md:gap-2">
+      <div class="flex items-center justify-between max-md:w-full">
+        <div class="navbar-start items-center justify-between max-md:w-full">
+          <a class="link text-base-content link-neutral no-underline flex items-center gap-2" href="/">
+            <span class="icon-[tabler--music] size-6 text-primary"></span>
+            <div class="flex items-center gap-2 whitespace-nowrap">
+              <span class="text-xl font-bold text-base-content">Track Record</span>
+              <span class="text-sm uppercase tracking-wider text-secondary">Musical Wisdom</span>
+            </div>
+          </a>
+        </div>
+        <div class="md:hidden">
+          <button type="button" class="collapse-toggle btn btn-outline btn-secondary btn-sm btn-square" data-collapse="#sticky-navbar-collapse" aria-controls="sticky-navbar-collapse" aria-label="Toggle navigation" >
+            <span class="icon-[tabler--menu-2] collapse-open:hidden size-4"></span>
+            <span class="icon-[tabler--x] collapse-open:block hidden size-4"></span>
+          </button>
+        </div>
+      </div>
+      <div id="sticky-navbar-collapse" class="md:navbar-end collapse hidden grow basis-full overflow-hidden transition-[height] duration-300 max-md:w-full" >
+        <ul class="menu md:menu-horizontal gap-2 p-0 text-base max-md:mt-2">
+          {# <li>
+            <a href="#">Link 1</a>
+          </li>
+          <li>
+            <a href="#">Link 2</a>
+          </li>
+          <li class="dropdown relative inline-flex [--auto-close:inside] [--offset:10] [--placement:bottom-end]">
+            <button id="dropdown-sticky" type="button" class="dropdown-toggle dropdown-open:bg-base-content/10 dropdown-open:text-base-content" aria-haspopup="menu" aria-expanded="false" aria-label="Dropdown" >
+              Parent
+              <span class="icon-[tabler--chevron-down] dropdown-open:rotate-180 size-4"></span>
+            </button>
+            <ul class="dropdown-menu dropdown-open:opacity-100 hidden" role="menu" aria-orientation="vertical" aria-labelledby="dropdown-sticky" >
+              <li>
+                <a class="dropdown-item" href="#">Link 3</a>
+              </li>
+              <li>
+                <a class="dropdown-item" href="#">Link 4</a>
+              </li>
+              <li>
+                <a class="dropdown-item" href="#">Link 5</a>
+              </li>
+              <hr class="border-base-content/25 -mx-2"/>
+              <li>
+                <a class="dropdown-item" href="#">Link 6</a>
+              </li>
+            </ul>
+          </li> #}
+          <li class="ml-auto">
+            <div class="max-w-sm" x-data="themes">
+              <div class="dropdown relative inline-flex [--auto-close:inside] [--offset:10] [--placement:bottom-end]">
+                <button type="button" class="dropdown-toggle btn btn-soft btn-primary btn-sm" aria-haspopup="menu" aria-expanded="false" aria-label="Theme selector">
+                  <span class="icon-[tabler--palette] size-5"></span>
+                  <span x-text="selectedTheme.charAt(0).toUpperCase() + selectedTheme.slice(1)"></span>
+                </button>
+                <ul class="dropdown-menu dropdown-open:opacity-100 hidden min-w-60 rounded-lg shadow-base-300/20 shadow-sm max-h-96 overflow-y-auto" role="menu" aria-orientation="vertical">
+                  <li class="dropdown-header">
+                    <span class="text-base-content/70">Flyon UI</span>
+                  </li>
+                  <template x-for="theme in flyonThemes" :key="theme.value">
+                    <li>
+                      <label class="dropdown-item justify-between cursor-pointer">
+                        <div class="flex items-center gap-2">
+                          <span class="icon-[tabler--sun]" x-show="theme.value === 'light'"></span>
+                          <span class="icon-[tabler--moon]" x-show="theme.value === 'dark'"></span>
+                          <span class="icon-[tabler--moon-stars]" x-show="theme.value === 'black'"></span>
+                          <span class="icon-[tabler--building]" x-show="theme.value === 'corporate'"></span>
+                          <span class="icon-[tabler--trees]" x-show="theme.value === 'ghibli'"></span>
+                          <span class="icon-[tabler--cookie]" x-show="theme.value === 'gourmet'"></span>
+                          <span class="icon-[tabler--diamond]" x-show="theme.value === 'luxury'"></span>
+                          <span class="icon-[tabler--leaf]" x-show="theme.value === 'mintlify'"></span>
+                          <span class="icon-[tabler--components]" x-show="theme.value === 'shadcn'"></span>
+                          <span class="icon-[tabler--brand-slack]" x-show="theme.value === 'slack'"></span>
+                          <span class="icon-[tabler--cloud]" x-show="theme.value === 'soft'"></span>
+                          <span class="icon-[tabler--sword]" x-show="theme.value === 'valorant'"></span>
+                          <span x-text="theme.label"></span>
+                        </div>
+                        <input type="radio" :name="theme.value" :value="theme.value" x-model="selectedTheme" class="radio radio-primary"/>
+                      </label>
+                    </li>
+                  </template>
+                  <hr class="border-base-content/25 -mx-2"/>
+                  <li class="dropdown-header">
+                    <span class="text-base-content/70">Custom UI</span>
+                  </li>
+                  <template x-for="theme in customThemes" :key="theme.value">
+                    <li>
+                      <label class="dropdown-item justify-between cursor-pointer">
+                        <div class="flex items-center gap-2">
+                          <span class="icon-[tabler--robot]" x-show="theme.value === 'cyberpunk'"></span>
+                          <span x-text="theme.label"></span>
+                        </div>
+                        <input type="radio" :name="theme.value" :value="theme.value" x-model="selectedTheme" class="radio radio-primary"/>
+                      </label>
+                    </li>
+                  </template>
+                  <hr class="border-base-content/25 -mx-2"/>
+                  <li class="dropdown-header">
+                    <span class="text-base-content/70">Daisy UI</span>
+                  </li>
+                  <template x-for="theme in daisyThemes" :key="theme.value">
+                    <li>
+                      <label class="dropdown-item justify-between cursor-pointer">
+                        <div class="flex items-center gap-2">
+                          <span class="icon-[tabler--pill]" x-show="theme.value === 'acid'"></span>
+                          <span class="icon-[tabler--massage]" x-show="theme.value === 'abyss'"></span>
+                          <span class="icon-[tabler--droplet]" x-show="theme.value === 'aqua'"></span>
+                          <span class="icon-[tabler--trees]" x-show="theme.value === 'autumn'"></span>
+                          <span class="icon-[tabler--brand-bumble]" x-show="theme.value === 'bumblebee'"></span>
+                          <span class="icon-[tabler--building]" x-show="theme.value === 'business'"></span>
+                          <span class="icon-[tabler--coffee]" x-show="theme.value === 'caramellatte'"></span>
+                          <span x-text="theme.label"></span>
+                        </div>
+                        <input type="radio" :name="theme.value" :value="theme.value" x-model="selectedTheme" class="radio radio-primary"/>
+                      </label>
+                    </li>
+                  </template>
+                </ul>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <!-- Demo content -->
+  {# <div class="overflow-y-auto top-15 absolute h-full w-full pe-2 pt-4">
+    <div class="flex w-full flex-col gap-4">
+      <div class="mb-4 flex items-center gap-4">
+        <div class="skeleton h-16 w-16 rounded-full"></div>
+        <div class="flex flex-col gap-4">
+          <div class="skeleton h-4 w-52"></div>
+          <div class="skeleton h-4 w-52"></div>
+        </div>
+      </div>
+      <div class="skeleton mb-4 h-16 w-full"></div>
+      <div class="skeleton mb-4 h-32 w-full"></div>
+    </div>
+  </div> #}
+</div>

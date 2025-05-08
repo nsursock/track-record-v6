@@ -1,0 +1,464 @@
+---
+layout: base.njk
+---
+
+<article class="container mx-auto px-4 py-8" id="scrollspy-scrollable-parent">
+  <!-- Breadcrumb Navigation -->
+  <div class="breadcrumbs mb-2 px-4 sm:px-8 md:px-12 lg:px-20 text-sm">
+    <ol>
+      <li>
+        <a href="/" class="flex items-center gap-2">
+          <span class="icon-[tabler--home] size-5"></span>
+          Home
+        </a>
+      </li>
+      <li class="breadcrumbs-separator rtl:rotate-180">
+        <span class="icon-[tabler--chevron-right]"></span>
+      </li>
+      <li>
+        <a href="/posts/" class="flex items-center gap-2">
+          <span class="icon-[tabler--article] size-5"></span>
+          Blog
+        </a>
+      </li>
+      <li class="breadcrumbs-separator rtl:rotate-180">
+        <span class="icon-[tabler--chevron-right]"></span>
+      </li>
+      <li aria-current="page" class="flex items-center gap-2">
+        <span class="icon-[tabler--file-text] size-5"></span>
+        <span class="hidden sm:inline">{{ title }}</span>
+        <span class="sm:hidden">Article</span>
+      </li>
+    </ol>
+  </div>
+
+  <!-- Hero Section -->
+  <section class="flex items-center py-8 sm:py-12 md:py-16">
+    <div class="w-full px-4 sm:px-8 md:px-12 lg:px-20">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center">
+        <!-- Left Content -->
+        <div class="space-y-6 md:space-y-8">
+          <div class="space-y-4">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3">
+              {% if nft_metadata %}
+                <span class="badge badge-primary">NFT Music</span>
+              {% endif %}
+              <span class="badge badge-soft bg-primary/10 text-primary">New Article</span>
+              <span class="text-sm text-secondary">By {{ author }}</span>
+            </div>
+            <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight text-primary">
+              {{ title }}
+            </h1>
+            {% if meta_description %}
+              <p class="text-base sm:text-lg md:text-xl text-secondary/80 max-w-lg">
+                {{ meta_description }}
+              </p>
+            {% endif %}
+          </div>
+
+          <div class="flex flex-col sm:flex-row gap-3 sm:gap-4">
+            <div class="flex items-center gap-4 text-sm text-secondary">
+              <div class="flex items-center gap-2">
+                <span class="icon-[tabler--calendar] size-4 text-primary"></span>
+                <time datetime="{{ published_date }}">
+                  {{ published_date | date("MMMM D, YYYY") }}
+                </time>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="icon-[tabler--clock] size-4 text-primary"></span>
+                <span>{% set words = content | wordcount %}{% set minutes = (words / 200) | round(0, 'ceil') %}{{ minutes }} min read</span>
+              </div>
+            </div>
+          </div>
+
+          {% if tags %}
+            <div class="flex flex-wrap gap-2">
+              {% for tag in tags %}
+                <span class="badge bg-primary/10 text-primary hover:bg-primary/20">
+                  {{ tag }}
+                </span>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+
+        <!-- Right Content - Hero Image -->
+        <div class="relative h-[400px] md:h-[500px] w-full rounded-2xl overflow-hidden">
+          <img src="https://picsum.photos/800/500" class="w-full h-full object-cover" alt="Hero image"/>
+          <div class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-primary/80 to-transparent">
+            <p class="text-white text-sm">
+              Photo by <a href="https://picsum.photos" target="_blank" rel="noopener noreferrer" class="underline hover:text-secondary">Lorem Picsum</a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Mobile Scrollspy -->
+  <aside class="md:hidden w-full mb-8">
+    <div class="card bg-base-200 shadow-base-300/20 shadow-sm mx-4 sm:mx-8 md:mx-12 lg:mx-20">
+      <div class="card-body p-4 sm:p-6">
+        <div class="overflow-y-auto max-h-[calc(100vh-4rem)]">
+          <ul class="menu menu-sm gap-1 bg-base-200" x-data="scrollspy" data-scrollspy="#scrollspy" data-scrollspy-scrollable-parent="#scrollspy">
+            <li class="text-base-content text-xl font-medium">Table of Contents</li>
+            {% for heading in content | toc %}
+              {% if heading.level == 2 %}
+                <li data-scrollspy-group="">
+                  <a href="#{{ heading.id }}" 
+                     class="text-primary hover:text-primary block py-0.5 font-medium"
+                     :class="{ 'scrollspy-active:text-primary': isActive('#{{ heading.id }}') }">
+                    {{ heading.text }}
+                  </a>
+                  {% if heading.children %}
+                    <ul>
+                      {% for child in heading.children %}
+                        <li class="ms-0.5 sm:ms-4">
+                          <a href="#{{ child.id }}" 
+                             class="text-secondary/80 hover:text-primary flex items-center gap-x-2 py-0.5"
+                             :class="{ 'scrollspy-active:text-primary': isActive('#{{ child.id }}') }">
+                            <span class="icon-[tabler--point] size-4 text-secondary"></span>
+                            {{ child.text }}
+                          </a>
+                        </li>
+                      {% endfor %}
+                    </ul>
+                  {% endif %}
+                </li>
+              {% endif %}
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <div class="container mx-auto px-4 sm:px-8 md:px-12 lg:px-20">
+    <div class="flex flex-col md:flex-row gap-12">
+      <!-- Main content -->
+      <div class="w-full md:w-3/5 order-1">
+        <div class="bg-base-100">
+          <div id="scrollspy" class="prose prose-base-content max-w-none prose-headings:text-primary prose-h3:text-secondary prose-p:text-base-content/90 prose-a:text-primary hover:prose-a:text-secondary prose-strong:text-primary prose-code:text-primary prose-pre:bg-primary/5 prose-pre:text-base-content">
+            <style>
+              .prose h2 + p > img {
+                width: 100%;
+                height: 192px;
+                object-fit: cover;
+                border-radius: 0.5rem;
+                margin-bottom: 2rem;
+              }
+              @media (min-width: 768px) {
+                .prose h2 + p > img {
+                  width: 256px;
+                }
+                .prose h2:nth-of-type(odd) + p > img {
+                  float: right;
+                  margin-left: 2rem;
+                }
+                .prose h2:nth-of-type(even) + p > img {
+                  float: left;
+                  margin-right: 2rem;
+                }
+              }
+            </style>
+            {{ content | safe }}
+          </div>
+
+          <!-- Comments Section -->
+          <section class="mt-12 pt-8 border-t border-primary/10" x-data="comments">
+            <h2 class="text-2xl font-bold text-primary mb-6">Comments</h2>
+
+            <!-- Comment Form -->
+            <div class="card bg-base-200 shadow-base-300/20 shadow-sm mb-8">
+              <div class="card-body">
+                <form class="space-y-4">
+                  <div class="form-control">
+                    <label class="label">
+                      <span class="label-text text-primary">Name</span>
+                    </label>
+                    <input type="text" placeholder="Your name" class="input input-bordered"/>
+                  </div>
+                  <div class="form-control">
+                    <label class="label">
+                      <span class="label-text text-primary">Email</span>
+                    </label>
+                    <input type="email" placeholder="Your email" class="input input-bordered"/>
+                  </div>
+                  <div class="form-control">
+                    <label class="label">
+                      <span class="label-text text-primary">Comment</span>
+                    </label>
+                    <textarea class="textarea textarea-bordered h-24" placeholder="Write your comment here..."></textarea>
+                  </div>
+                  <button class="btn btn-primary">Post Comment</button>
+                </form>
+              </div>
+            </div>
+
+            <!-- Featured Comment -->
+            <div class="card bg-base-200 shadow-base-300/20 shadow-sm mb-6">
+              <div class="card-body">
+                <div class="flex items-start gap-4">
+                  <div class="avatar">
+                    <div class="w-10 h-10 rounded-full">
+                      <img :src="comments[0].avatar" :alt="comments[0].name"/>
+                    </div>
+                  </div>
+                  <div class="flex-1">
+                    <div class="flex items-center justify-between">
+                      <h3 class="font-semibold text-primary" x-text="comments[0].name"></h3>
+                      <span class="text-sm text-secondary" x-text="comments[0].date"></span>
+                    </div>
+                    <p class="mt-2 text-base-content/90" x-text="comments[0].content"></p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Read More Comments Button -->
+            <div class="flex justify-center">
+              <button type="button" class="btn btn-primary" data-overlay="#overlay-comments">
+                <span class="icon-[tabler--message-circle] size-5 me-2"></span>
+                Read More Comments
+              </button>
+            </div>
+          </section>
+
+          <!-- Comments Drawer -->
+          <div id="overlay-comments" class="overlay overlay-open:translate-x-0 drawer drawer-end backdrop-blur-sm bg-base-100/80 hidden" role="dialog" tabindex="-1" x-data="comments" data-overlay-options='{"backdropClasses": "transition duration-300 fixed inset-0 bg-black/50 overlay-backdrop", "drawerClasses": "transition duration-300 fixed inset-y-0 end-0 z-50 w-80 bg-base-100 shadow-lg"}'>
+            <div class="drawer-header border-b border-base-300/20">
+              <h3 class="drawer-title text-primary">All Comments</h3>
+              <button type="button" class="btn btn-text btn-circle btn-sm absolute end-3 top-3" aria-label="Close" data-overlay="#overlay-comments">
+                <span class="icon-[tabler--x] size-5"></span>
+              </button>
+            </div>
+            <div class="drawer-body">
+              <div class="space-y-6">
+                <!-- Comments List -->
+                <div class="space-y-6">
+                  <template x-for="comment in comments" :key="comment.id">
+                    <div class="card bg-base-200 shadow-base-300/20 shadow-sm">
+                      <div class="card-body">
+                        <div class="flex items-start gap-4">
+                          <div class="avatar">
+                            <div class="w-10 h-10 rounded-full">
+                              <img :src="comment.avatar" :alt="comment.name" />
+                            </div>
+                          </div>
+                          <div class="flex-1">
+                            <div class="flex items-center justify-between">
+                              <h3 class="font-semibold text-primary" x-text="comment.name"></h3>
+                              <span class="text-sm text-secondary" x-text="comment.date"></span>
+                            </div>
+                            <p class="mt-2 text-base-content/90" x-text="comment.content"></p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </template>
+                </div>
+              </div>
+            </div>
+            <div class="drawer-footer border-t border-base-300/20">
+              <button type="button" class="btn btn-soft btn-secondary" data-overlay="#overlay-comments">Close</button>
+            </div>
+          </div>
+
+            <!-- Newsletter Section -->
+            <section class="mt-12 pt-8 border-t border-primary/10">
+              <div class="card bg-primary/5 border border-primary/10">
+                <div class="card-body">
+                  <div class="flex flex-col md:flex-row items-center gap-6">
+                    <div class="flex-1">
+                      <h2 class="text-2xl font-bold text-primary mb-2">Subscribe to our newsletter</h2>
+                      <p class="text-base-content/90">Get the latest articles and updates delivered straight to your inbox.</p>
+                    </div>
+                    <form class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto" onsubmit="return false;">
+                      <div class="form-control flex-1">
+                        <input 
+                        type="email" 
+                        placeholder="Enter your email" 
+                        class="input input-bordered w-full" 
+                        required
+                        pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
+                        title="Please enter a valid email address"
+/>
+                      </div>
+                      <button type="submit" class="btn btn-primary whitespace-nowrap">Subscribe</button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <footer class="mt-12 pt-8 border-t border-primary/10">
+              <!-- Mobile Author Info -->
+              <div class="md:hidden mb-8">
+                <div class="card bg-base-200 shadow-base-300/20 shadow-sm">
+                  <div class="card-body space-y-6">
+                    <!-- Author Info -->
+                    <div class="flex items-center space-x-4">
+                      <div class="avatar">
+                        <div class="w-12 h-12 rounded-full">
+                          <img src="https://i.pravatar.cc/150?u={{ author | replace(' ', '+') }}" alt="{{ author }}" onerror="this.src='https://ui-avatars.com/api/?name={{ author | replace(' ', '+') }}&background=random&color=fff&size=150'"/>
+                        </div>
+                      </div>
+                      <div>
+                        <p class="font-semibold text-primary">{{ author }}</p>
+                        <p class="text-sm text-secondary">Author</p>
+                      </div>
+                    </div>
+
+                    <!-- Tags -->
+                    {% if tags %}
+                      <div class="space-y-2">
+                        <h3 class="text-sm font-semibold text-primary">Tags</h3>
+                        <div class="flex flex-wrap gap-2">
+                          {% for tag in tags %}
+                            <span class="badge badge-outline badge-secondary">
+                              {{ tag }}
+                            </span>
+                          {% endfor %}
+                        </div>
+                      </div>
+                    {% endif %}
+
+                    <!-- Share Buttons -->
+                    <div class="space-y-2">
+                      <h3 class="text-sm font-semibold text-primary">Share</h3>
+                      <div class="flex space-x-4">
+                        <a href="https://twitter.com/intent/tweet?text={{ title | replace(' ', '+') }}&url={{ page.url | replace(' ', '+') }}" class="text-secondary hover:text-primary transition-colors">
+                          <span class="icon-[tabler--brand-twitter] size-5"></span>
+                        </a>
+                        <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ page.url | replace(' ', '+') }}&title={{ title | replace(' ', '+') }}" class="text-secondary hover:text-primary transition-colors">
+                          <span class="icon-[tabler--brand-linkedin] size-5"></span>
+                        </a>
+                        <a href="https://www.facebook.com/sharer/sharer.php?u={{ page.url | replace(' ', '+') }}" class="text-secondary hover:text-primary transition-colors">
+                          <span class="icon-[tabler--brand-facebook] size-5"></span>
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div class="flex items-center gap-2 text-sm text-secondary">
+                  <span class="icon-[tabler--copyright] size-4 text-primary"></span>
+                  <span>{{ published_date | date("YYYY") }}
+                    {{ author }}</span>
+                </div>
+                <div class="flex items-center gap-2 text-sm text-secondary">
+                  <span class="icon-[tabler--refresh] size-4 text-primary"></span>
+                  {% if updated_date %}
+                    <span>Last updated: {{ updated_date | date("MMMM D, YYYY") }}</span>
+                  {% else %}
+                    <span>Last updated: {{ published_date | date("MMMM D, YYYY") }}</span>
+                  {% endif %}
+                </div>
+              </div>
+            </footer>
+          </div>
+        </div>
+
+        <!-- Desktop Sidebar -->
+        <aside class="hidden md:block w-full md:w-2/5 order-2">
+          <div class="sticky top-8 space-y-4">
+            <!-- Scrollspy -->
+            <div class="card bg-base-200 shadow-base-300/20 shadow-sm">
+              <div class="card-body">
+                <div class="overflow-y-auto max-h-[calc(100vh-4rem)]">
+                  <ul class="menu menu-sm gap-1 bg-base-200" x-data="scrollspy" data-scrollspy="#scrollspy" data-scrollspy-scrollable-parent="#scrollspy">
+                    <li class="text-base-content text-xl font-medium">Table of Contents</li>
+                    {% for heading in content | toc %}
+                      {% if heading.level == 2 %}
+                        <li data-scrollspy-group="">
+                          <a href="#{{ heading.id }}" 
+                           class="text-primary hover:text-primary block py-0.5 font-medium"
+                           :class="{ 'scrollspy-active:text-primary': isActive('#{{ heading.id }}') }">
+                            {{ heading.text }}
+                          </a>
+                          {% if heading.children %}
+                            <ul>
+                              {% for child in heading.children %}
+                                <li class="ms-0.5 sm:ms-4">
+                                  <a href="#{{ child.id }}" 
+                                   class="text-secondary/80 hover:text-primary flex items-center gap-x-2 py-0.5"
+                                   :class="{ 'scrollspy-active:text-primary': isActive('#{{ child.id }}') }">
+                                    <span class="icon-[tabler--point] size-4 text-secondary"></span>
+                                    {{ child.text }}
+                                  </a>
+                                </li>
+                              {% endfor %}
+                            </ul>
+                          {% endif %}
+                        </li>
+                      {% endif %}
+                    {% endfor %}
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <!-- Article Metadata -->
+            <div class="card bg-base-200 shadow-base-300/20 shadow-sm">
+              <div class="card-body space-y-6">
+                <!-- Author Info -->
+                <div class="flex items-center space-x-4">
+                  <div class="avatar">
+                    <div class="w-12 h-12 rounded-full">
+                      <img src="https://i.pravatar.cc/150?u={{ author | replace(' ', '+') }}" alt="{{ author }}" onerror="this.src='https://ui-avatars.com/api/?name={{ author | replace(' ', '+') }}&background=random&color=fff&size=150'"/>
+                    </div>
+                  </div>
+                  <div>
+                    <p class="font-semibold text-primary">{{ author }}</p>
+                    <p class="text-sm text-secondary">Author</p>
+                  </div>
+                </div>
+
+                <!-- Tags -->
+                {% if tags %}
+                  <div class="space-y-2">
+                    <h3 class="text-sm font-semibold text-primary">Tags</h3>
+                    <div class="flex flex-wrap gap-2">
+                      {% for tag in tags %}
+                        <span class="badge badge-outline badge-secondary">
+                          {{ tag }}
+                        </span>
+                      {% endfor %}
+                    </div>
+                  </div>
+                {% endif %}
+
+                <!-- Share Buttons -->
+                <div class="space-y-2">
+                  <h3 class="text-sm font-semibold text-primary">Share</h3>
+                  <div class="flex space-x-4">
+                    <a href="https://twitter.com/intent/tweet?text={{ title | replace(' ', '+') }}&url={{ page.url | replace(' ', '+') }}" class="text-secondary hover:text-primary transition-colors">
+                      <span class="icon-[tabler--brand-twitter] size-5"></span>
+                    </a>
+                    <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ page.url | replace(' ', '+') }}&title={{ title | replace(' ', '+') }}" class="text-secondary hover:text-primary transition-colors">
+                      <span class="icon-[tabler--brand-linkedin] size-5"></span>
+                    </a>
+                    <a href="https://www.facebook.com/sharer/sharer.php?u={{ page.url | replace(' ', '+') }}" class="text-secondary hover:text-primary transition-colors">
+                      <span class="icon-[tabler--brand-facebook] size-5"></span>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+
+    <!-- Mobile Progress Bar -->
+    <div class="md:hidden fixed bottom-0 left-0 right-0 bg-base-100 shadow-lg px-4 py-1">
+      <div class="flex items-center gap-x-1">
+        <template x-for="(step, index) in sectionCount">
+          <div class="progress-step bg-primary" role="progressbar" aria-label="Progressbar" :aria-valuenow="progress" aria-valuemin="0" aria-valuemax="100" style="opacity: 0.3;"></div>
+        </template>
+        <p class="text-xs text-primary ms-1 font-medium" x-text="`${progress}%`"></p>
+      </div>
+    </div>
+  </article>

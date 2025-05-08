@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="{{ meta.lang or site.lang }}">
+  <head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>{{ site.title }} - {{ title or meta.title }}</title>
+    {% include "meta.njk" %}
+    <link rel="stylesheet" href="{{ '/node_modules/flatpickr/dist/flatpickr.css' | url }}"/>
+  </head>
+
+  <body>
+
+    {% include "header.njk" %}
+
+    <main id="main">
+      {% if hero_picture %}
+        <div class="hero-image mb-8">
+          {% image "src/assets/images/" + hero_picture + ".png",
+          title,
+          "100vw" %}
+        </div>
+      {% endif %}
+
+      {{ content | safe }}
+
+    </main>
+
+    {% include "footer.njk" %}
+
+    <script type="module" src="{{ '/assets/js/index.js' | url }}"></script>
+    <script src="{{ '/node_modules/flyonui/flyonui.js' | url }}"></script>
+    <script src="{{ '/node_modules/flatpickr/dist/flatpickr.js' | url }}"></script>
+    {# <script src="{{ '/node_modules/flyonui/dist/accordion.js' | url }}"></script>
+    <script src="{{ '/node_modules/flyonui/dist/select.js' | url }}"></script>
+    <script src="{{ '/node_modules/flyonui/dist/scrollspy.js' | url }}"></script> #}
+  </body>
+</html>

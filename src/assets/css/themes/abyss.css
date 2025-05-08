@@ -1,0 +1,41 @@
+@plugin "flyonui/theme" {
+    name: "abyss";
+    fontFamily: "Audiowide, system-ui, sans-serif";
+    color-scheme: dark;
+    
+    --color-base-100: #0f172a;
+    --color-base-200: #1e293b;
+    --color-base-300: #334155;
+    --color-base-content: #e2e8f0;
+    --color-primary: #3b82f6;
+    --color-primary-content: #ffffff;
+    --color-secondary: #8b5cf6;
+    --color-accent: #ec4899;
+    --color-accent-content: #ffffff;
+    --color-neutral: #1e293b;
+    --color-neutral-content: #e2e8f0;
+    --color-info: #0ea5e9;
+    --color-info-content: #ffffff;
+    --color-success: #10b981;
+    --color-success-content: #ffffff;
+    --color-warning: #f59e0b;
+    --color-warning-content: #ffffff;
+    --color-error: #ef4444;
+    --color-error-content: #ffffff;
+
+    /* Border Radius */
+    --radius-selector: 0.5rem;
+    --radius-field: 0.25rem;
+    --radius-box: 0.5rem;
+
+    /* Base Sizes */
+    --size-selector: 0.25rem;
+    --size-field: 0.25rem;
+
+    /* Border Size */
+    --border: 1px;
+
+    /* Effects */
+    --depth: 1;
+    --noise: 0;
+}

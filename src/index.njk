@@ -1,0 +1,386 @@
+---
+meta:
+  title: Musical Wisdom
+  description: A blog sharing deep insights and critiques on music, past and present.
+layout: base
+eleventyNavigation:
+  key: Home
+  order: 1
+---
+
+<!-- Hero Section -->
+<section class="min-h-[80vh] flex items-center py-8 sm:py-12 md:py-16 mx-4 sm:mx-8 md:mx-12 lg:mx-20">
+  <div class="container mx-auto px-4">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center">
+      
+      <!-- Left Content -->
+      <div class="space-y-6 md:space-y-8">
+        <div class="space-y-4">
+          <div class="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3">
+            <span class="badge badge-soft badge-primary">New Feature</span>
+            <span class="text-sm text-secondary">Discover your music personality</span>
+          </div>
+          <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
+            Track Your <span class="text-primary">Music Journey</span>
+          </h1>
+          <p class="text-base sm:text-lg md:text-xl text-secondary/80 max-w-lg">
+            Discover, organize, and share your favorite tracks. Create playlists that tell your story and connect with music lovers worldwide.
+          </p>
+        </div>
+
+        <div class="flex flex-col sm:flex-row gap-3 sm:gap-4">
+          <a href="/signup/" class="btn btn-soft btn-primary btn-lg w-full sm:w-auto">
+            <span class="icon-[tabler--music] size-5 mr-2"></span>
+            Start Your Journey
+          </a>
+          <a href="/about/" class="btn btn-soft btn-secondary btn-lg w-full sm:w-auto">
+            <span class="icon-[tabler--info-circle] size-5 mr-2"></span>
+            Learn More
+          </a>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-4 sm:gap-8 pt-4">
+          <div class="flex items-center gap-2">
+            <span class="text-2xl sm:text-3xl font-bold text-primary">10K+</span>
+            <span class="text-secondary">Active Users</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-2xl sm:text-3xl font-bold text-secondary">50K+</span>
+            <span class="text-primary">Playlists</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-2xl sm:text-3xl font-bold text-primary">1M+</span>
+            <span class="text-secondary">Tracks</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Grid -->
+      <div class="grid grid-cols-2 gap-3 sm:gap-4 md:gap-6">
+        <div class="relative aspect-square group">
+          <img src="https://picsum.photos/400/400?random=1" alt="Music Collection" class="w-full h-full object-cover rounded-lg shadow-lg transition-transform duration-300 group-hover:scale-105">
+          <div class="absolute inset-0 bg-primary/30 rounded-lg"></div>
+          <div class="absolute bottom-4 left-4 text-white">
+            <span class="text-sm font-medium">Your Collection</span>
+          </div>
+        </div>
+        <div class="relative aspect-square md:mt-8 lg:mt-12 group">
+          <img src="https://picsum.photos/400/400?random=2" alt="Music Discovery" class="w-full h-full object-cover rounded-lg shadow-lg transition-transform duration-300 group-hover:scale-105">
+          <div class="absolute inset-0 bg-secondary/30 rounded-lg"></div>
+          <div class="absolute bottom-4 left-4 text-white">
+            <span class="text-sm font-medium">Discover</span>
+          </div>
+        </div>
+        <div class="relative aspect-square md:-mt-8 lg:-mt-12 group">
+          <img src="https://picsum.photos/400/400?random=3" alt="Playlist Creation" class="w-full h-full object-cover rounded-lg shadow-lg transition-transform duration-300 group-hover:scale-105">
+          <div class="absolute inset-0 bg-primary/30 rounded-lg"></div>
+          <div class="absolute bottom-4 left-4 text-white">
+            <span class="text-sm font-medium">Create</span>
+          </div>
+        </div>
+        <div class="relative aspect-square group">
+          <img src="https://picsum.photos/400/400?random=4" alt="Music Sharing" class="w-full h-full object-cover rounded-lg shadow-lg transition-transform duration-300 group-hover:scale-105">
+          <div class="absolute inset-0 bg-secondary/30 rounded-lg"></div>
+          <div class="absolute bottom-4 left-4 text-white">
+            <span class="text-sm font-medium">Share</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Featured Posts Section -->
+<section class="py-12 sm:py-16 md:py-20 bg-base-200">
+  <div class="container mx-auto px-4 sm:px-8 md:px-12 lg:px-20">
+    <h2 class="text-2xl sm:text-3xl font-bold text-center mb-4 sm:mb-6 md:mb-8 text-primary">Featured Posts</h2>
+    <p class="text-center text-base-content/70 mb-8 sm:mb-12 md:mb-16">Discover our latest articles and insights. <a href="/posts/" class="link link-primary">View all posts</a> to explore more.</p>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+      <!-- Card 1 -->
+      <div class="card card-border shadow-none hover:shadow-lg transition-shadow duration-300 bg-base-100">
+        <figure class="relative">
+          <img src="https://picsum.photos/600/400?random=5" alt="Featured Post 1" class="w-full h-40 sm:h-48 object-cover">
+          <div class="absolute top-4 right-4">
+            <span class="badge badge-soft badge-primary">New</span>
+          </div>
+        </figure>
+        <div class="card-body p-4 sm:p-6">
+          <h5 class="card-title mb-2 text-primary">Top Albums of 2024</h5>
+          <p class="mb-4 text-sm sm:text-base text-secondary/80">Discover the most influential albums that defined this year's music scene.</p>
+          <div class="card-actions justify-end">
+            <button class="btn btn-soft btn-primary btn-sm">Read More</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="card card-border shadow-none hover:shadow-lg transition-shadow duration-300 bg-base-100">
+        <figure class="relative">
+          <img src="https://picsum.photos/600/400?random=6" alt="Featured Post 2" class="w-full h-40 sm:h-48 object-cover">
+          <div class="absolute top-4 right-4">
+            <span class="badge badge-soft badge-secondary">Popular</span>
+          </div>
+        </figure>
+        <div class="card-body p-4 sm:p-6">
+          <h5 class="card-title mb-2 text-secondary">Artist Spotlight</h5>
+          <p class="mb-4 text-sm sm:text-base text-primary/80">An in-depth look at emerging artists making waves in the industry.</p>
+          <div class="card-actions justify-end">
+            <button class="btn btn-soft btn-secondary btn-sm">Read More</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="card card-border shadow-none hover:shadow-lg transition-shadow duration-300 bg-base-100">
+        <figure class="relative">
+          <img src="https://picsum.photos/600/400?random=7" alt="Featured Post 3" class="w-full h-40 sm:h-48 object-cover">
+          <div class="absolute top-4 right-4">
+            <span class="badge badge-soft badge-primary">Trending</span>
+          </div>
+        </figure>
+        <div class="card-body p-4 sm:p-6">
+          <h5 class="card-title mb-2 text-primary">Music Production Tips</h5>
+          <p class="mb-4 text-sm sm:text-base text-secondary/80">Expert advice on creating professional-quality music at home.</p>
+          <div class="card-actions justify-end">
+            <button class="btn btn-soft btn-primary btn-sm">Read More</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ Section -->
+<section class="py-12 sm:py-16 md:py-20">
+  <div class="container mx-auto px-4 sm:px-8 md:px-12 lg:px-20">
+    <h2 class="text-2xl sm:text-3xl font-bold text-center mb-8 sm:mb-12 md:mb-16 text-primary">Frequently Asked Questions</h2>
+    <div class="flex flex-col lg:flex-row gap-8">
+      <!-- Contact Sidebar -->
+      <div class="lg:w-1/3">
+        <div class="card card-border bg-base-100 p-6 sticky top-6">
+          <h3 class="text-xl font-bold mb-4 text-primary">Contact Us</h3>
+          <div class="space-y-4">
+            <div class="flex items-center gap-3">
+              <span class="icon-[tabler--mail] size-5 text-primary"></span>
+              <div>
+                <p class="text-sm text-secondary/80">Email</p>
+                <a href="mailto:support@trackrecord.com" class="text-base-content hover:text-primary">support@trackrecord.com</a>
+              </div>
+            </div>
+            <div class="flex items-center gap-3">
+              <span class="icon-[tabler--phone] size-5 text-primary"></span>
+              <div>
+                <p class="text-sm text-secondary/80">Phone</p>
+                <a href="tel:+1234567890" class="text-base-content hover:text-primary">+1 (234) 567-890</a>
+              </div>
+            </div>
+            <div class="flex items-center gap-3">
+              <span class="icon-[tabler--clock] size-5 text-primary"></span>
+              <div>
+                <p class="text-sm text-secondary/80">Support Hours</p>
+                <p class="text-base-content">Mon-Fri: 9AM - 6PM EST</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-3">
+              <span class="icon-[tabler--map-pin] size-5 text-primary"></span>
+              <div>
+                <p class="text-sm text-secondary/80">Location</p>
+                <p class="text-base-content">123 Music Street, New York, NY</p>
+              </div>
+            </div>
+            <div class="pt-4">
+              <button class="btn btn-soft btn-primary w-full">
+                <span class="icon-[tabler--message-circle] size-5 mr-2"></span>
+                Live Chat
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FAQ Content -->
+      <div class="lg:w-2/3">
+        <div class="accordion divide-neutral/20 divide-y">
+          <!-- FAQ Item 1 -->
+          <div class="accordion-item active" id="faq-start">
+            <button class="accordion-toggle inline-flex items-center gap-x-4 text-start" aria-controls="faq-start-collapse" aria-expanded="true">
+              <span class="icon-[tabler--plus] accordion-item-active:hidden text-base-content size-4.5 block shrink-0"></span>
+              <span class="icon-[tabler--minus] accordion-item-active:block text-base-content size-4.5 hidden shrink-0"></span>
+              How do I start tracking my music?
+            </button>
+            <div id="faq-start-collapse" class="accordion-content w-full overflow-hidden transition-[height] duration-300" aria-labelledby="faq-start" role="region">
+              <div class="px-5 pb-4">
+                <p class="text-base-content/80 font-normal">
+                  Getting started is easy! Simply create an account and connect your music streaming service. You can then start creating playlists, tracking your listening habits, and discovering new music.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- FAQ Item 2 -->
+          <div class="accordion-item" id="faq-import">
+            <button class="accordion-toggle inline-flex items-center gap-x-4 text-start" aria-controls="faq-import-collapse" aria-expanded="false">
+              <span class="icon-[tabler--plus] accordion-item-active:hidden text-base-content size-4.5 block shrink-0"></span>
+              <span class="icon-[tabler--minus] accordion-item-active:block text-base-content size-4.5 hidden shrink-0"></span>
+              Can I import my existing playlists?
+            </button>
+            <div id="faq-import-collapse" class="accordion-content hidden w-full overflow-hidden transition-[height] duration-300" aria-labelledby="faq-import" role="region">
+              <div class="px-5 pb-4">
+                <p class="text-base-content/80 font-normal">
+                  Yes! We support importing playlists from popular streaming services like Spotify, Apple Music, and YouTube Music. Your existing playlists will be seamlessly integrated into your Track Record profile.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- FAQ Item 3 -->
+          <div class="accordion-item" id="faq-personality">
+            <button class="accordion-toggle inline-flex items-center gap-x-4 text-start" aria-controls="faq-personality-collapse" aria-expanded="false">
+              <span class="icon-[tabler--plus] accordion-item-active:hidden text-base-content size-4.5 block shrink-0"></span>
+              <span class="icon-[tabler--minus] accordion-item-active:block text-base-content size-4.5 hidden shrink-0"></span>
+              How does the music personality feature work?
+            </button>
+            <div id="faq-personality-collapse" class="accordion-content hidden w-full overflow-hidden transition-[height] duration-300" aria-labelledby="faq-personality" role="region">
+              <div class="px-5 pb-4">
+                <p class="text-base-content/80 font-normal">
+                  Our music personality feature analyzes your listening patterns, favorite genres, and playlist creation habits to provide insights about your musical preferences and help you discover new music that matches your taste.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- FAQ Item 4 -->
+          <div class="accordion-item" id="faq-security">
+            <button class="accordion-toggle inline-flex items-center gap-x-4 text-start" aria-controls="faq-security-collapse" aria-expanded="false">
+              <span class="icon-[tabler--plus] accordion-item-active:hidden text-base-content size-4.5 block shrink-0"></span>
+              <span class="icon-[tabler--minus] accordion-item-active:block text-base-content size-4.5 hidden shrink-0"></span>
+              Is my data secure?
+            </button>
+            <div id="faq-security-collapse" class="accordion-content hidden w-full overflow-hidden transition-[height] duration-300" aria-labelledby="faq-security" role="region">
+              <div class="px-5 pb-4">
+                <p class="text-base-content/80 font-normal">
+                  Absolutely! We take data security seriously. Your personal information and music data are encrypted and protected. We only access the minimum required data to provide our services.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- FAQ Item 5 -->
+          <div class="accordion-item" id="faq-sharing">
+            <button class="accordion-toggle inline-flex items-center gap-x-4 text-start" aria-controls="faq-sharing-collapse" aria-expanded="false">
+              <span class="icon-[tabler--plus] accordion-item-active:hidden text-base-content size-4.5 block shrink-0"></span>
+              <span class="icon-[tabler--minus] accordion-item-active:block text-base-content size-4.5 hidden shrink-0"></span>
+              Can I share my music journey with friends?
+            </button>
+            <div id="faq-sharing-collapse" class="accordion-content hidden w-full overflow-hidden transition-[height] duration-300" aria-labelledby="faq-sharing" role="region">
+              <div class="px-5 pb-4">
+                <p class="text-base-content/80 font-normal">
+                  Yes! You can share your playlists, listening stats, and music personality insights with friends. You can also follow other users and discover new music through their recommendations.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Testimonials Section -->
+<section class="py-12 sm:py-16 md:py-20 bg-base-200">
+  <div class="container mx-auto px-4 sm:px-8 md:px-12 lg:px-20">
+    <div class="text-center mb-12">
+      <h2 class="text-2xl sm:text-3xl font-bold mb-4 text-primary">What Our Users Say</h2>
+      <p class="text-base-content/70 max-w-2xl mx-auto">Join thousands of music enthusiasts who are already tracking their musical journey with us.</p>
+    </div>
+
+    <div x-data="testimonials" class="relative">
+      <!-- Mobile Carousel -->
+      <div class="block md:hidden mx-4">
+        <div
+          data-carousel='{
+            "loadingClasses": "opacity-0",
+            "dotsItemClasses": "carousel-dot carousel-active:bg-primary",
+            "isAutoPlay": true
+          }'
+          class="relative w-full"
+        >
+          <div class="carousel overflow-hidden">
+            <div class="carousel-body relative w-full">
+              <template x-for="(testimonial, index) in testimonials" :key="testimonial.id">
+                <div class="carousel-slide w-full" :class="{ 'active': index === 0 }">
+                  <div class="card card-border shadow-none hover:shadow-lg transition-all duration-300 bg-base-100">
+                    <div class="overflow-hidden rounded-lg">
+                      <div class="card-body p-6">
+                        <div class="flex items-center gap-4 mb-4">
+                          <div class="avatar avatar-circle avatar-md">
+                            <div class="w-full h-full rounded-full ring-2 ring-primary/20">
+                              <img :src="testimonial.avatar" :alt="testimonial.name" class="w-full h-full object-cover rounded-full">
+                            </div>
+                          </div>
+                          <div>
+                            <h5 class="card-title text-primary" x-text="testimonial.name"></h5>
+                            <span class="text-sm text-secondary/80" x-text="testimonial.role"></span>
+                          </div>
+                        </div>
+                        <p class="text-base-content/80 mb-4 italic" x-text="testimonial.text"></p>
+                        <div class="flex items-center justify-between">
+                          <div class="flex gap-1 text-primary">
+                            <template x-for="i in 5" :key="i">
+                              <span 
+                                class="size-4"
+                                :class="getStarClass(testimonial.rating, i)"
+                              ></span>
+                            </template>
+                          </div>
+                          <span class="text-sm text-secondary/60" x-text="testimonial.date"></span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </template>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Desktop Masonry -->
+      <div class="hidden md:block columns-1 md:columns-2 lg:columns-3 xl:columns-4 gap-6">
+        <template x-for="(testimonial, index) in testimonials" :key="testimonial.id">
+          <div class="break-inside-avoid mb-6">
+            <div class="card card-border shadow-none hover:shadow-lg transition-all duration-300 bg-base-100">
+              <div class="overflow-hidden rounded-lg">
+                <div class="card-body p-6">
+                  <div class="flex items-center gap-4 mb-4">
+                    <div class="avatar avatar-circle avatar-md">
+                      <div class="w-full h-full rounded-full ring-2 ring-primary/20">
+                        <img :src="testimonial.avatar" :alt="testimonial.name" class="w-full h-full object-cover rounded-full">
+                      </div>
+                    </div>
+                    <div>
+                      <h5 class="card-title text-primary" x-text="testimonial.name"></h5>
+                      <span class="text-sm text-secondary/80" x-text="testimonial.role"></span>
+                    </div>
+                  </div>
+                  <p class="text-base-content/80 mb-4 italic" x-text="testimonial.text"></p>
+                  <div class="flex items-center justify-between">
+                    <div class="flex gap-1 text-primary">
+                      <template x-for="i in 5" :key="i">
+                        <span 
+                          class="size-4"
+                          :class="getStarClass(testimonial.rating, i)"
+                        ></span>
+                      </template>
+                    </div>
+                    <span class="text-sm text-secondary/60" x-text="testimonial.date"></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </template>
+      </div>
+    </div>
+  </div>
+</section>

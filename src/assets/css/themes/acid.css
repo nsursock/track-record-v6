@@ -1,0 +1,78 @@
+@plugin "flyonui/theme" {
+    name: "acid";
+    fontFamily: "Space Grotesk, system-ui, sans-serif";
+    color-scheme: light;
+    
+    /* Enhanced Color System */
+    --color-base-100: oklch(98% 0.01 220);
+    --color-base-200: oklch(95% 0.02 220);
+    --color-base-300: oklch(92% 0.03 220);
+    --color-base-content: oklch(20% 0.1 220);
+    
+    /* Primary Colors */
+    --color-primary: oklch(70% 0.25 300);
+    --color-primary-content: oklch(98% 0.01 220);
+    --color-primary-focus: oklch(65% 0.25 300);
+    --color-primary-hover: oklch(75% 0.25 300);
+    
+    /* Secondary Colors */
+    --color-secondary: oklch(60% 0.25 200);
+    --color-secondary-content: oklch(98% 0.01 220);
+    --color-secondary-focus: oklch(55% 0.25 200);
+    --color-secondary-hover: oklch(65% 0.25 200);
+    
+    /* Accent Colors */
+    --color-accent: oklch(65% 0.25 250);
+    --color-accent-content: oklch(98% 0.01 220);
+    --color-accent-focus: oklch(60% 0.25 250);
+    --color-accent-hover: oklch(70% 0.25 250);
+    
+    /* Neutral Colors */
+    --color-neutral: oklch(50% 0.1 220);
+    --color-neutral-content: oklch(98% 0.01 220);
+    --color-neutral-focus: oklch(45% 0.1 220);
+    --color-neutral-hover: oklch(55% 0.1 220);
+    
+    /* State Colors */
+    --color-info: oklch(70% 0.25 240);
+    --color-info-content: oklch(98% 0.01 220);
+    --color-info-focus: oklch(65% 0.25 240);
+    --color-info-hover: oklch(75% 0.25 240);
+    
+    --color-success: oklch(70% 0.25 140);
+    --color-success-content: oklch(98% 0.01 220);
+    --color-success-focus: oklch(65% 0.25 140);
+    --color-success-hover: oklch(75% 0.25 140);
+    
+    --color-warning: oklch(70% 0.25 60);
+    --color-warning-content: oklch(98% 0.01 220);
+    --color-warning-focus: oklch(65% 0.25 60);
+    --color-warning-hover: oklch(75% 0.25 60);
+    
+    --color-error: oklch(70% 0.25 20);
+    --color-error-content: oklch(98% 0.01 220);
+    --color-error-focus: oklch(65% 0.25 20);
+    --color-error-hover: oklch(75% 0.25 20);
+
+    /* Border Radius */
+    --radius-selector: 0.5rem;
+    --radius-field: 0.25rem;
+    --radius-box: 0.5rem;
+    --radius-btn: 0.5rem;
+    --radius-badge: 1.9rem;
+    --radius-tab: 0.5rem;
+
+    /* Effects */
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+
+    /* Animation */
+    --animation-btn: 0.25s;
+    --animation-input: 0.2s;
+    --animation-card: 0.3s;
+    --animation-badge: 0.2s;
+    --animation-modal: 0.3s;
+}

@@ -1,0 +1,331 @@
+---
+layout: base.njk
+title: "Musical Wisdom Roadmap"
+description: "A clear, Web2-first roadmap for the Musical Wisdom blog — built to start earning, build community, and grow sustainably."
+---
+
+<article class="container max-w-5xl mx-auto px-4 py-8" x-data="{ activePhase: 1 }">
+  <!-- Hero Section with Parallax -->
+  <section class="relative min-h-[60vh] flex items-center justify-center overflow-hidden">
+    <div class="absolute inset-0 bg-gradient-to-br from-primary/20 to-secondary/20 backdrop-blur-sm"></div>
+    <div class="relative z-10 w-full px-4 sm:px-8 md:px-12 lg:px-20">
+      <div class="max-w-4xl mx-auto text-center space-y-8">
+        <div class="flex justify-center gap-3">
+          <span class="badge badge-primary badge-lg">Roadmap</span>
+          <span class="badge badge-soft bg-primary/10 text-primary badge-lg">Strategy</span>
+        </div>
+        <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight text-primary">
+          Musical Wisdom Roadmap
+        </h1>
+        <p class="text-xl sm:text-2xl text-secondary/90 max-w-2xl mx-auto">
+          A clear, Web2-first roadmap for the Musical Wisdom blog — built to start earning, build community, and grow sustainably.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Mission Statement with Animation -->
+  <section class="my-16" x-intersect="$el.classList.add('animate-fade-in')">
+    <div class="card bg-base-200 shadow-xl hover:shadow-2xl transition-shadow duration-300">
+      <div class="card-body">
+        <div class="flex items-center gap-4 mb-6">
+          <span class="icon-[tabler--target] size-8 text-primary"></span>
+          <h2 class="text-3xl font-bold text-primary">Mission Statement</h2>
+        </div>
+        <blockquote class="text-xl text-secondary/90 italic border-l-4 border-primary pl-6 py-2">
+          A music blog that shares reflective, personal insights inspired by lyrics — offering emotional and cultural depth, with a touch of curation.
+        </blockquote>
+      </div>
+    </div>
+  </section>
+
+  <!-- Interactive Roadmap Timeline -->
+  <section class="my-16">
+    <div class="flex justify-between items-center mb-8">
+      <h2 class="text-3xl font-bold text-primary">🗺️ Web2 Roadmap (6–12 Months)</h2>
+      <div class="join">
+        <button class="join-item btn" :class="{ 'btn-primary': activePhase === 1 }" @click="activePhase = 1">Phase 1</button>
+        <button class="join-item btn" :class="{ 'btn-primary': activePhase === 2 }" @click="activePhase = 2">Phase 2</button>
+        <button class="join-item btn" :class="{ 'btn-primary': activePhase === 3 }" @click="activePhase = 3">Phase 3</button>
+        <button class="join-item btn" :class="{ 'btn-primary': activePhase === 4 }" @click="activePhase = 4">Phase 4</button>
+      </div>
+    </div>
+
+    <!-- Phase Cards -->
+    <div class="space-y-8">
+      <!-- Phase 1 -->
+      <div class="card bg-base-200 shadow-xl transition-all duration-300" 
+           x-show="activePhase === 1"
+           x-transition:enter="transition ease-out duration-300"
+           x-transition:enter-start="opacity-0 transform -translate-x-4"
+           x-transition:enter-end="opacity-100 transform translate-x-0">
+        <div class="card-body">
+          <div class="flex items-center gap-4 mb-6">
+            <div class="badge badge-lg badge-primary">Phase 1</div>
+            <h3 class="text-2xl font-bold text-primary">Launch MVP (Weeks 1–4)</h3>
+          </div>
+          <p class="text-lg text-secondary mb-6">Launch the core site with your first essays, a strong identity, and monetization hooks</p>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="space-y-4">
+              <div class="flex items-center gap-3 p-3 bg-base-100 rounded-lg hover:bg-base-300/20 transition-colors">
+                <span class="icon-[tabler--check] size-6 text-success"></span>
+                <span>Set up blog using Alpine.js + lightweight CMS</span>
+              </div>
+              <div class="flex items-center gap-3 p-3 bg-base-100 rounded-lg hover:bg-base-300/20 transition-colors">
+                <span class="icon-[tabler--check] size-6 text-success"></span>
+                <span>Choose a clean design, mobile-first, readable typography</span>
+              </div>
+              <div class="flex items-center gap-3 p-3 bg-base-100 rounded-lg hover:bg-base-300/20 transition-colors">
+                <span class="icon-[tabler--pencil] size-6 text-primary"></span>
+                <span>Write & publish 3–5 high-quality essays</span>
+              </div>
+            </div>
+            <div class="space-y-4">
+              <div class="flex items-center gap-3 p-3 bg-base-100 rounded-lg hover:bg-base-300/20 transition-colors">
+                <span class="icon-[tabler--photo] size-6 text-primary"></span>
+                <span>Use lyric lines as headers or prompts</span>
+              </div>
+              <div class="flex items-center gap-3 p-3 bg-base-100 rounded-lg hover:bg-base-300/20 transition-colors">
+                <span class="icon-[tabler--settings] size-6 text-primary"></span>
+                <span>Add email capture, donation button, and affiliate links</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-6 p-4 bg-primary/5 rounded-lg">
+            <div class="flex items-center gap-3">
+              <span class="icon-[tabler--target] size-6 text-primary"></span>
+              <div>
+                <span class="font-semibold text-primary">Target:</span>
+                <span class="text-secondary">50 subscribers</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Phase 2 -->
+      <div class="card bg-base-200 shadow-xl transition-all duration-300" 
+           x-show="activePhase === 2"
+           x-transition:enter="transition ease-out duration-300"
+           x-transition:enter-start="opacity-0 transform -translate-x-4"
+           x-transition:enter-end="opacity-100 transform translate-x-0">
+        <div class="card-body">
+          <div class="flex items-center gap-4 mb-6">
+            <div class="badge badge-lg badge-warning">Phase 2</div>
+            <h3 class="text-2xl font-bold text-primary">Grow & Engage (Months 2–4)</h3>
+          </div>
+          <p class="text-lg text-secondary mb-6">Build your audience and learn what content connects best</p>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="space-y-4">
+              <div class="flex items-center gap-3 p-3 bg-base-100 rounded-lg hover:bg-base-300/20 transition-colors">
+                <span class="icon-[tabler--mail] size-6 text-primary"></span>
+                <span>Publish weekly or bi-weekly post</span>
+              </div>
+              <div class="flex items-center gap-3 p-3 bg-base-100 rounded-lg hover:bg-base-300/20 transition-colors">
+                <span class="icon-[tabler--message-circle] size-6 text-primary"></span>
+                <span>Enable comments with pseudonyms or email login</span>
+              </div>
+            </div>
+            <div class="space-y-4">
+              <div class="flex items-center gap-3 p-3 bg-base-100 rounded-lg hover:bg-base-300/20 transition-colors">
+                <span class="icon-[tabler--chart-bar] size-6 text-primary"></span>
+                <span>Collect feedback + analytics</span>
+              </div>
+              <div class="flex items-center gap-3 p-3 bg-base-100 rounded-lg hover:bg-base-300/20 transition-colors">
+                <span class="icon-[tabler--newsletter] size-6 text-primary"></span>
+                <span>Start a weekly email newsletter</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-6 p-4 bg-primary/5 rounded-lg">
+            <div class="flex items-center gap-3">
+              <span class="icon-[tabler--target] size-6 text-primary"></span>
+              <div>
+                <span class="font-semibold text-primary">Target:</span>
+                <span class="text-secondary">500 monthly readers, 200 subscribers, 5 paying donors</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Phase 3 -->
+      <div class="card bg-base-200 shadow-xl transition-all duration-300" 
+           x-show="activePhase === 3"
+           x-transition:enter="transition ease-out duration-300"
+           x-transition:enter-start="opacity-0 transform -translate-x-4"
+           x-transition:enter-end="opacity-100 transform translate-x-0">
+        <div class="card-body">
+          <div class="flex items-center gap-4 mb-6">
+            <div class="badge badge-lg badge-error">Phase 3</div>
+            <h3 class="text-2xl font-bold text-primary">Monetize & Deepen Connection (Months 4–6)</h3>
+          </div>
+          <p class="text-lg text-secondary mb-6">Start recurring income from your most engaged readers</p>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="space-y-4">
+              <div class="flex items-center gap-3 p-3 bg-base-100 rounded-lg hover:bg-base-300/20 transition-colors">
+                <span class="icon-[tabler--crown] size-6 text-primary"></span>
+                <span>Launch Premium Tier with exclusive content</span>
+              </div>
+              <div class="flex items-center gap-3 p-3 bg-base-100 rounded-lg hover:bg-base-300/20 transition-colors">
+                <span class="icon-[tabler--credit-card] size-6 text-primary"></span>
+                <span>Use Stripe + Supabase auth to gate access</span>
+              </div>
+            </div>
+            <div class="space-y-4">
+              <div class="flex items-center gap-3 p-3 bg-base-100 rounded-lg hover:bg-base-300/20 transition-colors">
+                <span class="icon-[tabler--microphone] size-6 text-primary"></span>
+                <span>Host a live listening session on Zoom (paid)</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-6 p-4 bg-primary/5 rounded-lg">
+            <div class="flex items-center gap-3">
+              <span class="icon-[tabler--target] size-6 text-primary"></span>
+              <div>
+                <span class="font-semibold text-primary">Target:</span>
+                <span class="text-secondary">30 premium members</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Phase 4 -->
+      <div class="card bg-base-200 shadow-xl transition-all duration-300" 
+           x-show="activePhase === 4"
+           x-transition:enter="transition ease-out duration-300"
+           x-transition:enter-start="opacity-0 transform -translate-x-4"
+           x-transition:enter-end="opacity-100 transform translate-x-0">
+        <div class="card-body">
+          <div class="flex items-center gap-4 mb-6">
+            <div class="badge badge-lg badge-info">Phase 4</div>
+            <h3 class="text-2xl font-bold text-primary">Scale & Sustain (Months 6–12)</h3>
+          </div>
+          <p class="text-lg text-secondary mb-6">Stabilize income, grow reputation, create deeper products</p>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="space-y-4">
+              <div class="flex items-center gap-3 p-3 bg-base-100 rounded-lg hover:bg-base-300/20 transition-colors">
+                <span class="icon-[tabler--book] size-6 text-primary"></span>
+                <span>Package your best essays as a downloadable eBook</span>
+              </div>
+              <div class="flex items-center gap-3 p-3 bg-base-100 rounded-lg hover:bg-base-300/20 transition-colors">
+                <span class="icon-[tabler--users] size-6 text-primary"></span>
+                <span>Launch a referral program for your newsletter</span>
+              </div>
+            </div>
+            <div class="space-y-4">
+              <div class="flex items-center gap-3 p-3 bg-base-100 rounded-lg hover:bg-base-300/20 transition-colors">
+                <span class="icon-[tabler--brand-linkedin] size-6 text-primary"></span>
+                <span>Pitch guest posts or interviews on music blogs/podcasts</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-6 p-4 bg-primary/5 rounded-lg">
+            <div class="flex items-center gap-3">
+              <span class="icon-[tabler--target] size-6 text-primary"></span>
+              <div>
+                <span class="font-semibold text-primary">Target:</span>
+                <span class="text-secondary">$500–1,000/month income, 1,000 subscribers</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Bonus Layer with Interactive Cards -->
+  <section class="my-16" x-intersect="$el.classList.add('animate-fade-in')">
+    <div class="card bg-base-200 shadow-xl">
+      <div class="card-body">
+        <div class="flex items-center gap-4 mb-8">
+          <span class="icon-[tabler--brain] size-8 text-primary"></span>
+          <h2 class="text-3xl font-bold text-primary">Bonus Layer (Optional Later)</h2>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <!-- Podcast Card -->
+          <div class="card bg-base-100 hover:shadow-lg transition-shadow duration-300">
+            <div class="card-body">
+              <div class="flex items-center gap-4 mb-4">
+                <span class="icon-[tabler--microphone] size-8 text-primary"></span>
+                <h3 class="text-xl font-semibold text-primary">Podcast</h3>
+              </div>
+              <p class="text-secondary">Read posts aloud with added commentary</p>
+              <div class="card-actions justify-end mt-4">
+                <button class="btn btn-ghost btn-sm">Learn More</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- YouTube Card -->
+          <div class="card bg-base-100 hover:shadow-lg transition-shadow duration-300">
+            <div class="card-body">
+              <div class="flex items-center gap-4 mb-4">
+                <span class="icon-[tabler--video] size-8 text-primary"></span>
+                <h3 class="text-xl font-semibold text-primary">YouTube</h3>
+              </div>
+              <p class="text-secondary">Video essays inspired by posts</p>
+              <div class="card-actions justify-end mt-4">
+                <button class="btn btn-ghost btn-sm">Learn More</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Courses Card -->
+          <div class="card bg-base-100 hover:shadow-lg transition-shadow duration-300">
+            <div class="card-body">
+              <div class="flex items-center gap-4 mb-4">
+                <span class="icon-[tabler--school] size-8 text-primary"></span>
+                <h3 class="text-xl font-semibold text-primary">Courses</h3>
+              </div>
+              <p class="text-secondary">"How to Write About Music with Soul"</p>
+              <div class="card-actions justify-end mt-4">
+                <button class="btn btn-ghost btn-sm">Learn More</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer Note with Animation -->
+  <footer class="mt-16 pt-8 border-t border-primary/10" x-intersect="$el.classList.add('animate-fade-in')">
+    <div class="text-center">
+      <p class="text-lg text-secondary italic">This roadmap is a living document and will be updated as we progress and learn from our audience.</p>
+      <div class="mt-4">
+        <button class="btn btn-primary" onclick="window.print()">
+          <span class="icon-[tabler--printer] size-5 me-2"></span>
+          Print Roadmap
+        </button>
+      </div>
+    </div>
+  </footer>
+</article>
+
+<style>
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style> 

@@ -1,0 +1,481 @@
+---
+layout: base.njk
+title: Sign Up
+---
+
+<div class="min-h-screen flex items-center justify-center bg-base-100 py-12 px-4 sm:px-6 lg:px-8" x-data="signupForm" x-init="init">
+  <div class="w-full max-w-4xl">
+    <div class="bg-base-200 rounded-xl shadow-xl overflow-hidden">
+      <div class="grid md:grid-cols-12">
+        <!-- Left Side - Stepper -->
+        <div class="md:col-span-4 bg-primary/5 p-8">
+          <div class="text-center mb-8">
+            <h2 class="text-2xl font-bold text-primary">Create Account</h2>
+            <p class="text-base-content/70 mt-2">Join us and start your journey</p>
+          </div>
+
+          <!-- Vertical Stepper -->
+          <div class="relative">
+            <!-- Step 1 -->
+            <div class="flex items-center mb-8" 
+              :class="{
+                'opacity-50': currentStep > 1,
+                'stepper-active': currentStep === 1,
+                'stepper-success': currentStep > 1
+              }">
+              <div class="flex items-center">
+                <span class="flex items-center justify-center w-10 h-10 rounded-full transition-all duration-300" 
+                  :class="{
+                    'bg-primary text-primary-content': currentStep === 1,
+                    'bg-secondary text-secondary-content': currentStep > 1,
+                    'bg-base-300 text-base-content': currentStep < 1,
+                    'ring-2 ring-primary ring-offset-2': currentStep === 1
+                  }"
+                  class="text-lg font-medium">1</span>
+                <div class="ml-4">
+                  <h3 class="text-base font-medium transition-colors duration-300" 
+                    :class="{
+                      'text-primary': currentStep === 1,
+                      'text-base-content': currentStep > 1,
+                      'text-base-content/70': currentStep < 1
+                    }">Account Details</h3>
+                  <p class="text-sm text-base-content/70">Basic information</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="flex items-center mb-8" 
+              :class="{
+                'opacity-50': currentStep > 2,
+                'stepper-active': currentStep === 2,
+                'stepper-success': currentStep > 2
+              }">
+              <div class="flex items-center">
+                <span class="flex items-center justify-center w-10 h-10 rounded-full transition-all duration-300" 
+                  :class="{
+                    'bg-primary text-primary-content': currentStep === 2,
+                    'bg-secondary text-secondary-content': currentStep > 2,
+                    'bg-base-300 text-base-content': currentStep < 2,
+                    'ring-2 ring-primary ring-offset-2': currentStep === 2
+                  }"
+                  class="text-lg font-medium">2</span>
+                <div class="ml-4">
+                  <h3 class="text-base font-medium transition-colors duration-300" 
+                    :class="{
+                      'text-primary': currentStep === 2,
+                      'text-base-content': currentStep > 2,
+                      'text-base-content/70': currentStep < 2
+                    }">Profile Information</h3>
+                  <p class="text-sm text-base-content/70">Personal details</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="flex items-center mb-8" 
+              :class="{
+                'opacity-50': currentStep > 3,
+                'stepper-active': currentStep === 3,
+                'stepper-success': currentStep > 3
+              }">
+              <div class="flex items-center">
+                <span class="flex items-center justify-center w-10 h-10 rounded-full transition-all duration-300" 
+                  :class="{
+                    'bg-primary text-primary-content': currentStep === 3,
+                    'bg-secondary text-secondary-content': currentStep > 3,
+                    'bg-base-300 text-base-content': currentStep < 3,
+                    'ring-2 ring-primary ring-offset-2': currentStep === 3
+                  }"
+                  class="text-lg font-medium">3</span>
+                <div class="ml-4">
+                  <h3 class="text-base font-medium transition-colors duration-300" 
+                    :class="{
+                      'text-accent': currentStep === 3,
+                      'text-base-content': currentStep > 3,
+                      'text-base-content/70': currentStep < 3
+                    }">Social Links</h3>
+                  <p class="text-sm text-base-content/70">Connect your profiles</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Step 4 -->
+            <div class="flex items-center" 
+              :class="{
+                'stepper-active': currentStep === 4,
+                'stepper-success': currentStep === 4 && formSubmitted
+              }">
+              <div class="flex items-center">
+                <span class="flex items-center justify-center w-10 h-10 rounded-full transition-all duration-300" 
+                  :class="{
+                    'bg-primary text-primary-content': currentStep === 4,
+                    'bg-secondary text-secondary-content': currentStep === 4 && formSubmitted,
+                    'bg-base-300 text-base-content': currentStep < 4,
+                    'ring-2 ring-primary ring-offset-2': currentStep === 4
+                  }"
+                  class="text-lg font-medium">4</span>
+                <div class="ml-4">
+                  <h3 class="text-base font-medium transition-colors duration-300" 
+                    :class="{
+                      'text-primary': currentStep === 4,
+                      'text-base-content': currentStep === 4 && formSubmitted,
+                      'text-base-content/70': currentStep < 4
+                    }">Complete</h3>
+                  <p class="text-sm text-base-content/70">Finish setup</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Side - Form Content -->
+        <div class="md:col-span-8 p-8">
+          <form id="signup-form" class="space-y-6" @submit.prevent="submitForm">
+            <!-- Step 1: Account Details -->
+            <div x-show="currentStep === 1">
+              <div class="space-y-4">
+                <div class="form-control">
+                  <label for="email" class="label">
+                    <span class="label-text">Email address</span>
+                  </label>
+                  <input type="email" id="email" x-model="formData.email" required 
+                    class="input input-bordered w-full focus:input-primary" 
+                    placeholder="Enter your email">
+                </div>
+                <div class="form-control">
+                  <label for="password" class="label">
+                    <span class="label-text">Password</span>
+                  </label>
+                  <div class="relative">
+                    <div class="input">
+                      <input type="password" id="password" x-model="formData.password" required 
+                        @input="checkPasswordStrength($event.target.value)"
+                        class="w-full focus:input-primary" 
+                        placeholder="Create a password">
+                      <button type="button" data-toggle-password='{ "target": "#password" }' class="block cursor-pointer" aria-label="password toggle">
+                        <span class="icon-[tabler--eye] text-base-content/80 password-active:block hidden size-5 shrink-0"></span>
+                        <span class="icon-[tabler--eye-off] text-base-content/80 password-active:hidden block size-5 shrink-0"></span>
+                      </button>
+                    </div>
+                    <!-- Password Strength Indicator -->
+                    <div class="mt-2">
+                      <div class="flex gap-0.5 h-1.5">
+                        <template x-for="i in 5">
+                          <div class="flex-1 rounded-full transition-all duration-300"
+                            :class="{
+                              'bg-primary': i <= passwordStrength,
+                              'bg-neutral/20': i > passwordStrength
+                            }"></div>
+                        </template>
+                      </div>
+                      <div class="mt-2">
+                        <div class="flex items-center gap-2">
+                          <span class="text-sm text-base-content">Level:</span>
+                          <span class="text-base-content text-sm font-semibold"
+                            x-text="['Empty', 'Very Weak', 'Weak', 'Medium', 'Strong', 'Very Strong'][passwordStrength]"></span>
+                        </div>
+                        <h6 class="my-2 text-base font-semibold text-base-content">Your password must contain:</h6>
+                        <ul class="text-base-content/80 space-y-1 text-sm">
+                          <li class="flex items-center gap-x-2" :class="{ 'text-success': passwordRules.minLength }">
+                            <span class="icon-[tabler--circle-check]" x-show="passwordRules.minLength"></span>
+                            <span class="icon-[tabler--circle-x]" x-show="!passwordRules.minLength"></span>
+                            Minimum number of characters is 6.
+                          </li>
+                          <li class="flex items-center gap-x-2" :class="{ 'text-success': passwordRules.hasLowercase }">
+                            <span class="icon-[tabler--circle-check]" x-show="passwordRules.hasLowercase"></span>
+                            <span class="icon-[tabler--circle-x]" x-show="!passwordRules.hasLowercase"></span>
+                            Should contain lowercase.
+                          </li>
+                          <li class="flex items-center gap-x-2" :class="{ 'text-success': passwordRules.hasUppercase }">
+                            <span class="icon-[tabler--circle-check]" x-show="passwordRules.hasUppercase"></span>
+                            <span class="icon-[tabler--circle-x]" x-show="!passwordRules.hasUppercase"></span>
+                            Should contain uppercase.
+                          </li>
+                          <li class="flex items-center gap-x-2" :class="{ 'text-success': passwordRules.hasNumber }">
+                            <span class="icon-[tabler--circle-check]" x-show="passwordRules.hasNumber"></span>
+                            <span class="icon-[tabler--circle-x]" x-show="!passwordRules.hasNumber"></span>
+                            Should contain numbers.
+                          </li>
+                          <li class="flex items-center gap-x-2" :class="{ 'text-success': passwordRules.hasSpecial }">
+                            <span class="icon-[tabler--circle-check]" x-show="passwordRules.hasSpecial"></span>
+                            <span class="icon-[tabler--circle-x]" x-show="!passwordRules.hasSpecial"></span>
+                            Should contain special characters.
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-control">
+                  <label for="confirm-password" class="label">
+                    <span class="label-text">Confirm Password</span>
+                  </label>
+                  <div class="input">
+                    <input type="password" id="confirm-password" x-model="formData.confirmPassword" required 
+                      class="w-full focus:input-primary" 
+                      placeholder="Confirm your password">
+                    <button type="button" data-toggle-password='{ "target": "#confirm-password" }' class="block cursor-pointer" aria-label="password toggle">
+                      <span class="icon-[tabler--eye] text-base-content/80 password-active:block hidden size-5 shrink-0"></span>
+                      <span class="icon-[tabler--eye-off] text-base-content/80 password-active:hidden block size-5 shrink-0"></span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Step 2: Profile Information -->
+            <div x-show="currentStep === 2">
+              <div class="space-y-4">
+                <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+                  <div class="form-control">
+                    <label for="first-name" class="label">
+                      <span class="label-text">First Name</span>
+                    </label>
+                    <input type="text" id="first-name" x-model="formData.firstName" required 
+                      class="input input-bordered w-full focus:input-secondary" 
+                      placeholder="John">
+                  </div>
+                  <div class="form-control">
+                    <label for="last-name" class="label">
+                      <span class="label-text">Last Name</span>
+                    </label>
+                    <input type="text" id="last-name" x-model="formData.lastName" required 
+                      class="input input-bordered w-full focus:input-secondary" 
+                      placeholder="Doe">
+                  </div>
+                </div>
+                <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+                  <div class="form-control" x-data="countrySelect">
+                    <label for="country" class="label">
+                      <span class="label-text">Country</span>
+                    </label>
+                    <select id="country-select" x-model="formData.country"
+                      data-select='{
+                        "placeholder": "Select Country...",
+                        "toggleTag": "<button type=\"button\" aria-expanded=\"false\"></button>",
+                        "toggleClasses": "advance-select-toggle select-disabled:pointer-events-none select-disabled:opacity-40 relative z-10",
+                        "dropdownClasses": "advance-select-menu max-h-60 overflow-y-auto absolute z-50 w-full",
+                        "optionClasses": "advance-select-option selected:select-active",
+                        "optionTemplate": "<div class=\"flex justify-between items-center w-full\"><span data-title></span><span class=\"icon-[tabler--check] shrink-0 size-4 text-primary hidden selected:block \"></span></div>",
+                        "extraMarkup": "<span class=\"icon-[tabler--caret-up-down] shrink-0 size-4 text-base-content absolute top-1/2 end-3 -translate-y-1/2 \"></span>",
+                        "hasSearch": true,
+                        "searchPlaceholder": "Search countries...",
+                        "searchClasses": "input input-bordered w-full focus:input-primary"
+                      }'
+                      :class="{ 'opacity-50 cursor-not-allowed': isLoading }"
+                      class="hidden">
+                      <option value="">Select Country</option>
+                      <template x-if="isLoading">
+                        <option disabled>Loading countries...</option>
+                      </template>
+                      <template x-if="error">
+                        <option disabled class="text-error">Error loading countries</option>
+                      </template>
+                    </select>
+                  </div>
+
+                  <div class="form-control" x-data="citySelect">
+                    <label for="city" class="label">
+                      <span class="label-text">City</span>
+                    </label>
+                    <select id="city-select" x-model="formData.city"
+                      data-select='{
+                        "placeholder": "Select City...",
+                        "toggleTag": "<button type=\"button\" aria-expanded=\"false\"></button>",
+                        "toggleClasses": "advance-select-toggle select-disabled:pointer-events-none select-disabled:opacity-40 relative z-10",
+                        "dropdownClasses": "advance-select-menu max-h-60 overflow-y-auto absolute z-50 w-full",
+                        "optionClasses": "advance-select-option selected:select-active",
+                        "optionTemplate": "<div class=\"flex justify-between items-center w-full\"><span data-title></span><span class=\"icon-[tabler--check] shrink-0 size-4 text-primary hidden selected:block \"></span></div>",
+                        "extraMarkup": "<span class=\"icon-[tabler--caret-up-down] shrink-0 size-4 text-base-content absolute top-1/2 end-3 -translate-y-1/2 \"></span>",
+                        "hasSearch": true,
+                        "searchPlaceholder": "Search cities...",
+                        "searchClasses": "input input-bordered w-full focus:input-primary",
+                        "init": true
+                      }'
+                      :class="{ 'opacity-50 cursor-not-allowed': !hasCountryBeenSelected }">
+                      <option value="">Select City</option>
+                      <template x-if="isLoading">
+                        <option disabled>Loading cities...</option>
+                      </template>
+                    </select>
+                  </div>
+                </div>
+                <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+                  <div class="form-control">
+                    <label for="dob" class="label">
+                      <span class="label-text">Date of Birth</span>
+                    </label>
+                    <div class="relative">
+                      <input type="text" id="dob" x-model="formData.dateOfBirth"
+                        class="input input-bordered w-full focus:input-secondary flatpickr-input" 
+                        placeholder="Select your date of birth"
+                        x-ref="dob">
+                      <span class="icon-[tabler--calendar] absolute right-3 top-1/2 -translate-y-1/2 text-base-content/70"></span>
+                    </div>
+                  </div>
+                  <div class="form-control">
+                    <label for="phone" class="label">
+                      <span class="label-text">Phone Number</span>
+                    </label>
+                    <input type="tel" id="phone" x-model="formData.phoneNumber"
+                      class="input input-bordered w-full focus:input-secondary" 
+                      placeholder="+1 (555) 000-0000">
+                  </div>
+                </div>
+
+                <div class="grid grid-cols-1 gap-6">
+                  <div class="form-control">
+                    <label for="profile-pic" class="label">
+                      <span class="label-text">Profile Picture</span>
+                    </label>
+                    <div class="file-upload" x-data="fileUpload(formData)">
+                      <input type="file" 
+                        class="hidden" 
+                        accept="image/*"
+                        @change="handleFileSelect"
+                        x-ref="fileInput">
+
+                      <button type="button" 
+                        class="relative flex w-full overflow-hidden rounded-lg border border-base-content/20 text-sm focus:z-10 focus:ring-1 focus:border-primary focus:ring-primary focus:outline-none disabled:pointer-events-none disabled:opacity-50"
+                        @click="$refs.fileInput.click()">
+                        <span class="h-full text-nowrap bg-primary text-primary-content rounded-s-lg px-4 py-3">Choose File</span>
+                        <span class="group flex h-full grow overflow-hidden px-4 py-3 text-base-content">
+                          <template x-if="!fileName">
+                            <span>No Chosen File</span>
+                          </template>
+                          <template x-if="fileName">
+                            <div class="flex items-center justify-between gap-2">
+                              <div class="truncate min-w-0">
+                                <span class="text-sm font-medium" x-text="fileName"></span>
+                                <span class="text-base-content/50">.</span>
+                                <span class="text-sm font-medium" x-text="fileExt"></span>
+                              </div>
+                            </div>
+                          </template>
+                        </span>
+                      </button>
+                    </div>
+                    <template x-if="formData.profilePictureUrl">
+                      <div class="mt-2 text-sm">
+                        <span class="text-base-content/70">File URL:</span>
+                        <a :href="formData.profilePictureUrl" target="_blank" class="link link-accent ml-2 text-primary hover:underline break-all" x-text="formData.profilePictureUrl"></a>
+                      </div>
+                    </template>
+                  </div>
+                  <div class="form-control">
+                    <label class="label">
+                      <span class="label-text">Gender</span>
+                    </label>
+                    <div class="flex gap-4">
+                      <div class="flex items-center gap-1">
+                        <input type="radio" name="gender" id="male" x-model="formData.gender" value="male"
+                          class="radio radio-primary">
+                        <label for="male" class="label-text text-base">Male</label>
+                      </div>
+                      <div class="flex items-center gap-1">
+                        <input type="radio" name="gender" id="female" x-model="formData.gender" value="female"
+                          class="radio radio-primary">
+                        <label for="female" class="label-text text-base">Female</label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Step 3: Social Links -->
+            <div x-show="currentStep === 3">
+              <div class="space-y-6">
+                <div class="form-control">
+                  <label for="linkedin" class="label">
+                    <span class="label-text">LinkedIn Handle</span>
+                  </label>
+                  <div class="relative">
+                    <span class="icon-[tabler--brand-linkedin] absolute left-3 top-1/2 -translate-y-1/2 text-base-content/70"></span>
+                    <input type="text" id="linkedin" x-model="formData.linkedinHandle" 
+                      class="input input-bordered w-full pl-10 focus:input-accent" 
+                      placeholder="your-profile">
+                  </div>
+                </div>
+
+                <div class="form-control">
+                  <label for="twitter" class="label">
+                    <span class="label-text">Twitter/X Handle</span>
+                  </label>
+                  <div class="relative">
+                    <span class="icon-[tabler--brand-x] absolute left-3 top-1/2 -translate-y-1/2 text-base-content/70"></span>
+                    <input type="text" id="twitter" x-model="formData.twitterHandle" 
+                      class="input input-bordered w-full pl-10 focus:input-accent" 
+                      placeholder="your-profile">
+                  </div>
+                </div>
+
+                <div class="form-control">
+                  <label for="github" class="label">
+                    <span class="label-text">GitHub Handle</span>
+                  </label>
+                  <div class="relative">
+                    <span class="icon-[tabler--brand-github] absolute left-3 top-1/2 -translate-y-1/2 text-base-content/70"></span>
+                    <input type="text" id="github" x-model="formData.githubHandle" 
+                      class="input input-bordered w-full pl-10 focus:input-accent" 
+                      placeholder="your-profile">
+                  </div>
+                </div>
+
+                <div class="form-control">
+                  <label for="website" class="label">
+                    <span class="label-text">Personal Website</span>
+                  </label>
+                  <div class="relative">
+                    <span class="icon-[tabler--world] absolute left-3 top-1/2 -translate-y-1/2 text-base-content/70"></span>
+                    <input type="url" id="website" x-model="formData.websiteUrl" 
+                      class="input input-bordered w-full pl-10 focus:input-accent" 
+                      placeholder="https://your-website.com">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Step 4: Completion -->
+            <div x-show="currentStep === 4" class="flex flex-col items-center justify-center min-h-[400px]">
+              <div class="text-center">
+                <div class="w-16 h-16 bg-secondary/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <span class="icon-[tabler--check] w-8 h-8 text-secondary"></span>
+                </div>
+                <h3 class="text-xl font-medium text-primary">Account Created Successfully!</h3>
+                <p class="mt-2 text-base-content/70">
+                  Your account has been created. <br> You can now log in with your credentials.
+                </p>
+              </div>
+            </div>
+
+            <!-- Navigation Buttons -->
+            <div class="flex justify-between mt-8">
+              <button type="button" class="btn btn-secondary btn-soft" @click="prevStep" x-show="currentStep > 1 && currentStep < 4">
+                <span class="icon-[tabler--arrow-left] w-4 h-4 mr-2"></span>
+                Back
+              </button>
+              <template x-if="currentStep < 3">
+                <button type="button" class="btn btn-secondary btn-soft" @click="nextStep">
+                  Next
+                  <span class="icon-[tabler--arrow-right] w-4 h-4 ml-2"></span>
+                </button>
+              </template>
+              <template x-if="currentStep === 3">
+                <button type="submit" class="btn btn-secondary btn-soft" :disabled="isLoading">
+                  <template x-if="!isLoading">
+                    <span>Create Account</span>
+                  </template>
+                  <template x-if="isLoading">
+                    <span class="loading loading-spinner"></span>
+                  </template>
+                </button>
+              </template>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
