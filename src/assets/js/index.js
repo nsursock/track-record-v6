@@ -8,32 +8,32 @@ window.Alpine = Alpine
 // Add Alpine extensions here
 Alpine.data('themes', () => ({
     selectedTheme: localStorage.getItem('theme') || 'light',
-    flyonThemes: [
-        { value: 'light', label: 'Light', icon: 'sun', description: 'Default light theme with high contrast.' },
-        { value: 'dark', label: 'Dark', icon: 'moon', description: 'Dark theme for low-light environments.' },
-        { value: 'black', label: 'Black', icon: 'moon-stars', description: 'Pure black theme for OLED displays.' },
-        { value: 'corporate', label: 'Corporate', icon: 'building', description: 'Professional theme for business applications.' },
-        { value: 'ghibli', label: 'Ghibli', icon: 'trees', description: 'Inspired by Studio Ghibli\u0027s aesthetic.' },
-        { value: 'gourmet', label: 'Gourmet', icon: 'cookie', description: 'Warm and inviting theme for food-related sites.' },
-        { value: 'luxury', label: 'Luxury', icon: 'diamond', description: 'Elegant theme with premium feel.' },
-        { value: 'mintlify', label: 'Mintlify', icon: 'leaf', description: 'Clean and modern documentation theme.' },
-        { value: 'shadcn', label: 'Shadcn', icon: 'components', description: 'Inspired by shadcn/ui design system.' },
-        { value: 'slack', label: 'Slack', icon: 'brand-slack', description: 'Theme inspired by Slack\u0027s interface.' },
-        { value: 'soft', label: 'Soft', icon: 'cloud', description: 'Gentle theme with soft colors.' },
-        { value: 'valorant', label: 'Valorant', icon: 'sword', description: 'Dynamic theme inspired by Valorant.' }
-    ],
-    customThemes: [
-        { value: 'cyberpunk', label: 'Cyberpunk', icon: 'robot', description: 'Cyberpunk theme with neon lights and dark colors.' },
-    ],
-    daisyThemes: [
-        { value: 'abyss', label: 'Abyss', icon: 'massage', description: 'Abyss theme with dark colors and a soothing vibe.' },
-        { value: 'acid', label: 'Acid', icon: 'pill', description: 'Acid theme with neon lights and dark colors.' },
-        { value: 'aqua', label: 'Aqua', icon: 'water', description: 'Aqua theme with blue colors and a soothing vibe.' },
-        { value: 'autumn', label: 'Autumn', icon: 'trees', description: 'Autumn theme with warm colors and a cozy vibe.' },
-        { value: 'bumblebee', label: 'Bumblebee', icon: 'bee', description: 'Bumblebee theme with yellow colors and a soothing vibe.' },
-        { value: 'business', label: 'Business', icon: 'building', description: 'Business theme with professional colors and a sleek vibe.' },
-        { value: 'caramellatte', label: 'Caramellatte', icon: 'coffee', description: 'Warm and cozy theme inspired by caramel latte.' },
-    ],
+    // flyonThemes: [
+    //     { value: 'light', label: 'Light', icon: 'sun', description: 'Default light theme with high contrast.' },
+    //     { value: 'dark', label: 'Dark', icon: 'moon', description: 'Dark theme for low-light environments.' },
+    //     { value: 'black', label: 'Black', icon: 'moon-stars', description: 'Pure black theme for OLED displays.' },
+    //     { value: 'corporate', label: 'Corporate', icon: 'building', description: 'Professional theme for business applications.' },
+    //     { value: 'ghibli', label: 'Ghibli', icon: 'trees', description: 'Inspired by Studio Ghibli\u0027s aesthetic.' },
+    //     { value: 'gourmet', label: 'Gourmet', icon: 'cookie', description: 'Warm and inviting theme for food-related sites.' },
+    //     { value: 'luxury', label: 'Luxury', icon: 'diamond', description: 'Elegant theme with premium feel.' },
+    //     { value: 'mintlify', label: 'Mintlify', icon: 'leaf', description: 'Clean and modern documentation theme.' },
+    //     { value: 'shadcn', label: 'Shadcn', icon: 'components', description: 'Inspired by shadcn/ui design system.' },
+    //     { value: 'slack', label: 'Slack', icon: 'brand-slack', description: 'Theme inspired by Slack\u0027s interface.' },
+    //     { value: 'soft', label: 'Soft', icon: 'cloud', description: 'Gentle theme with soft colors.' },
+    //     { value: 'valorant', label: 'Valorant', icon: 'sword', description: 'Dynamic theme inspired by Valorant.' }
+    // ],
+    // customThemes: [
+    //     { value: 'cyberpunk', label: 'Cyberpunk', icon: 'robot', description: 'Cyberpunk theme with neon lights and dark colors.' },
+    // ],
+    // daisyThemes: [
+    //     { value: 'abyss', label: 'Abyss', icon: 'massage', description: 'Abyss theme with dark colors and a soothing vibe.' },
+    //     { value: 'acid', label: 'Acid', icon: 'pill', description: 'Acid theme with neon lights and dark colors.' },
+    //     { value: 'aqua', label: 'Aqua', icon: 'water', description: 'Aqua theme with blue colors and a soothing vibe.' },
+    //     { value: 'autumn', label: 'Autumn', icon: 'trees', description: 'Autumn theme with warm colors and a cozy vibe.' },
+    //     { value: 'bumblebee', label: 'Bumblebee', icon: 'bee', description: 'Bumblebee theme with yellow colors and a soothing vibe.' },
+    //     { value: 'business', label: 'Business', icon: 'building', description: 'Business theme with professional colors and a sleek vibe.' },
+    //     { value: 'caramellatte', label: 'Caramellatte', icon: 'coffee', description: 'Warm and cozy theme inspired by caramel latte.' },
+    // ],
     init() {
         // Set initial theme
         document.documentElement.setAttribute('data-theme', this.selectedTheme);
@@ -312,6 +312,24 @@ document.addEventListener('alpine:init', () => {
       }
     ]
   }));
+});
+
+// Add Alpine extensions here
+document.addEventListener('alpine:init', () => {
+    // Initialize theme
+    const themeSelect = document.getElementById('theme-select');
+    if (themeSelect) {
+        const selectedTheme = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-theme', selectedTheme);
+        themeSelect.value = selectedTheme;
+
+        // Listen for changes
+        themeSelect.addEventListener('change', (e) => {
+            const value = e.target.value;
+            document.documentElement.setAttribute('data-theme', value);
+            localStorage.setItem('theme', value);
+        });
+    }
 });
 
 Alpine.start()

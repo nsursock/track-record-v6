@@ -7,14 +7,14 @@ import dotenv from 'dotenv';
 dotenv.config({ path: '.env.local' });
 
 // Log environment variables (without exposing sensitive data)
-console.log('Supabase URL exists:', !!process.env.VITE_SUPABASE_URL);
-console.log('Service Role Key exists:', !!process.env.VITE_SUPABASE_SERVICE_ROLE_KEY);
+// console.log('Supabase URL exists:', !!process.env.SUPABASE_URL);
+// console.log('Service Role Key exists:', !!process.env.SUPABASE_SERVICE_ROLE_KEY);
 
 // Initialize Supabase client with error handling
 let supabase;
 try {
-  const supabaseUrl = process.env.VITE_SUPABASE_URL;
-  const supabaseServiceKey = process.env.VITE_SUPABASE_SERVICE_ROLE_KEY;
+  const supabaseUrl = process.env.SUPABASE_URL;
+  const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
   if (!supabaseUrl || !supabaseServiceKey) {
     throw new Error('Missing Supabase credentials in environment variables');
@@ -279,13 +279,25 @@ async function handleLogin(req, res) {
 
 async function handleUpload(req, res) {
   try {
-    // Parse the form data
-    const form = formidable({});
+    // Set proper headers for file upload
+    res.setHeader('Content-Type', 'application/json');
+
+    // Parse the form data with more options
+    const form = formidable({
+      maxFileSize: 5 * 1024 * 1024, // 5MB
+      filter: ({ mimetype }) => {
+        return mimetype && mimetype.includes('image/');
+      }
+    });
+
     const [fields, files] = await form.parse(req);
 
     const file = files.file?.[0];
     if (!file) {
-      return res.status(400).json({ error: 'No file uploaded' });
+      return res.status(400).json({ 
+        error: 'No file uploaded',
+        details: 'Please select a file to upload'
+      });
     }
 
     // Validate file type
@@ -297,15 +309,6 @@ async function handleUpload(req, res) {
       });
     }
 
-    // Validate file size (max 5MB)
-    const maxSize = 5 * 1024 * 1024; // 5MB
-    if (file.size > maxSize) {
-      return res.status(400).json({ 
-        error: 'File too large',
-        details: 'Maximum file size is 5MB'
-      });
-    }
-
     // Read the file
     const fileData = fs.readFileSync(file.filepath);
 
@@ -313,32 +316,43 @@ async function handleUpload(req, res) {
     const fileName = `profile-${Date.now()}.${file.originalFilename.split('.').pop()}`;
     const filePath = `avatars/${fileName}`;
 
-    // Upload file to Supabase Storage
-    const { data, error } = await supabase.storage
-      .from('profile-pictures')
-      .upload(filePath, fileData, {
-        contentType: file.mimetype,
-        upsert: true
+    try {
+      // Upload file to Supabase Storage
+      const { data, error } = await supabase.storage
+        .from('profile-pictures')
+        .upload(filePath, fileData, {
+          contentType: file.mimetype,
+          upsert: true
+        });
+
+      // Clean up the temporary file
+      fs.unlinkSync(file.filepath);
+
+      if (error) {
+        console.error('Supabase upload error:', error);
+        return res.status(400).json({ 
+          error: 'Failed to upload file',
+          details: error.message
+        });
+      }
+
+      // Get public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from('profile-pictures')
+        .getPublicUrl(filePath);
+
+      return res.status(200).json({ 
+        success: true,
+        url: publicUrl,
+        filePath: filePath
       });
-
-    // Clean up the temporary file
-    fs.unlinkSync(file.filepath);
-
-    if (error) {
-      console.error('Upload error:', error);
-      return res.status(400).json({ error: error.message });
+    } catch (uploadError) {
+      // Clean up the temporary file in case of error
+      if (file.filepath && fs.existsSync(file.filepath)) {
+        fs.unlinkSync(file.filepath);
+      }
+      throw uploadError;
     }
-
-    // Get public URL
-    const { data: { publicUrl } } = supabase.storage
-      .from('profile-pictures')
-      .getPublicUrl(filePath);
-
-    return res.status(200).json({ 
-      success: true,
-      url: publicUrl,
-      filePath: filePath
-    });
   } catch (error) {
     console.error('Upload error:', error);
     return res.status(500).json({ 

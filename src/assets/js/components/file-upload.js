@@ -22,10 +22,16 @@ export const fileUpload = (formData) => ({
         body: formData
       });
 
+      // Check if response is JSON
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        throw new Error('Server returned non-JSON response. Please try again.');
+      }
+
       const data = await response.json();
       
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to upload profile picture');
+        throw new Error(data.error || data.details || 'Failed to upload profile picture');
       }
 
       // Store the URL in the form data

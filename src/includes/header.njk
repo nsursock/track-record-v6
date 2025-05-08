@@ -6,7 +6,7 @@
         <div class="navbar-start items-center justify-between max-md:w-full">
           <a class="link text-base-content link-neutral no-underline flex items-center gap-2" href="/">
             <span class="icon-[tabler--music] size-6 text-primary"></span>
-            <div class="flex items-center gap-2 whitespace-nowrap">
+            <div class="hidden sm:flex items-center gap-2 whitespace-nowrap">
               <span class="text-xl font-bold text-base-content">Track Record</span>
               <span class="text-sm uppercase tracking-wider text-secondary">Musical Wisdom</span>
             </div>
@@ -21,110 +21,215 @@
       </div>
       <div id="sticky-navbar-collapse" class="md:navbar-end collapse hidden grow basis-full overflow-hidden transition-[height] duration-300 max-md:w-full" >
         <ul class="menu md:menu-horizontal gap-2 p-0 text-base max-md:mt-2">
-          {# <li>
-            <a href="#">Link 1</a>
-          </li>
-          <li>
-            <a href="#">Link 2</a>
-          </li>
-          <li class="dropdown relative inline-flex [--auto-close:inside] [--offset:10] [--placement:bottom-end]">
-            <button id="dropdown-sticky" type="button" class="dropdown-toggle dropdown-open:bg-base-content/10 dropdown-open:text-base-content" aria-haspopup="menu" aria-expanded="false" aria-label="Dropdown" >
-              Parent
-              <span class="icon-[tabler--chevron-down] dropdown-open:rotate-180 size-4"></span>
-            </button>
-            <ul class="dropdown-menu dropdown-open:opacity-100 hidden" role="menu" aria-orientation="vertical" aria-labelledby="dropdown-sticky" >
-              <li>
-                <a class="dropdown-item" href="#">Link 3</a>
-              </li>
-              <li>
-                <a class="dropdown-item" href="#">Link 4</a>
-              </li>
-              <li>
-                <a class="dropdown-item" href="#">Link 5</a>
-              </li>
-              <hr class="border-base-content/25 -mx-2"/>
-              <li>
-                <a class="dropdown-item" href="#">Link 6</a>
-              </li>
-            </ul>
-          </li> #}
           <li class="ml-auto">
-            <div class="max-w-sm" x-data="themes">
-              <div class="dropdown relative inline-flex [--auto-close:inside] [--offset:10] [--placement:bottom-end]">
-                <button type="button" class="dropdown-toggle btn btn-soft btn-primary btn-sm" aria-haspopup="menu" aria-expanded="false" aria-label="Theme selector">
-                  <span class="icon-[tabler--palette] size-5"></span>
-                  <span x-text="selectedTheme.charAt(0).toUpperCase() + selectedTheme.slice(1)"></span>
-                </button>
-                <ul class="dropdown-menu dropdown-open:opacity-100 hidden min-w-60 rounded-lg shadow-base-300/20 shadow-sm max-h-96 overflow-y-auto" role="menu" aria-orientation="vertical">
-                  <li class="dropdown-header">
-                    <span class="text-base-content/70">Flyon UI</span>
-                  </li>
-                  <template x-for="theme in flyonThemes" :key="theme.value">
-                    <li>
-                      <label class="dropdown-item justify-between cursor-pointer">
-                        <div class="flex items-center gap-2">
-                          <span class="icon-[tabler--sun]" x-show="theme.value === 'light'"></span>
-                          <span class="icon-[tabler--moon]" x-show="theme.value === 'dark'"></span>
-                          <span class="icon-[tabler--moon-stars]" x-show="theme.value === 'black'"></span>
-                          <span class="icon-[tabler--building]" x-show="theme.value === 'corporate'"></span>
-                          <span class="icon-[tabler--trees]" x-show="theme.value === 'ghibli'"></span>
-                          <span class="icon-[tabler--cookie]" x-show="theme.value === 'gourmet'"></span>
-                          <span class="icon-[tabler--diamond]" x-show="theme.value === 'luxury'"></span>
-                          <span class="icon-[tabler--leaf]" x-show="theme.value === 'mintlify'"></span>
-                          <span class="icon-[tabler--components]" x-show="theme.value === 'shadcn'"></span>
-                          <span class="icon-[tabler--brand-slack]" x-show="theme.value === 'slack'"></span>
-                          <span class="icon-[tabler--cloud]" x-show="theme.value === 'soft'"></span>
-                          <span class="icon-[tabler--sword]" x-show="theme.value === 'valorant'"></span>
-                          <span x-text="theme.label"></span>
-                        </div>
-                        <input type="radio" :name="theme.value" :value="theme.value" x-model="selectedTheme" class="radio radio-primary"/>
-                      </label>
-                    </li>
-                  </template>
-                  <hr class="border-base-content/25 -mx-2"/>
-                  <li class="dropdown-header">
-                    <span class="text-base-content/70">Custom UI</span>
-                  </li>
-                  <template x-for="theme in customThemes" :key="theme.value">
-                    <li>
-                      <label class="dropdown-item justify-between cursor-pointer">
-                        <div class="flex items-center gap-2">
-                          <span class="icon-[tabler--robot]" x-show="theme.value === 'cyberpunk'"></span>
-                          <span x-text="theme.label"></span>
-                        </div>
-                        <input type="radio" :name="theme.value" :value="theme.value" x-model="selectedTheme" class="radio radio-primary"/>
-                      </label>
-                    </li>
-                  </template>
-                  <hr class="border-base-content/25 -mx-2"/>
-                  <li class="dropdown-header">
-                    <span class="text-base-content/70">Daisy UI</span>
-                  </li>
-                  <template x-for="theme in daisyThemes" :key="theme.value">
-                    <li>
-                      <label class="dropdown-item justify-between cursor-pointer">
-                        <div class="flex items-center gap-2">
-                          <span class="icon-[tabler--pill]" x-show="theme.value === 'acid'"></span>
-                          <span class="icon-[tabler--massage]" x-show="theme.value === 'abyss'"></span>
-                          <span class="icon-[tabler--droplet]" x-show="theme.value === 'aqua'"></span>
-                          <span class="icon-[tabler--trees]" x-show="theme.value === 'autumn'"></span>
-                          <span class="icon-[tabler--brand-bumble]" x-show="theme.value === 'bumblebee'"></span>
-                          <span class="icon-[tabler--building]" x-show="theme.value === 'business'"></span>
-                          <span class="icon-[tabler--coffee]" x-show="theme.value === 'caramellatte'"></span>
-                          <span x-text="theme.label"></span>
-                        </div>
-                        <input type="radio" :name="theme.value" :value="theme.value" x-model="selectedTheme" class="radio radio-primary"/>
-                      </label>
-                    </li>
-                  </template>
-                </ul>
-              </div>
-            </div>
+            <button type="button" class="btn btn-soft btn-primary btn-sm">
+              <span class="icon-[tabler--palette] size-4"></span>
+              <span>Theme</span>
+            </button>
           </li>
         </ul>
       </div>
     </div>
   </nav>
+
+  <!-- Theme Select -->
+  <div class="absolute end-4 top-4 z-10 w-12 sm:w-64">
+    <select
+      id="theme-select"
+      data-select='{
+        "placeholder": "Select theme...",
+        "toggleTag": "<button type=\"button\" aria-expanded=\"false\" class=\"w-full\"><span class=\"me-2 flex\" data-icon></span><span class=\"text-base-content hidden sm:inline\" data-title></span></button>",
+        "toggleClasses": "advance-select-toggle items-center w-full",
+        "dropdownClasses": "advance-select-menu max-h-96 overflow-y-auto bg-base-100 shadow-lg rounded-lg border border-base-300 w-full",
+        "optionClasses": "advance-select-option selected:select-active",
+        "optionTemplate": "<div><div class=\"flex items-center\"><div class=\"me-2 flex\" data-icon></div><div class=\"font-semibold text-base-content\" data-title></div></div><div class=\"mt-1.5 text-sm text-base-content/80\" data-description></div></div>",
+        "extraMarkup": "<span class=\"icon-[tabler--caret-up-down] shrink-0 size-4 text-base-content absolute top-1/2 end-3 -translate-y-1/2\"></span>"
+      }'
+    >
+      <option value="" selected>Choose theme...</option>
+      <option 
+        value="light" 
+        data-select-option='{
+          "description": "Default light theme with high contrast.",
+          "icon": "<span class=\"icon-[tabler--sun] shrink-0 size-4 text-base-content\"></span>"
+        }'
+      >
+        Light
+      </option>
+      <option 
+        value="dark" 
+        data-select-option='{
+          "description": "Dark theme for low-light environments.",
+          "icon": "<span class=\"icon-[tabler--moon] shrink-0 size-4 text-base-content\"></span>"
+        }'
+      >
+        Dark
+      </option>
+      <option 
+        value="black" 
+        data-select-option='{
+          "description": "Pure black theme for OLED displays.",
+          "icon": "<span class=\"icon-[tabler--moon-stars] shrink-0 size-4 text-base-content\"></span>"
+        }'
+      >
+        Black
+      </option>
+      <option 
+        value="corporate" 
+        data-select-option='{
+          "description": "Professional theme for business applications.",
+          "icon": "<span class=\"icon-[tabler--building] shrink-0 size-4 text-base-content\"></span>"
+        }'
+      >
+        Corporate
+      </option>
+      <option 
+        value="ghibli" 
+        data-select-option='{
+          "description": "Inspired by Studio Ghibli\u0027s aesthetic.",
+          "icon": "<span class=\"icon-[tabler--trees] shrink-0 size-4 text-base-content\"></span>"
+        }'
+      >
+        Ghibli
+      </option>
+      <option 
+        value="gourmet" 
+        data-select-option='{
+          "description": "Warm and inviting theme for food-related sites.",
+          "icon": "<span class=\"icon-[tabler--cookie] shrink-0 size-4 text-base-content\"></span>"
+        }'
+      >
+        Gourmet
+      </option>
+      <option 
+        value="luxury" 
+        data-select-option='{
+          "description": "Elegant theme with premium feel.",
+          "icon": "<span class=\"icon-[tabler--diamond] shrink-0 size-4 text-base-content\"></span>"
+        }'
+      >
+        Luxury
+      </option>
+      <option 
+        value="mintlify" 
+        data-select-option='{
+          "description": "Clean and modern documentation theme.",
+          "icon": "<span class=\"icon-[tabler--leaf] shrink-0 size-4 text-base-content\"></span>"
+        }'
+      >
+        Mintlify
+      </option>
+      <option 
+        value="shadcn" 
+        data-select-option='{
+          "description": "Inspired by shadcn/ui design system.",
+          "icon": "<span class=\"icon-[tabler--components] shrink-0 size-4 text-base-content\"></span>"
+        }'
+      >
+        Shadcn
+      </option>
+      <option 
+        value="slack" 
+        data-select-option='{
+          "description": "Theme inspired by Slack\u0027s interface.",
+          "icon": "<span class=\"icon-[tabler--brand-slack] shrink-0 size-4 text-base-content\"></span>"
+        }'
+      >
+        Slack
+      </option>
+      <option 
+        value="soft" 
+        data-select-option='{
+          "description": "Gentle theme with soft colors.",
+          "icon": "<span class=\"icon-[tabler--cloud] shrink-0 size-4 text-base-content\"></span>"
+        }'
+      >
+        Soft
+      </option>
+      <option 
+        value="valorant" 
+        data-select-option='{
+          "description": "Dynamic theme inspired by Valorant.",
+          "icon": "<span class=\"icon-[tabler--sword] shrink-0 size-4 text-base-content\"></span>"
+        }'
+      >
+        Valorant
+      </option>
+      <option 
+        value="cyberpunk" 
+        data-select-option='{
+          "description": "Cyberpunk theme with neon lights and dark colors.",
+          "icon": "<span class=\"icon-[tabler--robot] shrink-0 size-4 text-base-content\"></span>"
+        }'
+      >
+        Cyberpunk
+      </option>
+      <option 
+        value="abyss" 
+        data-select-option='{
+          "description": "Abyss theme with dark colors and a soothing vibe.",
+          "icon": "<span class=\"icon-[tabler--massage] shrink-0 size-4 text-base-content\"></span>"
+        }'
+      >
+        Abyss
+      </option>
+      <option 
+        value="acid" 
+        data-select-option='{
+          "description": "Acid theme with neon lights and dark colors.",
+          "icon": "<span class=\"icon-[tabler--pill] shrink-0 size-4 text-base-content\"></span>"
+        }'
+      >
+        Acid
+      </option>
+      <option 
+        value="aqua" 
+        data-select-option='{
+          "description": "Aqua theme with blue colors and a soothing vibe.",
+          "icon": "<span class=\"icon-[tabler--droplet] shrink-0 size-4 text-base-content\"></span>"
+        }'
+      >
+        Aqua
+      </option>
+      <option 
+        value="autumn" 
+        data-select-option='{
+          "description": "Autumn theme with warm colors and a cozy vibe.",
+          "icon": "<span class=\"icon-[tabler--trees] shrink-0 size-4 text-base-content\"></span>"
+        }'
+      >
+        Autumn
+      </option>
+      <option 
+        value="bumblebee" 
+        data-select-option='{
+          "description": "Bumblebee theme with yellow colors and a soothing vibe.",
+          "icon": "<span class=\"icon-[tabler--wheel] shrink-0 size-4 text-base-content\"></span>"
+        }'
+      >
+        Bumblebee
+      </option>
+      <option 
+        value="business" 
+        data-select-option='{
+          "description": "Business theme with professional colors and a sleek vibe.",
+          "icon": "<span class=\"icon-[tabler--building] shrink-0 size-4 text-base-content\"></span>"
+        }'
+      >
+        Business
+      </option>
+      <option 
+        value="caramellatte" 
+        data-select-option='{
+          "description": "Warm and cozy theme inspired by caramel latte.",
+          "icon": "<span class=\"icon-[tabler--coffee] shrink-0 size-4 text-base-content\"></span>"
+        }'
+      >
+        Caramellatte
+      </option>
+    </select>
+  </div>
+
   <!-- Demo content -->
   {# <div class="overflow-y-auto top-15 absolute h-full w-full pe-2 pt-4">
     <div class="flex w-full flex-col gap-4">
