@@ -44,6 +44,17 @@ export default async function handler(req, res) {
   // Set response headers
   res.setHeader('Content-Type', 'application/json');
 
+  // Handle GET requests for profile action
+  if (req.method === 'GET' && req.query.action === 'profile') {
+    return await handleProfile(req, res);
+  }
+
+  // Handle DELETE requests for delete account action
+  if (req.method === 'DELETE' && req.query.action === 'profile') {
+    return await handleDeleteAccount(req, res);
+  }
+
+  // For all other actions, only allow POST
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
@@ -355,6 +366,137 @@ async function handleUpload(req, res) {
     }
   } catch (error) {
     console.error('Upload error:', error);
+    return res.status(500).json({ 
+      error: 'Internal server error',
+      details: error.message
+    });
+  }
+}
+
+async function handleProfile(req, res) {
+  if (req.method !== 'GET') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  try {
+    // Get the authorization header
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+      return res.status(401).json({ error: 'No authorization header' });
+    }
+
+    // Extract the token
+    const token = authHeader.split(' ')[1];
+    if (!token) {
+      return res.status(401).json({ error: 'No token provided' });
+    }
+
+    // Verify the token and get the user
+    const { data: { user: authUser }, error: authError } = await supabase.auth.getUser(token);
+    if (authError) {
+      console.error('Auth error:', authError);
+      return res.status(401).json({ error: 'Invalid token' });
+    }
+
+    // Get the user's profile from the users table
+    const { data: userData, error: userError } = await supabase
+      .from('users')
+      .select('*')
+      .eq('id', authUser.id)
+      .single();
+
+    if (userError) {
+      console.error('User profile error:', userError);
+      return res.status(500).json({ 
+        error: 'Failed to fetch user profile',
+        details: userError.message
+      });
+    }
+
+    // Return the user data
+    return res.status(200).json({
+      success: true,
+      user: {
+        id: userData.id,
+        email: userData.email,
+        first_name: userData.first_name,
+        last_name: userData.last_name,
+        profile_picture_url: userData.profile_picture_url,
+        country: userData.country,
+        city: userData.city,
+        date_of_birth: userData.date_of_birth,
+        phone_number: userData.phone_number,
+        gender: userData.gender,
+        linkedin_url: userData.linkedin_url,
+        twitter_url: userData.twitter_url,
+        github_url: userData.github_url,
+        website_url: userData.website_url,
+        created_at: userData.created_at,
+        updated_at: userData.updated_at
+      }
+    });
+
+  } catch (error) {
+    console.error('Unexpected error:', error);
+    return res.status(500).json({ 
+      error: 'Internal server error',
+      details: error.message
+    });
+  }
+}
+
+async function handleDeleteAccount(req, res) {
+  try {
+    // Get the authorization header
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+      return res.status(401).json({ error: 'No authorization header' });
+    }
+
+    // Extract the token
+    const token = authHeader.split(' ')[1];
+    if (!token) {
+      return res.status(401).json({ error: 'No token provided' });
+    }
+
+    // Verify the token and get the user
+    const { data: { user: authUser }, error: authError } = await supabase.auth.getUser(token);
+    if (authError) {
+      console.error('Auth error:', authError);
+      return res.status(401).json({ error: 'Invalid token' });
+    }
+
+    // Delete the user from the users table first
+    const { error: deleteUserError } = await supabase
+      .from('users')
+      .delete()
+      .eq('id', authUser.id);
+
+    if (deleteUserError) {
+      console.error('Delete user error:', deleteUserError);
+      return res.status(500).json({ 
+        error: 'Failed to delete user data',
+        details: deleteUserError.message
+      });
+    }
+
+    // Delete the user from Supabase Auth
+    const { error: deleteAuthError } = await supabase.auth.admin.deleteUser(authUser.id);
+    if (deleteAuthError) {
+      console.error('Delete auth user error:', deleteAuthError);
+      return res.status(500).json({ 
+        error: 'Failed to delete user account',
+        details: deleteAuthError.message
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: 'Account deleted successfully'
+    });
+
+  } catch (error) {
+    console.error('Unexpected error:', error);
     return res.status(500).json({ 
       error: 'Internal server error',
       details: error.message

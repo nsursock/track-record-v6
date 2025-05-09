@@ -3,12 +3,12 @@ layout: base.njk
 title: "Blog Posts"
 ---
 
-<div class="mx-auto px-20 py-8 bg-base-200 rounded-lg">
+<div class="mx-auto px-4 sm:px-6 lg:px-8 py-8 bg-base-200 rounded-lg">
   <h1 class="text-4xl font-bold text-base-content mb-8">Blog Posts</h1>
   
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
     {% for post in collections.posts | reverse %}
-    <div class="card bg-base-100 shadow-base-300/20 shadow-sm hover:shadow-base-300/40 transition-shadow duration-200 border border-base-300/20">
+    <div class="card bg-base-100 shadow-base-300/20 shadow-sm hover:shadow-base-300/40 transition-shadow duration-200 border border-base-300/20 max-w-2xl">
       <figure class="relative h-48 overflow-hidden">
         <img 
           src="https://picsum.photos/seed/{{ post.data.title | slug }}/800/400" 

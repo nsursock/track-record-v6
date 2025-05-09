@@ -1,0 +1,27 @@
+<!-- Theme Select -->
+<div class="dropdown relative inline-flex [--auto-close:inside] [--offset:8] [--placement:bottom-end]" x-data="themes">
+  <button id="theme-dropdown" type="button" class="dropdown-toggle btn btn-info btn-soft btn-square md:btn-wide px-4" aria-haspopup="menu" aria-expanded="false" aria-label="Theme selector">
+    <span class="icon-[tabler--palette] size-5"></span>
+    <span class="hidden md:inline-block">Theme</span>
+  </button>
+  <ul class="dropdown-menu dropdown-open:opacity-100 hidden min-w-72 max-h-[calc(100vh-8rem)] overflow-y-auto rounded-lg shadow-base-300/20 shadow-sm" role="menu" aria-orientation="vertical" aria-labelledby="theme-dropdown">
+    <template x-for="group in themeGroups" :key="group.name">
+      <li>
+        <div class="dropdown-header sticky top-0 z-10 bg-base-100">
+          <span class="text-base-content/70" x-text="group.name"></span>
+        </div>
+        <template x-for="theme in group.themes" :key="theme.value">
+          <li>
+            <button class="dropdown-item justify-start" @click="setTheme(theme.value)">
+              <span :class="`icon-[tabler--${theme.icon}] shrink-0 size-4 text-base-content`"></span>
+              <div class="ml-2 flex flex-col">
+                <span x-text="theme.label"></span>
+                <span class="text-xs text-base-content/70 whitespace-pre-line" x-text="theme.description"></span>
+              </div>
+            </button>
+          </li>
+        </template>
+      </li>
+    </template>
+  </ul>
+</div>

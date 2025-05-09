@@ -1,233 +1,198 @@
-<div class="relative h-16 w-full">
+<div class="relative h-16 w-full" x-data="header">
   <!-- Sticky navbar -->
   <nav class="navbar bg-base-100 md:h-15 absolute start-0 top-0 z-1 shadow-base-300/20 shadow-sm">
-    <div class="w-full md:flex md:items-center md:gap-2">
-      <div class="flex items-center justify-between max-md:w-full">
-        <div class="navbar-start items-center justify-between max-md:w-full">
-          <a class="link text-base-content link-neutral no-underline flex items-center gap-2" href="/">
-            <span class="icon-[tabler--music] size-6 text-primary"></span>
-            <div class="hidden sm:flex items-center gap-2 whitespace-nowrap">
-              <span class="text-xl font-bold text-base-content">Track Record</span>
-              <span class="text-sm uppercase tracking-wider text-secondary">Musical Wisdom</span>
+    <!-- Title and tagline at start -->
+    <div class="navbar-start items-center justify-between max-md:w-full">
+      <a class="link text-base-content link-neutral no-underline flex items-center gap-2" href="/">
+        <span class="icon-[tabler--music] size-6 text-primary"></span>
+        <div class="hidden sm:flex items-center gap-2 whitespace-nowrap">
+          <span class="text-xl font-bold text-base-content">Track Record</span>
+          <span class="text-sm uppercase tracking-wider text-secondary">Musical Wisdom</span>
+        </div>
+      </a>
+    </div>
+
+    <!-- Mobile menu button -->
+    <div class="md:hidden">
+      <button type="button" class="collapse-toggle btn btn-outline btn-secondary btn-sm btn-square" data-collapse="#sticky-navbar-collapse" aria-controls="sticky-navbar-collapse" aria-label="Toggle navigation" >
+        <span class="icon-[tabler--menu-2] collapse-open:hidden size-4"></span>
+        <span class="icon-[tabler--x] collapse-open:block hidden size-4"></span>
+      </button>
+    </div>
+
+    <!-- Desktop navigation items -->
+    <div class="navbar-end hidden md:flex items-center gap-4">
+      {% include "switcher.njk" %}
+      
+      <!-- User dropdown -->
+      <div class="dropdown relative inline-flex [--auto-close:inside] [--offset:8] [--placement:bottom-end]" x-show="user">
+        <button id="dropdown-scrollable" type="button" class="cursor-pointer dropdown-toggle flex items-center" aria-haspopup="menu" aria-expanded="false" aria-label="Dropdown">
+          <div class="avatar">
+            <div class="size-9.5 rounded-full ring ring-primary ring-offset-2 ring-offset-base-100">
+              <template x-if="user && user.profile_picture_url">
+                <img :src="user.profile_picture_url" :alt="user.first_name + ' ' + user.last_name + '\'s avatar'"/>
+              </template>
+              <template x-if="user && !user.profile_picture_url">
+                <div class="flex h-full w-full items-center justify-center bg-primary text-primary-content text-sm font-medium">
+                  <span x-text="user ? (user.first_name?.[0] || '') + (user.last_name?.[0] || '') : ''"></span>
+                </div>
+              </template>
             </div>
-          </a>
-        </div>
-        <div class="md:hidden">
-          <button type="button" class="collapse-toggle btn btn-outline btn-secondary btn-sm btn-square" data-collapse="#sticky-navbar-collapse" aria-controls="sticky-navbar-collapse" aria-label="Toggle navigation" >
-            <span class="icon-[tabler--menu-2] collapse-open:hidden size-4"></span>
-            <span class="icon-[tabler--x] collapse-open:block hidden size-4"></span>
-          </button>
-        </div>
-      </div>
-      <div id="sticky-navbar-collapse" class="md:navbar-end collapse hidden grow basis-full overflow-hidden transition-[height] duration-300 max-md:w-full" >
-        <ul class="menu md:menu-horizontal gap-2 p-0 text-base max-md:mt-2">
-          <li class="ml-auto">
-            <button type="button" class="btn btn-soft btn-primary btn-sm">
-              <span class="icon-[tabler--palette] size-4"></span>
-              <span>Theme</span>
+          </div>
+        </button>
+        <ul class="dropdown-menu dropdown-open:opacity-100 hidden min-w-60" role="menu" aria-orientation="vertical" aria-labelledby="dropdown-avatar">
+          <li class="dropdown-header gap-2">
+            <div class="avatar">
+              <div class="w-10 rounded-full ring ring-primary ring-offset-2 ring-offset-base-100">
+                <template x-if="user && user.profile_picture_url">
+                  <img :src="user.profile_picture_url" :alt="user.first_name + ' ' + user.last_name + '\'s avatar'"/>
+                </template>
+                <template x-if="user && !user.profile_picture_url">
+                  <div class="flex h-full w-full items-center justify-center bg-primary text-primary-content text-sm font-medium">
+                    <span x-text="user ? (user.first_name?.[0] || '') + (user.last_name?.[0] || '') : ''"></span>
+                  </div>
+                </template>
+              </div>
+            </div>
+            <div class="flex flex-col justify-center gap-0.5 ml-2">
+              <h6 class="text-base-content text-base font-semibold leading-tight" x-text="user ? user.first_name + ' ' + user.last_name : ''"></h6>
+              <small class="text-base-content/50 leading-tight" x-text="user ? user.email : ''"></small>
+            </div>
+          </li>
+          <li>
+            <a class="dropdown-item" href="/profile/">
+              <span class="icon-[tabler--user]"></span>
+              My Profile
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item" href="/profile/#edit">
+              <span class="icon-[tabler--settings]"></span>
+              Edit Profile
+            </a>
+          </li>
+          <template x-if="user && user.email === 'nicolas.sursock@gmail.com'">
+            <li>
+              <a class="dropdown-item" href="/analytics/">
+                <span class="icon-[tabler--chart-bar]"></span>
+                Analytics
+              </a>
+            </li>
+          </template>
+          <li class="dropdown-footer gap-2">
+            <button class="btn btn-error btn-soft btn-block" @click="logout">
+              <span class="icon-[tabler--logout]"></span>
+              Sign out
             </button>
           </li>
         </ul>
       </div>
+
+      <!-- Login/Signup buttons -->
+      <div class="flex items-center gap-2" x-show="!user">
+        <a href="/login/" class="btn btn-primary btn-soft">
+          <span class="icon-[tabler--login] size-5"></span>
+          Login
+        </a>
+        <a href="/signup/" class="btn btn-secondary btn-soft">
+          <span class="icon-[tabler--user-plus] size-5"></span>
+          Sign Up
+        </a>
+      </div>
     </div>
   </nav>
 
-  <!-- Theme Select -->
-  <div class="absolute end-4 top-4 z-10 w-12 sm:w-64">
-    <select
-      id="theme-select"
-      data-select='{
-        "placeholder": "Select theme...",
-        "toggleTag": "<button type=\"button\" aria-expanded=\"false\" class=\"w-full\"><span class=\"me-2 flex\" data-icon></span><span class=\"text-base-content hidden sm:inline\" data-title></span></button>",
-        "toggleClasses": "advance-select-toggle items-center w-full",
-        "dropdownClasses": "advance-select-menu max-h-96 overflow-y-auto bg-base-100 shadow-lg rounded-lg border border-base-300 w-full",
-        "optionClasses": "advance-select-option selected:select-active",
-        "optionTemplate": "<div><div class=\"flex items-center\"><div class=\"me-2 flex\" data-icon></div><div class=\"font-semibold text-base-content\" data-title></div></div><div class=\"mt-1.5 text-sm text-base-content/80\" data-description></div></div>",
-        "extraMarkup": "<span class=\"icon-[tabler--caret-up-down] shrink-0 size-4 text-base-content absolute top-1/2 end-3 -translate-y-1/2\"></span>"
-      }'
-    >
-      <option value="" selected>Choose theme...</option>
-      <option 
-        value="light" 
-        data-select-option='{
-          "description": "Default light theme with high contrast.",
-          "icon": "<span class=\"icon-[tabler--sun] shrink-0 size-4 text-base-content\"></span>"
-        }'
-      >
-        Light
-      </option>
-      <option 
-        value="dark" 
-        data-select-option='{
-          "description": "Dark theme for low-light environments.",
-          "icon": "<span class=\"icon-[tabler--moon] shrink-0 size-4 text-base-content\"></span>"
-        }'
-      >
-        Dark
-      </option>
-      <option 
-        value="black" 
-        data-select-option='{
-          "description": "Pure black theme for OLED displays.",
-          "icon": "<span class=\"icon-[tabler--moon-stars] shrink-0 size-4 text-base-content\"></span>"
-        }'
-      >
-        Black
-      </option>
-      <option 
-        value="corporate" 
-        data-select-option='{
-          "description": "Professional theme for business applications.",
-          "icon": "<span class=\"icon-[tabler--building] shrink-0 size-4 text-base-content\"></span>"
-        }'
-      >
-        Corporate
-      </option>
-      <option 
-        value="ghibli" 
-        data-select-option='{
-          "description": "Inspired by Studio Ghibli\u0027s aesthetic.",
-          "icon": "<span class=\"icon-[tabler--trees] shrink-0 size-4 text-base-content\"></span>"
-        }'
-      >
-        Ghibli
-      </option>
-      <option 
-        value="gourmet" 
-        data-select-option='{
-          "description": "Warm and inviting theme for food-related sites.",
-          "icon": "<span class=\"icon-[tabler--cookie] shrink-0 size-4 text-base-content\"></span>"
-        }'
-      >
-        Gourmet
-      </option>
-      <option 
-        value="luxury" 
-        data-select-option='{
-          "description": "Elegant theme with premium feel.",
-          "icon": "<span class=\"icon-[tabler--diamond] shrink-0 size-4 text-base-content\"></span>"
-        }'
-      >
-        Luxury
-      </option>
-      <option 
-        value="mintlify" 
-        data-select-option='{
-          "description": "Clean and modern documentation theme.",
-          "icon": "<span class=\"icon-[tabler--leaf] shrink-0 size-4 text-base-content\"></span>"
-        }'
-      >
-        Mintlify
-      </option>
-      <option 
-        value="shadcn" 
-        data-select-option='{
-          "description": "Inspired by shadcn/ui design system.",
-          "icon": "<span class=\"icon-[tabler--components] shrink-0 size-4 text-base-content\"></span>"
-        }'
-      >
-        Shadcn
-      </option>
-      <option 
-        value="slack" 
-        data-select-option='{
-          "description": "Theme inspired by Slack\u0027s interface.",
-          "icon": "<span class=\"icon-[tabler--brand-slack] shrink-0 size-4 text-base-content\"></span>"
-        }'
-      >
-        Slack
-      </option>
-      <option 
-        value="soft" 
-        data-select-option='{
-          "description": "Gentle theme with soft colors.",
-          "icon": "<span class=\"icon-[tabler--cloud] shrink-0 size-4 text-base-content\"></span>"
-        }'
-      >
-        Soft
-      </option>
-      <option 
-        value="valorant" 
-        data-select-option='{
-          "description": "Dynamic theme inspired by Valorant.",
-          "icon": "<span class=\"icon-[tabler--sword] shrink-0 size-4 text-base-content\"></span>"
-        }'
-      >
-        Valorant
-      </option>
-      <option 
-        value="cyberpunk" 
-        data-select-option='{
-          "description": "Cyberpunk theme with neon lights and dark colors.",
-          "icon": "<span class=\"icon-[tabler--robot] shrink-0 size-4 text-base-content\"></span>"
-        }'
-      >
-        Cyberpunk
-      </option>
-      <option 
-        value="abyss" 
-        data-select-option='{
-          "description": "Abyss theme with dark colors and a soothing vibe.",
-          "icon": "<span class=\"icon-[tabler--massage] shrink-0 size-4 text-base-content\"></span>"
-        }'
-      >
-        Abyss
-      </option>
-      <option 
-        value="acid" 
-        data-select-option='{
-          "description": "Acid theme with neon lights and dark colors.",
-          "icon": "<span class=\"icon-[tabler--pill] shrink-0 size-4 text-base-content\"></span>"
-        }'
-      >
-        Acid
-      </option>
-      <option 
-        value="aqua" 
-        data-select-option='{
-          "description": "Aqua theme with blue colors and a soothing vibe.",
-          "icon": "<span class=\"icon-[tabler--droplet] shrink-0 size-4 text-base-content\"></span>"
-        }'
-      >
-        Aqua
-      </option>
-      <option 
-        value="autumn" 
-        data-select-option='{
-          "description": "Autumn theme with warm colors and a cozy vibe.",
-          "icon": "<span class=\"icon-[tabler--trees] shrink-0 size-4 text-base-content\"></span>"
-        }'
-      >
-        Autumn
-      </option>
-      <option 
-        value="bumblebee" 
-        data-select-option='{
-          "description": "Bumblebee theme with yellow colors and a soothing vibe.",
-          "icon": "<span class=\"icon-[tabler--wheel] shrink-0 size-4 text-base-content\"></span>"
-        }'
-      >
-        Bumblebee
-      </option>
-      <option 
-        value="business" 
-        data-select-option='{
-          "description": "Business theme with professional colors and a sleek vibe.",
-          "icon": "<span class=\"icon-[tabler--building] shrink-0 size-4 text-base-content\"></span>"
-        }'
-      >
-        Business
-      </option>
-      <option 
-        value="caramellatte" 
-        data-select-option='{
-          "description": "Warm and cozy theme inspired by caramel latte.",
-          "icon": "<span class=\"icon-[tabler--coffee] shrink-0 size-4 text-base-content\"></span>"
-        }'
-      >
-        Caramellatte
-      </option>
-    </select>
+  <!-- Mobile collapse menu -->
+  <div id="sticky-navbar-collapse" class="collapse collapse-arrow collapse-close bg-base-100 absolute top-16 w-full md:hidden shadow-lg z-40 hidden">
+    <div class="collapse-content flex flex-col gap-4 p-4 bg-base-100">
+      <!-- Theme switcher -->
+      <div class="dropdown relative inline-flex [--auto-close:inside] [--offset:8] [--placement:bottom-end] z-50" x-data="themes">
+        <button id="theme-dropdown-mobile" type="button" class="dropdown-toggle btn btn-info btn-soft btn-block justify-center gap-2" aria-haspopup="menu" aria-expanded="false" aria-label="Theme selector">
+          <span class="icon-[tabler--palette] size-5"></span>
+          <span>Theme</span>
+        </button>
+        <ul class="dropdown-menu dropdown-open:opacity-100 hidden min-w-72 max-h-[calc(100vh-8rem)] overflow-y-auto rounded-lg shadow-lg bg-base-100 z-[60]" role="menu" aria-orientation="vertical" aria-labelledby="theme-dropdown-mobile">
+          <template x-for="group in themeGroups" :key="group.name">
+            <li>
+              <div class="dropdown-header sticky top-0 z-10 bg-base-100">
+                <span class="text-base-content/70" x-text="group.name"></span>
+              </div>
+              <template x-for="theme in group.themes" :key="theme.value">
+                <li>
+                  <button class="dropdown-item justify-start" @click="setTheme(theme.value)">
+                    <span :class="`icon-[tabler--${theme.icon}] shrink-0 size-4 text-base-content`"></span>
+                    <div class="ml-2 flex flex-col">
+                      <span x-text="theme.label"></span>
+                      <span class="text-xs text-base-content/70 whitespace-pre-line" x-text="theme.description"></span>
+                    </div>
+                  </button>
+                </li>
+              </template>
+            </li>
+          </template>
+        </ul>
+      </div>
+      
+      <!-- User section -->
+      <template x-if="user">
+        <div class="flex items-center justify-center gap-4 p-2">
+          <div class="avatar">
+            <div class="size-12 rounded-full ring ring-primary ring-offset-2 ring-offset-base-100">
+              <template x-if="user.profile_picture_url">
+                <img :src="user.profile_picture_url" :alt="user.first_name + ' ' + user.last_name + '\'s avatar'"/>
+              </template>
+              <template x-if="!user.profile_picture_url">
+                <div class="flex h-full w-full items-center justify-center bg-primary text-primary-content text-sm font-medium">
+                  <span x-text="(user.first_name?.[0] || '') + (user.last_name?.[0] || '')"></span>
+                </div>
+              </template>
+            </div>
+          </div>
+          <div class="flex flex-col items-center">
+            <h6 class="text-base-content text-base font-semibold" x-text="user.first_name + ' ' + user.last_name"></h6>
+            <small class="text-base-content/50" x-text="user.email"></small>
+          </div>
+        </div>
+      </template>
+
+      <!-- Navigation links -->
+      <template x-if="user">
+        <div class="flex flex-col gap-2">
+          <a href="/profile/" class="btn btn-ghost btn-block justify-center gap-2">
+            <span class="icon-[tabler--user]"></span>
+            My Profile
+          </a>
+          <a href="/profile/#edit" class="btn btn-ghost btn-block justify-center gap-2">
+            <span class="icon-[tabler--settings]"></span>
+            Edit Profile
+          </a>
+          <template x-if="user.email === 'nicolas.sursock@gmail.com'">
+            <a href="/analytics/" class="btn btn-ghost btn-block justify-center gap-2">
+              <span class="icon-[tabler--chart-bar]"></span>
+              Analytics
+            </a>
+          </template>
+          <button class="btn btn-error btn-ghost btn-block justify-center gap-2" @click="logout">
+            <span class="icon-[tabler--logout]"></span>
+            Sign out
+          </button>
+        </div>
+      </template>
+
+      <!-- Login/Signup buttons -->
+      <template x-if="!user">
+        <div class="flex flex-col gap-2">
+          <a href="/login/" class="btn btn-primary btn-soft btn-block justify-center gap-2">
+            <span class="icon-[tabler--login] size-5"></span>
+            Login
+          </a>
+          <a href="/signup/" class="btn btn-secondary btn-soft btn-block justify-center gap-2">
+            <span class="icon-[tabler--user-plus] size-5"></span>
+            Sign Up
+          </a>
+        </div>
+      </template>
+    </div>
   </div>
 
   <!-- Demo content -->
