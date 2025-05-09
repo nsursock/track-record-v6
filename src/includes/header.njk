@@ -79,6 +79,14 @@
               </a>
             </li>
           </template>
+          <template x-if="user && user.email === 'nicolas.sursock@gmail.com'">
+            <li>
+              <a class="dropdown-item" href="/pages/private/">
+                <span class="icon-[tabler--building]"></span>
+                CEO Dashboard
+              </a>
+            </li>
+          </template>
           <li class="dropdown-footer gap-2">
             <button class="btn btn-error btn-soft btn-block" @click="logout">
               <span class="icon-[tabler--logout]"></span>
@@ -145,6 +153,12 @@
             <a href="/analytics/" class="btn btn-ghost btn-block justify-center gap-2">
               <span class="icon-[tabler--chart-bar]"></span>
               Analytics
+            </a>
+          </template>
+          <template x-if="user.email === 'nicolas.sursock@gmail.com'">
+            <a href="/private/" class="btn btn-ghost btn-block justify-center gap-2">
+              <span class="icon-[tabler--building]"></span>
+              CEO Dashboard
             </a>
           </template>
           <button class="btn btn-error btn-ghost btn-block justify-center gap-2" @click="logout">

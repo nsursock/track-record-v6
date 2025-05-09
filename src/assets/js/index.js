@@ -354,13 +354,13 @@ document.addEventListener('alpine:init', () => {
       }
     },
 
-    toggleDropdown() {
-      this.isDropdownOpen = !this.isDropdownOpen;
-    },
+    // toggleDropdown() {
+    //   this.isDropdownOpen = !this.isDropdownOpen;
+    // },
 
-    closeDropdown() {
-      this.isDropdownOpen = false;
-    },
+    // closeDropdown() {
+    //   this.isDropdownOpen = false;
+    // },
 
     async logout() {
       try {

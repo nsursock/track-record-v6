@@ -1,0 +1,218 @@
+<!-- Roadmap Section -->
+<div class="sm:hidden mb-4">
+  <select
+      id="roadmap-select"
+      data-select='{
+        "placeholder": "Select roadmap phase...",
+        "toggleTag": "<button type=\"button\" aria-expanded=\"false\"><span class=\"me-2 flex\" data-icon></span><span class=\"text-base-content\" data-title></span></button>",
+        "toggleClasses": "advance-select-toggle items-center",
+        "dropdownClasses": "advance-select-menu max-h-96 overflow-y-auto bg-base-100 shadow-lg rounded-lg border border-base-300",
+        "optionClasses": "advance-select-option selected:select-active",
+        "optionTemplate": "<div><div class=\"flex items-center\"><div class=\"me-2 flex\" data-icon></div><div class=\"font-semibold text-base-content\" data-title></div></div></div>",
+        "extraMarkup": "<span class=\"icon-[tabler--caret-up-down] shrink-0 size-4 text-base-content absolute top-1/2 end-3 -translate-y-1/2\"></span>"
+      }'
+      class="hidden"
+    >
+    <option value="">Choose phase...</option>
+    <option 
+        value="#tabs-roadmap-overview-content" 
+        selected
+        data-select-option='{
+          "icon": "<span class=\"icon-[tabler--home] shrink-0 size-4 text-primary\"></span>"
+        }'
+      >
+        Overview
+      </option>
+    <option 
+        value="#tabs-roadmap-phase1-content"
+        data-select-option='{
+          "icon": "<span class=\"icon-[tabler--rocket] shrink-0 size-4 text-primary\"></span>"
+        }'
+      >
+        Phase 1
+      </option>
+    <option 
+        value="#tabs-roadmap-phase2-content"
+        data-select-option='{
+          "icon": "<span class=\"icon-[tabler--chart-line] shrink-0 size-4 text-primary\"></span>"
+        }'
+      >
+        Phase 2
+      </option>
+    <option 
+        value="#tabs-roadmap-phase3-content"
+        data-select-option='{
+          "icon": "<span class=\"icon-[tabler--cash] shrink-0 size-4 text-primary\"></span>"
+        }'
+      >
+        Phase 3
+      </option>
+    <option 
+        value="#tabs-roadmap-phase4-content"
+        data-select-option='{
+          "icon": "<span class=\"icon-[tabler--scale] shrink-0 size-4 text-primary\"></span>"
+        }'
+      >
+        Phase 4
+      </option>
+  </select>
+</div>
+
+<nav class="tabs tabs-bordered overflow-x-auto hidden sm:block" aria-label="Roadmap Tabs" role="tablist" aria-orientation="horizontal" data-tab-select="#roadmap-select">
+  <button type="button" class="tab active-tab:tab-active active" id="tabs-roadmap-overview" data-tab="#tabs-roadmap-overview-content" aria-controls="tabs-roadmap-overview-content" role="tab" aria-selected="true">
+    <span class="icon-[tabler--home] size-5 shrink-0 me-2"></span>
+    Overview
+  </button>
+  <button type="button" class="tab active-tab:tab-active" id="tabs-roadmap-phase1" data-tab="#tabs-roadmap-phase1-content" aria-controls="tabs-roadmap-phase1-content" role="tab" aria-selected="false">
+    <span class="icon-[tabler--rocket] size-5 shrink-0 me-2"></span>
+    Phase 1
+  </button>
+  <button type="button" class="tab active-tab:tab-active" id="tabs-roadmap-phase2" data-tab="#tabs-roadmap-phase2-content" aria-controls="tabs-roadmap-phase2-content" role="tab" aria-selected="false">
+    <span class="icon-[tabler--chart-line] size-5 shrink-0 me-2"></span>
+    Phase 2
+  </button>
+  <button type="button" class="tab active-tab:tab-active" id="tabs-roadmap-phase3" data-tab="#tabs-roadmap-phase3-content" aria-controls="tabs-roadmap-phase3-content" role="tab" aria-selected="false">
+    <span class="icon-[tabler--cash] size-5 shrink-0 me-2"></span>
+    Phase 3
+  </button>
+  <button type="button" class="tab active-tab:tab-active" id="tabs-roadmap-phase4" data-tab="#tabs-roadmap-phase4-content" aria-controls="tabs-roadmap-phase4-content" role="tab" aria-selected="false">
+    <span class="icon-[tabler--scale] size-5 shrink-0 me-2"></span>
+    Phase 4
+  </button>
+</nav>
+
+<div class="mt-3">
+  <div id="tabs-roadmap-overview-content" role="tabpanel" aria-labelledby="tabs-roadmap-overview">
+    <div class="space-y-4">
+      <div class="alert alert-info">
+        <span class="icon-[tabler--info-circle] size-5"></span>
+        <span>A music blog sharing reflective, personal insights inspired by lyrics — offering emotional and cultural depth, with a touch of curation.</span>
+      </div>
+      <div class="stats stats-vertical sm:stats-horizontal shadow w-full text-center">
+        <div class="stat">
+          <div class="stat-title">Timeline</div>
+          <div class="stat-value">6-12 months</div>
+          <div class="stat-desc">Flexible pacing based on growth</div>
+        </div>
+        <div class="stat">
+          <div class="stat-title">Target Revenue</div>
+          <div class="stat-value">$500-1k/mo</div>
+          <div class="stat-desc">From multiple streams</div>
+        </div>
+        <div class="stat">
+          <div class="stat-title">Subscribers</div>
+          <div class="stat-value">1k</div>
+          <div class="stat-desc">Across all platforms</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="tabs-roadmap-phase1-content" class="hidden" role="tabpanel" aria-labelledby="tabs-roadmap-phase1">
+    <div class="space-y-4">
+      <h3 class="text-lg font-semibold">Launch MVP (Weeks 1-4)</h3>
+      <ul class="space-y-2">
+        <li class="flex items-center gap-2">
+          <span class="icon-[tabler--check] text-success"></span>
+          <span>Set up blog with Alpine.js + Supabase</span>
+        </li>
+        <li class="flex items-center gap-2">
+          <span class="icon-[tabler--check] text-success"></span>
+          <span>Implement clean, mobile-first design</span>
+        </li>
+        <li class="flex items-center gap-2">
+          <span class="icon-[tabler--clock] text-warning"></span>
+          <span>Write & publish 3-5 high-quality essays (2k+ words each)</span>
+        </li>
+        <li class="flex items-center gap-2">
+          <span class="icon-[tabler--clock] text-warning"></span>
+          <span>Add ConvertKit + Stripe integration</span>
+        </li>
+        <li class="flex items-center gap-2">
+          <span class="icon-[tabler--clock] text-warning"></span>
+          <span>Soft launch with 10-20 beta readers</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div id="tabs-roadmap-phase2-content" class="hidden" role="tabpanel" aria-labelledby="tabs-roadmap-phase2">
+    <div class="space-y-4">
+      <h3 class="text-lg font-semibold">Grow & Engage (Months 2-4)</h3>
+      <ul class="space-y-2">
+        <li class="flex items-center gap-2">
+          <span class="icon-[tabler--clock] text-warning"></span>
+          <span>Publish bi-weekly posts (2/month)</span>
+        </li>
+        <li class="flex items-center gap-2">
+          <span class="icon-[tabler--clock] text-warning"></span>
+          <span>Enable Supabase auth for comments</span>
+        </li>
+        <li class="flex items-center gap-2">
+          <span class="icon-[tabler--clock] text-warning"></span>
+          <span>Launch on Twitter + Bluesky (2-3 posts/week)</span>
+        </li>
+        <li class="flex items-center gap-2">
+          <span class="icon-[tabler--clock] text-warning"></span>
+          <span>Weekly newsletter with curated playlists</span>
+        </li>
+        <li class="flex items-center gap-2">
+          <span class="icon-[tabler--clock] text-warning"></span>
+          <span>Track with Fathom Analytics</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div id="tabs-roadmap-phase3-content" class="hidden" role="tabpanel" aria-labelledby="tabs-roadmap-phase3">
+    <div class="space-y-4">
+      <h3 class="text-lg font-semibold">Monetize & Deepen Connection (Months 4-6)</h3>
+      <ul class="space-y-2">
+        <li class="flex items-center gap-2">
+          <span class="icon-[tabler--clock] text-warning"></span>
+          <span>Launch $5/mo Premium Tier (Stripe)</span>
+        </li>
+        <li class="flex items-center gap-2">
+          <span class="icon-[tabler--clock] text-warning"></span>
+          <span>Add private audio posts (Supabase Storage)</span>
+        </li>
+        <li class="flex items-center gap-2">
+          <span class="icon-[tabler--clock] text-warning"></span>
+          <span>Host monthly Zoom sessions ($15/event)</span>
+        </li>
+        <li class="flex items-center gap-2">
+          <span class="icon-[tabler--clock] text-warning"></span>
+          <span>Test 7-day free trial</span>
+        </li>
+        <li class="flex items-center gap-2">
+          <span class="icon-[tabler--clock] text-warning"></span>
+          <span>Target 30 premium members</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div id="tabs-roadmap-phase4-content" class="hidden" role="tabpanel" aria-labelledby="tabs-roadmap-phase4">
+    <div class="space-y-4">
+      <h3 class="text-lg font-semibold">Scale & Sustain (Months 6-12)</h3>
+      <ul class="space-y-2">
+        <li class="flex items-center gap-2">
+          <span class="icon-[tabler--clock] text-warning"></span>
+          <span>Create $29 eBook (Gumroad)</span>
+        </li>
+        <li class="flex items-center gap-2">
+          <span class="icon-[tabler--clock] text-warning"></span>
+          <span>Launch 10% referral program</span>
+        </li>
+        <li class="flex items-center gap-2">
+          <span class="icon-[tabler--clock] text-warning"></span>
+          <span>Pitch to 3 music blogs/month</span>
+        </li>
+        <li class="flex items-center gap-2">
+          <span class="icon-[tabler--clock] text-warning"></span>
+          <span>Partner with 2 indie labels</span>
+        </li>
+        <li class="flex items-center gap-2">
+          <span class="icon-[tabler--clock] text-warning"></span>
+          <span>Scale to $500-1k monthly income</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
