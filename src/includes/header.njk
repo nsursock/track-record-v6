@@ -106,32 +106,7 @@
   <div id="sticky-navbar-collapse" class="collapse collapse-arrow collapse-close bg-base-100 absolute top-16 w-full md:hidden shadow-lg z-40 hidden">
     <div class="collapse-content flex flex-col gap-4 p-4 bg-base-100">
       <!-- Theme switcher -->
-      <div class="dropdown relative inline-flex [--auto-close:inside] [--offset:8] [--placement:bottom-end] z-50" x-data="themes">
-        <button id="theme-dropdown-mobile" type="button" class="dropdown-toggle btn btn-info btn-soft btn-block justify-center gap-2" aria-haspopup="menu" aria-expanded="false" aria-label="Theme selector">
-          <span class="icon-[tabler--palette] size-5"></span>
-          <span>Theme</span>
-        </button>
-        <ul class="dropdown-menu dropdown-open:opacity-100 hidden min-w-72 max-h-[calc(100vh-8rem)] overflow-y-auto rounded-lg shadow-lg bg-base-100 z-[60]" role="menu" aria-orientation="vertical" aria-labelledby="theme-dropdown-mobile">
-          <template x-for="group in themeGroups" :key="group.name">
-            <li>
-              <div class="dropdown-header sticky top-0 z-10 bg-base-100">
-                <span class="text-base-content/70" x-text="group.name"></span>
-              </div>
-              <template x-for="theme in group.themes" :key="theme.value">
-                <li>
-                  <button class="dropdown-item justify-start" @click="setTheme(theme.value)">
-                    <span :class="`icon-[tabler--${theme.icon}] shrink-0 size-4 text-base-content`"></span>
-                    <div class="ml-2 flex flex-col">
-                      <span x-text="theme.label"></span>
-                      <span class="text-xs text-base-content/70 whitespace-pre-line" x-text="theme.description"></span>
-                    </div>
-                  </button>
-                </li>
-              </template>
-            </li>
-          </template>
-        </ul>
-      </div>
+      {% include "switcher.njk" %}
       
       <!-- User section -->
       <template x-if="user">
