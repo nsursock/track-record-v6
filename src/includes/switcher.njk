@@ -13,7 +13,7 @@
         <template x-for="theme in group.themes" :key="theme.value">
           <li>
             <button class="dropdown-item justify-start" @click="setTheme(theme.value)">
-              <span :class="`icon-[tabler--${theme.icon}] shrink-0 size-4 text-base-content`"></span>
+              <span :class="`${theme.icon} shrink-0 size-4 text-base-content`"></span>
               <div class="ml-2 flex flex-col">
                 <span x-text="theme.label"></span>
                 <span class="text-xs text-base-content/70 whitespace-pre-line" x-text="theme.description"></span>

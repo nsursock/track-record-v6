@@ -12,36 +12,36 @@ Alpine.data('themes', () => ({
         {
             name: 'Custom Themes',
             themes: [
-                { value: 'cyberpunk', label: 'Cyberpunk', icon: 'robot', description: 'Futuristic theme with neon accents\nand cyberpunk aesthetics' }
+                { value: 'cyberpunk', label: 'Cyberpunk', icon: 'icon-[tabler--robot]', description: 'Futuristic theme with neon accents\nand cyberpunk aesthetics' }
             ]
         },
         {
             name: 'FlyonUI Themes',
             themes: [
-                { value: 'light', label: 'Light', icon: 'sun', description: 'Clean and bright interface\nwith high contrast for optimal readability' },
-                { value: 'dark', label: 'Dark', icon: 'moon', description: 'Elegant dark mode that reduces\neye strain in low-light environments' },
-                { value: 'black', label: 'Black', icon: 'moon-stars', description: 'True black theme optimized\nfor OLED displays with maximum contrast' },
-                { value: 'corporate', label: 'Corporate', icon: 'building', description: 'Professional design with a focus\non clarity and business aesthetics' },
-                { value: 'ghibli', label: 'Ghibli', icon: 'trees', description: 'Whimsical and artistic theme\ninspired by Studio Ghibli\'s magical worlds' },
-                { value: 'gourmet', label: 'Gourmet', icon: 'cookie', description: 'Warm and inviting design\nwith rich, appetizing color palette' },
-                { value: 'luxury', label: 'Luxury', icon: 'diamond', description: 'Sophisticated theme with premium\naesthetics and elegant details' },
-                { value: 'mintlify', label: 'Mintlify', icon: 'leaf', description: 'Modern documentation theme\nwith clean typography and clear hierarchy' },
-                { value: 'shadcn', label: 'Shadcn', icon: 'components', description: 'Minimalist design system\nwith focus on accessibility and usability' },
-                { value: 'slack', label: 'Slack', icon: 'brand-slack', description: 'Familiar interface inspired\nby Slack\'s popular communication platform' },
-                { value: 'soft', label: 'Soft', icon: 'cloud', description: 'Gentle and calming design\nwith subtle colors and soft edges' },
-                { value: 'valorant', label: 'Valorant', icon: 'sword', description: 'Dynamic gaming-inspired theme\nwith bold accents and modern aesthetics' }
+                { value: 'light', label: 'Light', icon: 'icon-[tabler--sun]', description: 'Clean and bright interface\nwith high contrast for optimal readability' },
+                { value: 'dark', label: 'Dark', icon: 'icon-[tabler--moon]', description: 'Elegant dark mode that reduces\neye strain in low-light environments' },
+                { value: 'black', label: 'Black', icon: 'icon-[tabler--moon-stars]', description: 'True black theme optimized\nfor OLED displays with maximum contrast' },
+                { value: 'corporate', label: 'Corporate', icon: 'icon-[tabler--building]', description: 'Professional design with a focus\non clarity and business aesthetics' },
+                { value: 'ghibli', label: 'Ghibli', icon: 'icon-[tabler--trees]', description: 'Whimsical and artistic theme\ninspired by Studio Ghibli\'s magical worlds' },
+                { value: 'gourmet', label: 'Gourmet', icon: 'icon-[tabler--cookie]', description: 'Warm and inviting design\nwith rich, appetizing color palette' },
+                { value: 'luxury', label: 'Luxury', icon: 'icon-[tabler--diamond]', description: 'Sophisticated theme with premium\naesthetics and elegant details' },
+                { value: 'mintlify', label: 'Mintlify', icon: 'icon-[tabler--leaf]', description: 'Modern documentation theme\nwith clean typography and clear hierarchy' },
+                { value: 'shadcn', label: 'Shadcn', icon: 'icon-[tabler--components]', description: 'Minimalist design system\nwith focus on accessibility and usability' },
+                { value: 'slack', label: 'Slack', icon: 'icon-[tabler--brand-slack]', description: 'Familiar interface inspired\nby Slack\'s popular communication platform' },
+                { value: 'soft', label: 'Soft', icon: 'icon-[tabler--cloud]', description: 'Gentle and calming design\nwith subtle colors and soft edges' },
+                { value: 'valorant', label: 'Valorant', icon: 'icon-[tabler--sword]', description: 'Dynamic gaming-inspired theme\nwith bold accents and modern aesthetics' }
             ]
         },
         {
             name: 'DaisyUI Themes',
             themes: [
-                { value: 'abyss', label: 'Abyss', icon: 'massage', description: 'Deep and immersive dark theme\nwith a soothing atmosphere' },
-                { value: 'acid', label: 'Acid', icon: 'pill', description: 'Vibrant and energetic theme\nwith bold, eye-catching elements' },
-                { value: 'aqua', label: 'Aqua', icon: 'droplet', description: 'Refreshing blue-themed interface\nwith a calm, water-inspired palette' },
-                { value: 'autumn', label: 'Autumn', icon: 'trees', description: 'Warm and cozy theme\nwith rich fall colors and natural elements' },
-                { value: 'bumblebee', label: 'Bumblebee', icon: 'wheel', description: 'Cheerful yellow theme\nwith a playful and energetic vibe' },
-                { value: 'business', label: 'Business', icon: 'building', description: 'Professional theme designed\nfor corporate and business applications' },
-                { value: 'caramellatte', label: 'Caramellatte', icon: 'coffee', description: 'Warm and inviting theme\ninspired by your favorite coffee drink' }
+                { value: 'abyss', label: 'Abyss', icon: 'icon-[tabler--massage]', description: 'Deep and immersive dark theme\nwith a soothing atmosphere' },
+                { value: 'acid', label: 'Acid', icon: 'icon-[tabler--pill]', description: 'Vibrant and energetic theme\nwith bold, eye-catching elements' },
+                { value: 'aqua', label: 'Aqua', icon: 'icon-[tabler--droplet]', description: 'Refreshing blue-themed interface\nwith a calm, water-inspired palette' },
+                { value: 'autumn', label: 'Autumn', icon: 'icon-[tabler--trees]', description: 'Warm and cozy theme\nwith rich fall colors and natural elements' },
+                { value: 'bumblebee', label: 'Bumblebee', icon: 'icon-[tabler--wheel]', description: 'Cheerful yellow theme\nwith a playful and energetic vibe' },
+                { value: 'business', label: 'Business', icon: 'icon-[tabler--building]', description: 'Professional theme designed\nfor corporate and business applications' },
+                { value: 'caramellatte', label: 'Caramellatte', icon: 'icon-[tabler--coffee]', description: 'Warm and inviting theme\ninspired by your favorite coffee drink' }
             ]
         }
     ],
