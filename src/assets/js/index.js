@@ -397,4 +397,38 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
+// Image Modal Component
+document.addEventListener('alpine:init', () => {
+  Alpine.data('imageModal', () => ({
+    init() {
+      // Add data-overlay attributes to all images in the content
+      document.querySelectorAll('#scrollspy img, .relative.h-\\[400px\\] img').forEach(img => {
+        img.setAttribute('data-overlay', '#imageModal');
+        img.setAttribute('aria-haspopup', 'dialog');
+        img.setAttribute('aria-expanded', 'false');
+        img.setAttribute('aria-controls', 'imageModal');
+        
+        // Store original image URL
+        let originalSrc;
+        if (img.closest('.relative.h-\\[400px\\]')) {
+          // For hero image, use the data-original-src attribute
+          originalSrc = img.getAttribute('data-original-src');
+        } else {
+          // For content images, remove the transform parameters
+          originalSrc = img.src.replace('/upload/w_320,h_240,c_fill,q_80,f_jpg/', '/upload/');
+        }
+        
+        // Update modal image when clicked
+        img.addEventListener('click', function() {
+          const modalImage = document.querySelector('#modalImage');
+          const modalImageUrl = document.querySelector('#modalImageUrl');
+          modalImage.src = originalSrc;
+          modalImage.alt = this.alt;
+          modalImageUrl.textContent = originalSrc;
+        });
+      });
+    }
+  }));
+});
+
 Alpine.start()

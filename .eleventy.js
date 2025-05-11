@@ -176,14 +176,154 @@ export default function (eleventyConfig) {
     return headings;
   });
 
+  // Add custom filter to transform image URLs with Cloudinary
+  eleventyConfig.addFilter("transformImage", function(url, isFirstImage = false) {
+    if (!url) return url;
+    
+    // Check if the URL is already a Cloudinary URL
+    if (url.includes('res.cloudinary.com')) {
+      // If it's already a Cloudinary URL, add our transformations
+      if (isFirstImage) {
+        return url.replace('/upload/', '/upload/w_800,h_600,c_fill,q_80,f_jpg/');
+      } else {
+        return url.replace('/upload/', '/upload/w_320,h_240,c_fill,q_80,f_jpg/');
+      }
+    }
+    
+    // If it's not a Cloudinary URL, return as is
+    return url;
+  });
+
+  // Add custom filter to extract first image not preceded by h2
+  eleventyConfig.addFilter("extractFirstImage", function(content) {
+    // First, find all h2 headings and their positions
+    const h2Positions = [];
+    const h2Regex = /<h2[^>]*>.*?<\/h2>/g;
+    let h2Match;
+    while ((h2Match = h2Regex.exec(content)) !== null) {
+      h2Positions.push(h2Match.index);
+    }
+
+    // Then find all images
+    const imgRegex = /<img[^>]+src="([^"]+)"[^>]*alt="([^"]*)"[^>]*>/g;
+    let imgMatch;
+    let firstImageFound = false;
+    let contentWithoutFirstImage = content;
+
+    while ((imgMatch = imgRegex.exec(content)) !== null) {
+      const imgIndex = imgMatch.index;
+      // Check if this image is before any h2 heading
+      if (!firstImageFound && (h2Positions.length === 0 || h2Positions.every(h2Pos => imgIndex < h2Pos))) {
+        const src = imgMatch[1];
+        firstImageFound = true;
+        
+        // Handle Cloudinary URLs
+        if (src.includes('res.cloudinary.com')) {
+          // Extract the base URL without transformations or version
+          const baseUrl = src.replace(/\/upload\/[^/]+\//, '/upload/');
+          // Remove the first image from content
+          contentWithoutFirstImage = content.replace(imgMatch[0], '');
+          
+          return {
+            src: baseUrl,
+            alt: imgMatch[2] || 'Hero image',
+            content: contentWithoutFirstImage
+          };
+        }
+        
+        // Remove the first image from content
+        contentWithoutFirstImage = content.replace(imgMatch[0], '');
+        
+        return {
+          src: src,
+          alt: imgMatch[2] || 'Hero image',
+          content: contentWithoutFirstImage
+        };
+      }
+    }
+    return null; // Return null if no suitable image is found
+  });
+
+  // Add custom filter to transform images in markdown content
+  eleventyConfig.addFilter("transformContentImages", function(content) {
+    if (!content) return content;
+    
+    // Replace image URLs in markdown content
+    return content.replace(
+      /!\[([^\]]*)\]\(([^)]+)\)/g,
+      (match, alt, url) => {
+        // Handle Cloudinary URLs
+        if (url.includes('res.cloudinary.com')) {
+          // Extract the base URL without transformations or version
+          const baseUrl = url.replace(/\/upload\/[^/]+\//, '/upload/');
+          // Apply content image transformation
+          return `![${alt}](${baseUrl.replace('/upload/', '/upload/w_320,h_240,c_fill,q_80,f_jpg/')})`;
+        }
+        
+        return match;
+      }
+    );
+  });
+
+  // Add custom filter to extract first image from markdown content
+  eleventyConfig.addFilter("matchImage", function(content) {
+    if (!content) return null;
+    
+    // Convert content to string if it's not already
+    const contentStr = typeof content === 'string' ? content : String(content);
+    
+    // First try to find markdown image syntax
+    const markdownImageRegex = /!\[([^\]]*)\]\(([^)]+)\)/;
+    const markdownMatch = contentStr.match(markdownImageRegex);
+    
+    if (markdownMatch) {
+      let url = markdownMatch[2];
+      // Apply Cloudinary transformations if it's a Cloudinary URL
+      if (url.includes('res.cloudinary.com')) {
+        // Extract the base URL without transformations or version
+        const baseUrl = url.replace(/\/upload\/[^/]+\//, '/upload/');
+        // Apply card image transformation
+        url = baseUrl.replace('/upload/', '/upload/w_480,h_320,c_fill,q_80,f_jpg/');
+      }
+      return {
+        alt: markdownMatch[1],
+        url: url
+      };
+    }
+    
+    // If no markdown image found, try to find HTML img tag
+    const htmlImageRegex = /<img[^>]+src="([^"]+)"[^>]*alt="([^"]*)"[^>]*>/;
+    const htmlMatch = contentStr.match(htmlImageRegex);
+    
+    if (htmlMatch) {
+      let url = htmlMatch[1];
+      // Apply Cloudinary transformations if it's a Cloudinary URL
+      if (url.includes('res.cloudinary.com')) {
+        // Extract the base URL without transformations or version
+        const baseUrl = url.replace(/\/upload\/[^/]+\//, '/upload/');
+        // Apply card image transformation
+        url = baseUrl.replace('/upload/', '/upload/w_480,h_320,c_fill,q_80,f_jpg/');
+      }
+      return {
+        alt: htmlMatch[2] || '',
+        url: url
+      };
+    }
+    
+    return null;
+  });
 
   // If you have other `addPlugin` calls, it's important that UpgradeHelper is added last.
-	// eleventyConfig.addPlugin(UpgradeHelper);
+  // eleventyConfig.addPlugin(UpgradeHelper);
 
   /* --- COLLECTIONS --- */
-  eleventyConfig.addCollection("posts", function(collectionApi) {
-    return collectionApi.getFilteredByGlob("src/posts/*.md")
-      .map(post => {
+  eleventyConfig.addCollection("posts", async function(collectionApi) {
+    const posts = await Promise.all(
+      collectionApi.getFilteredByGlob("src/posts/*.md").map(async (post) => {
+        // Store the raw content before markdown processing
+        const rawContent = await post.template.read();
+        post.rawContent = rawContent.content; // Access the content property
+        
         // Ensure tags are properly processed
         if (post.data.tags && Array.isArray(post.data.tags)) {
           // Remove 'post' tag if it exists
@@ -191,10 +331,12 @@ export default function (eleventyConfig) {
         }
         return post;
       })
-      .sort((a, b) => {
-        // Sort by published_date in descending order (newest first)
-        return new Date(b.data.published_date) - new Date(a.data.published_date);
-      });
+    );
+
+    // Sort posts by published_date in descending order (newest first)
+    return posts.sort((a, b) => {
+      return new Date(b.data.published_date) - new Date(a.data.published_date);
+    });
   });
 
   /* --- BASE CONFIG --- */
