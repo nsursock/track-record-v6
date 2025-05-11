@@ -313,6 +313,33 @@ export default function (eleventyConfig) {
     return null;
   });
 
+  // Add custom wordcount filter that only counts h2, h3, and p tags
+  eleventyConfig.addFilter("wordcount", function(content) {
+    if (!content) return 0;
+    
+    // Convert markdown to HTML using the configured markdown-it instance
+    const html = md.render(content);
+    
+    // Use regex to extract text from h2, h3, and p tags
+    const h2Text = (html.match(/<h2[^>]*>(.*?)<\/h2>/g) || [])
+      .map(tag => tag.replace(/<[^>]*>/g, ''))
+      .join(' ');
+    
+    const h3Text = (html.match(/<h3[^>]*>(.*?)<\/h3>/g) || [])
+      .map(tag => tag.replace(/<[^>]*>/g, ''))
+      .join(' ');
+    
+    const pText = (html.match(/<p[^>]*>(.*?)<\/p>/g) || [])
+      .map(tag => tag.replace(/<[^>]*>/g, ''))
+      .join(' ');
+    
+    // Combine all text and count words
+    const allText = `${h2Text} ${h3Text} ${pText}`.trim();
+    const words = allText.split(/\s+/).filter(word => word.length > 0);
+    
+    return words.length;
+  });
+
   // If you have other `addPlugin` calls, it's important that UpgradeHelper is added last.
   // eleventyConfig.addPlugin(UpgradeHelper);
 
