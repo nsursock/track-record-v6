@@ -62,7 +62,7 @@ export default {
     },
 
     startSessionCheck() {
-        // Check session every 5 minutes
+        // Check session every 2 minutes instead of 5
         this.sessionCheckInterval = setInterval(async () => {
             if (this.session) {
                 const isValid = await this.validateSession();
@@ -72,7 +72,7 @@ export default {
             } else {
                 clearInterval(this.sessionCheckInterval);
             }
-        }, 5 * 60 * 1000);
+        }, 2 * 60 * 1000);
     },
 
     async validateSession() {
@@ -83,8 +83,8 @@ export default {
             const tokenExp = this.session.expires_at;
             const now = Math.floor(Date.now() / 1000);
             
-            // If token is expired or will expire in the next 15 minutes, try to refresh it
-            if (!tokenExp || tokenExp < now + 900) {
+            // If token is expired or will expire in the next 30 minutes, try to refresh it
+            if (!tokenExp || tokenExp < now + 1800) {
                 console.log('Token is expiring soon, attempting refresh...');
                 const refreshed = await this.refreshToken();
                 if (!refreshed) {
@@ -93,6 +93,7 @@ export default {
                     return false;
                 }
                 console.log('Token refreshed successfully');
+                return true; // Return early since we've already refreshed
             }
 
             const response = await fetch('/api/credentials?action=validate', {

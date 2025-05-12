@@ -111,6 +111,9 @@ export default function (eleventyConfig) {
         return '';
       }
 
+      // Set timezone to UTC
+      dt = dt.setZone('UTC');
+
       // Convert common format patterns to Luxon format tokens
       const formatMap = {
         'YYYY': 'yyyy',
