@@ -1,5 +1,7 @@
 import flatpickr from 'flatpickr';
 import { fileUpload } from './components/file-upload.js';
+import auth from './stores/auth.js';
+import notifications from './stores/notifications.js';
 
 // Add Alpine extensions here
 document.addEventListener('alpine:init', () => {
@@ -36,6 +38,9 @@ document.addEventListener('alpine:init', () => {
         fileUploadObserver: null,
 
         init() {
+            // Initialize auth store
+            auth.init();
+
             // Initialize any components that need it
             this.$nextTick(() => {
                 if (this.$refs.dob) {
@@ -52,18 +57,11 @@ document.addEventListener('alpine:init', () => {
                         locale: {
                             firstDayOfWeek: 1
                         },
-                        // static: true,
                         position: 'auto',
                         enableTime: false,
                         time_24hr: true,
                         weekNumbers: false,
-                        disable: [],
-                        onOpen: function (selectedDates, dateStr, instance) {
-                            // Optional callback when calendar opens
-                        },
-                        onClose: function (selectedDates, dateStr, instance) {
-                            // Optional callback when calendar closes
-                        }
+                        disable: []
                     });
                 }
             });
@@ -110,24 +108,12 @@ document.addEventListener('alpine:init', () => {
                     githubHandle: undefined
                 };
 
-                const response = await fetch('/api/credentials?action=signup', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(submitData)
-                });
-
-                const data = await response.json();
-
-                if (!response.ok) {
-                    throw new Error(data.error || 'Failed to create account');
-                }
-
+                await auth.signup(submitData);
                 this.formSubmitted = true;
                 this.currentStep = 4;
             } catch (error) {
                 this.error = error.message;
+                notifications.error(error.message);
             } finally {
                 this.isLoading = false;
             }

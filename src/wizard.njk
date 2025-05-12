@@ -1,0 +1,280 @@
+---
+layout: base
+meta:
+  title: Hit Wizard - R&B Edition
+  description: Create a hit single in only 2 minutes!
+eleventyNavigation:
+  key: Hit Wizard
+  order: 3
+---
+
+<div class="p-4 md:p-8" x-data="hitWizard">
+    <div class="max-w-4xl mx-auto bg-base-100 border border-base-300 shadow-xl p-6 space-y-6 rounded-box">
+        <h1 class="text-2xl font-bold text-primary">Microsoft Hit Wizard! – R&B Edition</h1>
+        {# <p class="text-base-content/80">Create a hit single in only 2 minutes!</p> #}
+
+        <!-- Clippy-style message -->
+        <div class="alert alert-warning">
+            <i class="icon-[tabler--music] size-5 mr-2"></i>
+            <span>Let me help you create another pathetic 'thirteen in a dozen' R&B hit single!</span>
+        </div>
+
+        <!-- Step 1 -->
+        <div class="card bg-base-200">
+            <div class="card-body">
+                <h2 class="card-title text-lg font-semibold">Step 1 – Select the proper sound parameters:</h2>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="form-control">
+                        <label class="label-text" for="yeahs">Number of "Yeah Uh-huh" per minute</label>
+                        <input type="number" id="yeahs" class="input input-bordered w-full" x-model="yeahs">
+                    </div>
+                    <div class="form-control">
+                        <label class="label-text" for="moddas">Number of "Moddafokka" per minute</label>
+                        <input type="number" id="moddas" class="input input-bordered w-full" x-model="moddas">
+                    </div>
+                    <div class="form-control">
+                        <label class="label-text" for="horny">Number of "Horny" per minute</label>
+                        <input type="number" id="horny" class="input input-bordered w-full" x-model="horny">
+                    </div>
+                    <div class="form-control">
+                        <label class="label-text" for="subject">Main subject is</label>
+                        <select id="subject" x-model="subject"
+              data-select='{
+                "placeholder": "Select subject...",
+                "toggleTag": "<button type=\"button\" aria-expanded=\"false\"></button>",
+                "toggleClasses": "advance-select-toggle select-disabled:pointer-events-none select-disabled:opacity-40 relative z-10",
+                "dropdownClasses": "advance-select-menu max-h-60 overflow-y-auto absolute z-50 w-full",
+                "optionClasses": "advance-select-option selected:select-active",
+                "optionTemplate": "<div class=\"flex justify-between items-center w-full\"><span data-title></span><span class=\"icon-[tabler--check] shrink-0 size-4 text-primary hidden selected:block \"></span></div>",
+                "extraMarkup": "<span class=\"icon-[tabler--caret-up-down] shrink-0 size-4 text-base-content absolute top-1/2 end-3 -translate-y-1/2 \"></span>",
+                "hasSearch": true,
+                "searchPlaceholder": "Search subjects...",
+                "searchClasses": "input input-bordered w-full focus:input-primary"
+              }'
+              class="hidden">
+                            <option value="">Select subject</option>
+                            <option value="Gangsta's">Gangsta's</option>
+                            <option value="Bitches">Bitches</option>
+                            <option value="Gangsta's & Bitches">Gangsta's & Bitches</option>
+                            <option value="Mother">Mother</option>
+                            <option value="None">None</option>
+                        </select>
+                    </div>
+                    <div class="form-control">
+                        <label class="label-text" for="melody">Steal melody from</label>
+                        <select id="melody" x-model="melody"
+              data-select='{
+                "placeholder": "Select melody...",
+                "toggleTag": "<button type=\"button\" aria-expanded=\"false\"></button>",
+                "toggleClasses": "advance-select-toggle select-disabled:pointer-events-none select-disabled:opacity-40 relative z-10",
+                "dropdownClasses": "advance-select-menu max-h-60 overflow-y-auto absolute z-50 w-full",
+                "optionClasses": "advance-select-option selected:select-active",
+                "optionTemplate": "<div class=\"flex justify-between items-center w-full\"><span data-title></span><span class=\"icon-[tabler--check] shrink-0 size-4 text-primary hidden selected:block \"></span></div>",
+                "extraMarkup": "<span class=\"icon-[tabler--caret-up-down] shrink-0 size-4 text-base-content absolute top-1/2 end-3 -translate-y-1/2 \"></span>",
+                "hasSearch": true,
+                "searchPlaceholder": "Search melodies...",
+                "searchClasses": "input input-bordered w-full focus:input-primary"
+              }'
+              class="hidden">
+                            <option value="">Select melody</option>
+                            <option value="Queen">Queen</option>
+                            <option value="Led Zeppelin">Led Zeppelin</option>
+                            <option value="Red Hot Chili Peppers">Red Hot Chili Peppers</option>
+                            <option value="Knight Rider Theme">Knight Rider Theme</option>
+                        </select>
+                    </div>
+                    <div class="form-control">
+                        <label class="label-text" for="audience">Age of intended audience</label>
+                        <select id="audience" x-model="audience"
+              data-select='{
+                "placeholder": "Select audience...",
+                "toggleTag": "<button type=\"button\" aria-expanded=\"false\"></button>",
+                "toggleClasses": "advance-select-toggle select-disabled:pointer-events-none select-disabled:opacity-40 relative z-10",
+                "dropdownClasses": "advance-select-menu max-h-60 overflow-y-auto absolute z-50 w-full",
+                "optionClasses": "advance-select-option selected:select-active",
+                "optionTemplate": "<div class=\"flex justify-between items-center w-full\"><span data-title></span><span class=\"icon-[tabler--check] shrink-0 size-4 text-primary hidden selected:block \"></span></div>",
+                "extraMarkup": "<span class=\"icon-[tabler--caret-up-down] shrink-0 size-4 text-base-content absolute top-1/2 end-3 -translate-y-1/2 \"></span>",
+                "hasSearch": true,
+                "searchPlaceholder": "Search audience...",
+                "searchClasses": "input input-bordered w-full focus:input-primary"
+              }'
+              class="hidden">
+                            <option value="">Select audience</option>
+                            <option value="8 - 10 years old">8 - 10 years old</option>
+                            <option value="10 - 12 years old">10 - 12 years old</option>
+                            <option value="12 - 14 years old">12 - 14 years old</option>
+                        </select>
+                    </div>
+                    <div class="form-control">
+                        <label class="label-text" for="backgroundLyrics">Lyrics for the background brotha's</label>
+                        <select id="backgroundLyrics" x-model="backgroundLyrics"
+              data-select='{
+                "placeholder": "Select lyrics...",
+                "toggleTag": "<button type=\"button\" aria-expanded=\"false\"></button>",
+                "toggleClasses": "advance-select-toggle select-disabled:pointer-events-none select-disabled:opacity-40 relative z-10",
+                "dropdownClasses": "advance-select-menu max-h-60 overflow-y-auto absolute z-50 w-full",
+                "optionClasses": "advance-select-option selected:select-active",
+                "optionTemplate": "<div class=\"flex justify-between items-center w-full\"><span data-title></span><span class=\"icon-[tabler--check] shrink-0 size-4 text-primary hidden selected:block \"></span></div>",
+                "extraMarkup": "<span class=\"icon-[tabler--caret-up-down] shrink-0 size-4 text-base-content absolute top-1/2 end-3 -translate-y-1/2 \"></span>",
+                "hasSearch": true,
+                "searchPlaceholder": "Search lyrics...",
+                "searchClasses": "input input-bordered w-full focus:input-primary"
+              }'
+              class="hidden">
+                            <option value="">Select lyrics</option>
+                            <option value="Yeah Uh-huh">Yeah Uh-huh</option>
+                            <option value="Moddafokka">Moddafokka</option>
+                            <option value="Bush sounds">Bush sounds</option>
+                            <option value="Random">Random</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="card bg-base-200">
+            <div class="card-body">
+                <h2 class="card-title text-lg font-semibold">Step 2 – Select the proper video clip parameters:</h2>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="form-control">
+                        <label class="label-text" for="girls">Number of horny girls</label>
+                        <input type="number" id="girls" class="input input-bordered w-full" x-model="girls">
+                    </div>
+                    <div class="form-control">
+                        <label class="label-text" for="gold">Average kg of gold around the neck</label>
+                        <input type="number" id="gold" class="input input-bordered w-full" x-model="gold">
+                    </div>
+                    <div class="form-control">
+                        <label class="label-text" for="brothas">Total number of Brotha's</label>
+                        <input type="number" id="brothas" class="input input-bordered w-full" x-model="brothas">
+                    </div>
+                    <div class="form-control">
+                        <label class="label-text" for="car">Car is a</label>
+                        <select id="car" x-model="car"
+              data-select='{
+                "placeholder": "Select car...",
+                "toggleTag": "<button type=\"button\" aria-expanded=\"false\"></button>",
+                "toggleClasses": "advance-select-toggle select-disabled:pointer-events-none select-disabled:opacity-40 relative z-10",
+                "dropdownClasses": "advance-select-menu max-h-60 overflow-y-auto absolute z-50 w-full",
+                "optionClasses": "advance-select-option selected:select-active",
+                "optionTemplate": "<div class=\"flex justify-between items-center w-full\"><span data-title></span><span class=\"icon-[tabler--check] shrink-0 size-4 text-primary hidden selected:block \"></span></div>",
+                "extraMarkup": "<span class=\"icon-[tabler--caret-up-down] shrink-0 size-4 text-base-content absolute top-1/2 end-3 -translate-y-1/2 \"></span>",
+                "hasSearch": true,
+                "searchPlaceholder": "Search cars...",
+                "searchClasses": "input input-bordered w-full focus:input-primary"
+              }'
+              class="hidden">
+                            <option value="">Select car</option>
+                            <option value="Mercedes">Mercedes</option>
+                            <option value="BMW">BMW</option>
+                            <option value="Ferrari">Ferrari</option>
+                            <option value="Rolls Royce">Rolls Royce</option>
+                        </select>
+                    </div>
+                    <div class="form-control">
+                        <label class="label-text" for="shakeAss">Girls shake their asses?</label>
+                        <select id="shakeAss" x-model="shakeAss"
+              data-select='{
+                "placeholder": "Select option...",
+                "toggleTag": "<button type=\"button\" aria-expanded=\"false\"></button>",
+                "toggleClasses": "advance-select-toggle select-disabled:pointer-events-none select-disabled:opacity-40 relative z-10",
+                "dropdownClasses": "advance-select-menu max-h-60 overflow-y-auto absolute z-50 w-full",
+                "optionClasses": "advance-select-option selected:select-active",
+                "optionTemplate": "<div class=\"flex justify-between items-center w-full\"><span data-title></span><span class=\"icon-[tabler--check] shrink-0 size-4 text-primary hidden selected:block \"></span></div>",
+                "extraMarkup": "<span class=\"icon-[tabler--caret-up-down] shrink-0 size-4 text-base-content absolute top-1/2 end-3 -translate-y-1/2 \"></span>",
+                "hasSearch": true,
+                "searchPlaceholder": "Search options...",
+                "searchClasses": "input input-bordered w-full focus:input-primary"
+              }'
+              class="hidden">
+                            <option value="">Select option</option>
+                            <option value="Yes">Yes</option>
+                            <option value="No">No</option>
+                        </select>
+                    </div>
+                    <div class="form-control">
+                        <label class="label-text" for="outfits">Outfits are</label>
+                        <select id="outfits" x-model="outfits"
+              data-select='{
+                "placeholder": "Select outfit...",
+                "toggleTag": "<button type=\"button\" aria-expanded=\"false\"></button>",
+                "toggleClasses": "advance-select-toggle select-disabled:pointer-events-none select-disabled:opacity-40 relative z-10",
+                "dropdownClasses": "advance-select-menu max-h-60 overflow-y-auto absolute z-50 w-full",
+                "optionClasses": "advance-select-option selected:select-active",
+                "optionTemplate": "<div class=\"flex justify-between items-center w-full\"><span data-title></span><span class=\"icon-[tabler--check] shrink-0 size-4 text-primary hidden selected:block \"></span></div>",
+                "extraMarkup": "<span class=\"icon-[tabler--caret-up-down] shrink-0 size-4 text-base-content absolute top-1/2 end-3 -translate-y-1/2 \"></span>",
+                "hasSearch": true,
+                "searchPlaceholder": "Search outfits...",
+                "searchClasses": "input input-bordered w-full focus:input-primary"
+              }'
+              class="hidden">
+                            <option value="">Select outfit</option>
+                            <option value="Gold">Gold</option>
+                            <option value="Silver">Silver</option>
+                            <option value="Camouflage">Camouflage</option>
+                        </select>
+                    </div>
+                    <div class="form-control">
+                        <label class="label-text" for="water">Kind of water</label>
+                        <select id="water" x-model="water"
+              data-select='{
+                "placeholder": "Select water type...",
+                "toggleTag": "<button type=\"button\" aria-expanded=\"false\"></button>",
+                "toggleClasses": "advance-select-toggle select-disabled:pointer-events-none select-disabled:opacity-40 relative z-10",
+                "dropdownClasses": "advance-select-menu max-h-60 overflow-y-auto absolute z-50 w-full",
+                "optionClasses": "advance-select-option selected:select-active",
+                "optionTemplate": "<div class=\"flex justify-between items-center w-full\"><span data-title></span><span class=\"icon-[tabler--check] shrink-0 size-4 text-primary hidden selected:block \"></span></div>",
+                "extraMarkup": "<span class=\"icon-[tabler--caret-up-down] shrink-0 size-4 text-base-content absolute top-1/2 end-3 -translate-y-1/2 \"></span>",
+                "hasSearch": true,
+                "searchPlaceholder": "Search water types...",
+                "searchClasses": "input input-bordered w-full focus:input-primary"
+              }'
+              class="hidden">
+                            <option value="">Select water type</option>
+                            <option value="Swimming pool">Swimming pool</option>
+                            <option value="Jacuzzi">Jacuzzi</option>
+                            <option value="Sea and beach">Sea and beach</option>
+                        </select>
+                    </div>
+                    <div class="form-control">
+                        <label class="label cursor-pointer">
+                            <span class="label-text">Artist must have committed at least one murder</span>
+                            <input type="checkbox" class="checkbox checkbox-primary" x-model="criminal">
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="flex justify-center">
+            <div class="w-full space-y-4 flex flex-col gap-2">
+                <div class="w-full">
+                    <label class="label-text" for="profit">Desired profit ($ millions)</label>
+                    <div class="input input-bordered w-full space-x-3">
+                        <span class="icon-[tabler--currency-dollar] text-base-content/80 my-auto size-5 shrink-0"></span>
+                        <input type="number" id="profit" class="grow" x-model="profit" placeholder="00.00">
+                        <span class="label-text my-auto">USD</span>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <button class="btn btn-primary w-full" @click="generate">Create Video</button>
+                    <button class="btn btn-soft btn-secondary w-full" @click="copyPrompt">Copy Prompt</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Output -->
+        <template x-if="videoUrl">
+            <div class="card bg-base-200">
+                <div class="card-body">
+                    <h3 class="card-title">Your video is ready!</h3>
+                    <video class="w-full mt-2 rounded-box" controls :src="videoUrl"></video>
+                </div>
+            </div>
+        </template>
+    </div>
+</div>

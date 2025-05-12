@@ -62,10 +62,10 @@ export default async function handler(req, res) {
   // Get the action from query parameters
   const { action } = req.query;
 
-  if (!action || !['login', 'signup', 'upload'].includes(action)) {
+  if (!action || !['login', 'signup', 'upload', 'validate', 'refresh'].includes(action)) {
     return res.status(400).json({ 
       error: 'Invalid action',
-      details: 'Please specify a valid action (login, signup, or upload) in the query parameters'
+      details: 'Please specify a valid action (login, signup, upload, validate, or refresh) in the query parameters'
     });
   }
 
@@ -76,6 +76,10 @@ export default async function handler(req, res) {
       return await handleLogin(req, res);
     } else if (action === 'upload') {
       return await handleUpload(req, res);
+    } else if (action === 'validate') {
+      return await handleValidate(req, res);
+    } else if (action === 'refresh') {
+      return await handleRefresh(req, res);
     }
   } catch (error) {
     console.error('Unexpected error:', error);
@@ -237,6 +241,28 @@ async function handleLogin(req, res) {
     });
   }
 
+  // First check if the email exists
+  const { data: existingUser, error: checkError } = await supabase
+    .from('users')
+    .select('id')
+    .eq('email', email)
+    .single();
+
+  if (checkError && checkError.code !== 'PGRST116') {
+    console.error('Error checking for existing user:', checkError);
+    return res.status(500).json({ 
+      error: 'Error checking user existence',
+      details: checkError.message
+    });
+  }
+
+  if (!existingUser) {
+    return res.status(401).json({ 
+      error: 'Invalid email',
+      details: 'No account found with this email address'
+    });
+  }
+
   // Sign in the user
   const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
     email,
@@ -249,8 +275,8 @@ async function handleLogin(req, res) {
   if (authError) {
     if (authError.message.includes('Invalid login credentials')) {
       return res.status(401).json({ 
-        error: 'Invalid credentials',
-        details: 'The email or password you entered is incorrect'
+        error: 'Invalid password',
+        details: 'The password you entered is incorrect'
       });
     }
 
@@ -497,6 +523,101 @@ async function handleDeleteAccount(req, res) {
 
   } catch (error) {
     console.error('Unexpected error:', error);
+    return res.status(500).json({ 
+      error: 'Internal server error',
+      details: error.message
+    });
+  }
+}
+
+async function handleValidate(req, res) {
+  const { session } = req.body;
+
+  if (!session) {
+    return res.status(400).json({ 
+      error: 'Missing session',
+      details: 'Session data is required'
+    });
+  }
+
+  try {
+    // Verify the token and get the user
+    const { data: { user: authUser }, error: authError } = await supabase.auth.getUser(session.access_token);
+    
+    if (authError) {
+      // If token is expired, try to refresh it
+      if (authError.message.includes('expired')) {
+        const { data: refreshData, error: refreshError } = await supabase.auth.refreshSession({
+          refresh_token: session.refresh_token
+        });
+
+        if (refreshError) {
+          return res.status(401).json({ 
+            error: 'Session expired',
+            details: 'Please log in again'
+          });
+        }
+
+        // Return the refreshed session
+        return res.status(200).json({
+          success: true,
+          session: refreshData.session
+        });
+      }
+
+      return res.status(401).json({ 
+        error: 'Invalid session',
+        details: authError.message
+      });
+    }
+
+    // Session is valid, return success
+    return res.status(200).json({
+      success: true,
+      session
+    });
+
+  } catch (error) {
+    console.error('Session validation error:', error);
+    return res.status(500).json({ 
+      error: 'Internal server error',
+      details: error.message
+    });
+  }
+}
+
+async function handleRefresh(req, res) {
+  const { refresh_token } = req.body;
+
+  if (!refresh_token) {
+    return res.status(400).json({ 
+      error: 'Missing refresh token',
+      details: 'Refresh token is required'
+    });
+  }
+
+  try {
+    // Attempt to refresh the session
+    const { data: refreshData, error: refreshError } = await supabase.auth.refreshSession({
+      refresh_token
+    });
+
+    if (refreshError) {
+      console.error('Token refresh error:', refreshError);
+      return res.status(401).json({ 
+        error: 'Token refresh failed',
+        details: refreshError.message
+      });
+    }
+
+    // Return the new session
+    return res.status(200).json({
+      success: true,
+      session: refreshData.session
+    });
+
+  } catch (error) {
+    console.error('Session refresh error:', error);
     return res.status(500).json({ 
       error: 'Internal server error',
       details: error.message

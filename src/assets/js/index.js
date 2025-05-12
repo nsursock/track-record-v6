@@ -2,8 +2,13 @@ import '../css/index.css';
 
 import Alpine from 'alpinejs'
 import "./signup.js"
+import "./login.js"
+import notifications from "./stores/notifications.js"
+import auth from "./stores/auth.js"
 
 window.Alpine = Alpine
+window.auth = auth  // Make auth store globally accessible
+
 
 // Add Alpine extensions here
 Alpine.data('themes', () => ({
@@ -427,6 +432,229 @@ document.addEventListener('alpine:init', () => {
           modalImageUrl.textContent = originalSrc;
         });
       });
+    }
+  }));
+});
+
+// Hit Wizard Component
+document.addEventListener('alpine:init', () => {
+  Alpine.data('hitWizard', () => ({
+    yeahs: 281,
+    moddas: 58,
+    horny: 34,
+    subject: "Gangsta's",
+    melody: "Queen",
+    audience: "12 - 14 years old",
+    backgroundLyrics: "Yeah Uh-huh",
+    girls: 45,
+    gold: 16,
+    brothas: 22,
+    car: "Mercedes",
+    shakeAss: "Yes",
+    outfits: "Gold",
+    water: "Swimming pool",
+    criminal: true,
+    profit: 1600,
+    videoUrl: '',
+    showPrompt: false,
+    videoPrompt: {
+        scene: '',
+        music: {
+            melody: '',
+            lyrics: '',
+            background: ''
+        },
+        visuals: {
+            cast: '',
+            location: '',
+            style: ''
+        },
+        audience: ''
+    },
+
+    init() {
+        // Initialize FlyonUI components
+        this.$nextTick(() => {
+            // Initialize selects
+            document
+                .querySelectorAll('[data-select]')
+                .forEach(select => {
+                    if (select) {
+                        try {
+                            // Wait for the select to be initialized
+                            const checkSelect = setInterval(() => {
+                                const selectInstance = window
+                                    .HSSelect
+                                    .getInstance(select);
+
+                                if (selectInstance && selectInstance.el) {
+                                    clearInterval(checkSelect);
+
+                                    // Listen for changes on the select
+                                    select.addEventListener('change', (e) => {
+                                        selectInstance.setValue(e.target.value);
+                                    });
+                                }
+                            }, 100);
+                        } catch (error) {
+                            console.error('Error initializing select:', error);
+                        }
+                    }
+                });
+        });
+    },
+
+    generate() {
+        this.generatePrompt();
+        // Here you would typically call your video generation API
+        this.videoUrl = 'https://example.com/video.mp4'; // Placeholder
+    },
+
+    generatePrompt() {
+        // Scene description
+        this.videoPrompt = {
+            scene: `A high-energy R&B music video featuring ${this.brothas} stylish artists in ${this.outfits.toLowerCase()} outfits, surrounded by ${this.girls} dancers. The scene is set in a luxurious ${this.water.toLowerCase()} setting with a ${this.car} prominently displayed.`,
+            music: {
+                melody: `Melody inspired by ${this.melody}'s iconic sound, adapted for modern R&B.`,
+                lyrics: `Lyrics focus on ${this.subject.toLowerCase()}, with ${this.yeahs} "Yeah Uh-huh" and ${this.moddas} "Moddafokka" per minute.`,
+                background: `Background vocals consist of ${this.backgroundLyrics.toLowerCase()} throughout the track.`
+            },
+            visuals: {
+                cast: `${this.brothas} main artists wearing ${this.gold}kg of gold jewelry, accompanied by ${this.girls} dancers${this.shakeAss === 'Yes' ? ' performing synchronized dance moves' : ''}.`,
+                location: `Set in a luxurious ${this.water.toLowerCase()} with a ${this.car} as a centerpiece.`,
+                style: `Artists dressed in ${this.outfits.toLowerCase()} outfits, with ${this.criminal ? 'a mysterious, edgy atmosphere' : 'a glamorous, high-end aesthetic'}.`
+            },
+            audience: `Targeted at ${this.audience}, with an expected profit of $${this.profit} million.`
+        };
+    },
+
+    async copyPrompt() {
+        // First ensure the prompt is generated
+        this.generatePrompt();
+        
+        const promptText = `R&B Music Video Prompt
+
+Scene Description:
+${this.videoPrompt.scene}
+
+Music Elements:
+- ${this.videoPrompt.music.melody}
+- ${this.videoPrompt.music.lyrics}
+- ${this.videoPrompt.music.background}
+
+Visual Elements:
+- ${this.videoPrompt.visuals.cast}
+- ${this.videoPrompt.visuals.location}
+- ${this.videoPrompt.visuals.style}
+
+Target Audience:
+${this.videoPrompt.audience}`.trim();
+
+        try {
+            // Create a temporary textarea element
+            const textarea = document.createElement('textarea');
+            textarea.value = promptText;
+            textarea.style.position = 'fixed';  // Prevent scrolling to bottom
+            textarea.style.opacity = '0';
+            document.body.appendChild(textarea);
+            
+            // Select and copy the text
+            textarea.select();
+            document.execCommand('copy');
+            
+            // Clean up
+            document.body.removeChild(textarea);
+            
+            // Show success message using notifications store
+            notifications.success('Prompt copied to clipboard!');
+        } catch (err) {
+            console.error('Failed to copy prompt:', err);
+            notifications.error('Failed to copy prompt. Please try again.');
+        }
+    }
+  }));
+});
+
+// Profile Page Component
+document.addEventListener('alpine:init', () => {
+  Alpine.data('profilePage', () => ({
+    user: null,
+    isLoading: true,
+
+    async init() {
+      try {
+        // Initialize auth store
+        await auth.init();
+
+        // Check if user is authenticated
+        if (!auth.isAuthenticated()) {
+          window.location.href = '/login/';
+          return;
+        }
+
+        // Fetch profile data
+        const response = await fetch('/api/credentials?action=profile', {
+          headers: auth.getAuthHeaders()
+        });
+
+        if (!response.ok) {
+          if (response.status === 401) {
+            // Session expired or invalid
+            await auth.logout();
+            window.location.href = '/login/';
+            return;
+          }
+          throw new Error('Failed to fetch profile');
+        }
+
+        const data = await response.json();
+        this.user = data.user;
+      } catch (error) {
+        console.error('Error:', error);
+        notifications.error(error.message || 'Failed to load profile');
+        window.location.href = '/login/';
+      } finally {
+        this.isLoading = false;
+      }
+    },
+
+    async logout() {
+      try {
+        await auth.logout();
+      } catch (error) {
+        console.error('Logout error:', error);
+        notifications.error('Failed to logout. Please try again.');
+      }
+    },
+
+    editProfile() {
+      // TODO: Implement edit profile functionality
+      alert('Edit profile functionality coming soon!');
+    },
+
+    deleteAccount() {
+      const modal = new HSOverlay(document.querySelector('#delete-account-modal'));
+      modal.open();
+    },
+
+    async confirmDeleteAccount() {
+      try {
+        const response = await fetch('/api/credentials?action=profile', {
+          method: 'DELETE',
+          headers: auth.getAuthHeaders()
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || 'Failed to delete account');
+        }
+
+        await auth.logout();
+      } catch (error) {
+        console.error('Delete account error:', error);
+        notifications.error(error.message || 'Failed to delete account. Please try again.');
+      }
     }
   }));
 });

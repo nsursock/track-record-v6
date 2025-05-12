@@ -6,6 +6,7 @@
     <title>{{ site.title }} - {{ title or meta.title }}</title>
     {% include "meta.njk" %}
     <link rel="stylesheet" href="{{ '/node_modules/flatpickr/dist/flatpickr.css' | url }}"/>
+    <link rel="stylesheet" href="{{ '/node_modules/notyf/notyf.min.css' | url }}"/>
   </head>
 
   <body>
@@ -30,5 +31,6 @@
     <script type="module" src="{{ '/assets/js/index.js' | url }}"></script>
     <script type="module" src="{{ '/node_modules/flyonui/flyonui.js' | url }}"></script>
     <script type="module" src="{{ '/node_modules/flatpickr/dist/flatpickr.js' | url }}"></script>
+    <script src="{{ '/node_modules/notyf/notyf.min.js' | url }}"></script>
   </body>
 </html>
