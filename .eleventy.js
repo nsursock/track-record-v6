@@ -187,9 +187,9 @@ export default function (eleventyConfig) {
     if (url.includes('res.cloudinary.com')) {
       // If it's already a Cloudinary URL, add our transformations
       if (isFirstImage) {
-        return url.replace('/upload/', '/upload/w_800,h_600,c_fill,q_80,f_jpg/');
+        return url.replace('/upload/', '/upload/w_800,h_600,c_fill,q_auto,f_auto,dpr_auto/');
       } else {
-        return url.replace('/upload/', '/upload/w_320,h_240,c_fill,q_80,f_jpg/');
+        return url.replace('/upload/', '/upload/w_320,h_240,c_fill,q_auto,f_auto,dpr_auto/');
       }
     }
     
@@ -260,7 +260,7 @@ export default function (eleventyConfig) {
           // Extract the base URL without transformations or version
           const baseUrl = url.replace(/\/upload\/[^/]+\//, '/upload/');
           // Apply content image transformation
-          return `![${alt}](${baseUrl.replace('/upload/', '/upload/w_320,h_240,c_fill,q_80,f_jpg/')})`;
+          return `![${alt}](${baseUrl.replace('/upload/', '/upload/w_320,h_240,c_fill,q_auto,f_auto,dpr_auto/')})`;
         }
         
         return match;
