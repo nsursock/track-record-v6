@@ -69,6 +69,16 @@ layout: base.njk
                 <span>{% set words = content | wordcount %}{% set minutes = (words / 200) | round(0, 'ceil') %}{{ minutes }} min read</span>
               </div>
             </div>
+            
+            <!-- Listen to Article Button -->
+            <button id="listen-to-article" 
+                    x-show="$store.tts && $store.tts.isInitialized"
+                    class="btn btn-primary btn-sm gap-2 w-fit transition-all hover:transform hover:-translate-y-1" 
+                    @click="$store.tts.show()"
+                    style="display: none;">
+              <span class="icon-[tabler--headphones] size-4"></span>
+              Listen to Article
+            </button>
           </div>
 
           {% if tags %}
@@ -99,6 +109,238 @@ layout: base.njk
       </div>
     </div>
   </section>
+
+  <!-- Text-to-Speech Player -->
+  <div x-data="{ ttsPlayerDebug: false }" x-init="$watch('$store.tts.isPlayerVisible', value => { ttsPlayerDebug = value; console.log('TTS Player visibility changed:', value); })">
+    <!-- Floating Audio Player -->
+    <div x-show="$store.tts && $store.tts.isPlayerVisible" 
+         x-transition:enter="transition ease-out duration-300 transform"
+         x-transition:enter-start="translate-y-full opacity-0"
+         x-transition:enter-end="translate-y-0 opacity-100"
+         x-transition:leave="transition ease-in duration-200 transform"
+         x-transition:leave-start="translate-y-0 opacity-100"
+         x-transition:leave-end="translate-y-full opacity-0"
+         class="fixed bottom-4 z-50 bg-base-100 shadow-xl rounded-lg border border-primary/20 backdrop-blur-md left-4 right-4 sm:left-auto sm:right-4 sm:w-96"
+         style="display: none;">
+      
+      <div class="p-4">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="font-semibold text-primary flex items-center gap-2">
+            <span class="icon-[tabler--volume] size-5"></span>
+            Listen to Article
+          </h3>
+          <button @click="$store.tts.hide()" class="btn btn-circle btn-sm btn-ghost">
+            <span class="icon-[tabler--x] size-4"></span>
+          </button>
+        </div>
+        
+        <div class="space-y-3">
+          <!-- Progress bar -->
+          <div class="w-full">
+            <div class="flex justify-between text-xs text-secondary mb-1">
+              <span x-text="$store.tts.currentTime"></span>
+              <span x-text="$store.tts.totalTime"></span>
+            </div>
+            <div class="w-full bg-base-300 rounded-full h-2">
+              <div class="bg-gradient-to-r from-primary to-secondary h-2 rounded-full transition-all duration-300" 
+                   :style="`width: ${$store.tts.progressWidth}`"></div>
+            </div>
+          </div>
+
+          <!-- Main controls -->
+          <div class="flex items-center justify-center gap-2">
+            <button @click="$store.tts.previous()" 
+                    :disabled="!$store.tts.canGoPrevious"
+                    class="btn btn-circle btn-sm btn-ghost transition-all"
+                    :class="{ 'opacity-50 cursor-not-allowed': !$store.tts.canGoPrevious }">
+              <span class="icon-[tabler--player-skip-back] size-4"></span>
+            </button>
+            
+            <button @click="$store.tts.togglePlayPause()" 
+                    class="btn btn-circle btn-primary shadow-lg hover:shadow-xl transform hover:scale-105 transition-all">
+              <span :class="$store.tts.playButtonIcon + ' size-5'"></span>
+            </button>
+            
+            <button @click="$store.tts.next()" 
+                    :disabled="!$store.tts.canGoNext"
+                    class="btn btn-circle btn-sm btn-ghost transition-all"
+                    :class="{ 'opacity-50 cursor-not-allowed': !$store.tts.canGoNext }">
+              <span class="icon-[tabler--player-skip-forward] size-4"></span>
+            </button>
+          </div>
+
+          <!-- Settings -->
+          <div class="flex items-center justify-between text-sm">
+            <div class="flex items-center gap-2">
+              <span class="icon-[tabler--gauge] size-4 text-secondary"></span>
+              <span class="text-secondary">Speed:</span>
+              <select x-model="$store.tts.playbackRate" 
+                      @change="$store.tts.updateSettings()"
+                      data-select='{
+                        "placeholder": "1x",
+                        "toggleTag": "<button type=\"button\" aria-expanded=\"false\"></button>",
+                        "toggleClasses": "hs-select-disabled:pointer-events-none hs-select-disabled:opacity-50 relative py-1 px-2 pe-6 flex gap-x-1 text-nowrap w-16 cursor-pointer bg-base-200 border border-base-300 rounded text-start text-xs focus:outline-none focus:ring-1 focus:ring-primary",
+                        "dropdownClasses": "mb-1 bottom-full max-h-48 pb-1 px-1 space-y-0.5 z-50 w-20 bg-base-100 border border-base-300 rounded overflow-hidden overflow-y-auto shadow-lg",
+                        "optionClasses": "py-1 px-2 w-full text-xs text-base-content cursor-pointer hover:bg-base-200 rounded focus:outline-none focus:bg-base-200",
+                        "extraMarkup": "<div class=\"absolute top-1/2 end-1 -translate-y-1/2\"><svg class=\"shrink-0 size-2.5 text-base-content\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"m7 15 5 5 5-5\"/><path d=\"m7 9 5-5 5 5\"/></svg></div>"
+                      }'
+                      class="hidden">
+                <option value="0.5">0.5x</option>
+                <option value="0.75">0.75x</option>
+                <option value="1">1x</option>
+                <option value="1.25">1.25x</option>
+                <option value="1.5">1.5x</option>
+                <option value="2">2x</option>
+              </select>
+            </div>
+            
+            <button data-overlay="#tts-settings-modal" class="btn btn-circle btn-xs btn-ghost">
+              <span class="icon-[tabler--settings] size-3"></span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Debug info (remove in production) -->
+    <div x-show="ttsPlayerDebug" class="fixed bottom-4 left-4 bg-red-500 text-white p-2 text-xs rounded">
+      Player should be visible
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="tts-settings-modal" class="overlay modal overlay-open:opacity-100 overlay-open:duration-300 hidden" role="dialog" tabindex="-1" data-overlay-options='{"backdropClasses": "transition duration-300 fixed inset-0 bg-black/50 overlay-backdrop"}'>
+      <div class="modal-dialog overlay-open:opacity-100 overlay-open:duration-300">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3 class="modal-title">Audio Settings</h3>
+            <button type="button" class="btn btn-text btn-circle btn-sm absolute end-3 top-3" aria-label="Close" data-overlay="#tts-settings-modal">
+              <span class="icon-[tabler--x] size-4"></span>
+            </button>
+          </div>
+          
+          <div class="modal-body space-y-6">
+            <!-- Voice Selection -->
+            <div class="form-control">
+              <label class="label">
+                <span class="label-text font-medium">Voice</span>
+              </label>
+              <div class="relative">
+                <select x-model="$store.tts.selectedVoiceIndex" 
+                        @change="$store.tts.updateSettings()"
+                        data-select='{
+                          "placeholder": "Select a voice...",
+                          "toggleTag": "<button type=\"button\" aria-expanded=\"false\"></button>",
+                          "toggleClasses": "hs-select-disabled:pointer-events-none hs-select-disabled:opacity-50 relative py-3 ps-4 pe-9 flex gap-x-2 text-nowrap w-full cursor-pointer bg-base-100 border border-base-300 rounded-lg text-start text-sm focus:outline-none focus:ring-2 focus:ring-primary",
+                          "dropdownClasses": "mt-2 max-h-72 pb-1 px-1 space-y-0.5 z-20 w-full bg-base-100 border border-base-300 rounded-lg overflow-hidden overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-base-200 [&::-webkit-scrollbar-thumb]:bg-base-300",
+                          "optionClasses": "py-2 px-4 w-full text-sm text-base-content cursor-pointer hover:bg-base-200 rounded-lg focus:outline-none focus:bg-base-200",
+                          "optionTemplate": "<div class=\"flex justify-between items-center w-full\"><span data-title></span></div>",
+                          "extraMarkup": "<div class=\"absolute top-1/2 end-3 -translate-y-1/2\"><svg class=\"shrink-0 size-3.5 text-base-content\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"m7 15 5 5 5-5\"/><path d=\"m7 9 5-5 5 5\"/></svg></div>"
+                        }'
+                        class="hidden">
+                  <option value="" disabled>Select a voice...</option>
+                  <template x-for="(voice, index) in $store.tts.voices" :key="index">
+                    <option :value="index" x-text="`${voice.name} (${voice.lang})`"></option>
+                  </template>
+                </select>
+              </div>
+            </div>
+            
+            <!-- Playback Speed -->
+            <div class="form-control">
+              <label class="label">
+                <span class="label-text font-medium">Playback Speed</span>
+              </label>
+              <div class="relative">
+                <select x-model="$store.tts.playbackRate" 
+                        @change="$store.tts.updateSettings()"
+                        data-select='{
+                          "placeholder": "Select speed...",
+                          "toggleTag": "<button type=\"button\" aria-expanded=\"false\"></button>",
+                          "toggleClasses": "hs-select-disabled:pointer-events-none hs-select-disabled:opacity-50 relative py-3 ps-4 pe-9 flex gap-x-2 text-nowrap w-full cursor-pointer bg-base-100 border border-base-300 rounded-lg text-start text-sm focus:outline-none focus:ring-2 focus:ring-primary",
+                          "dropdownClasses": "mt-2 max-h-72 pb-1 px-1 space-y-0.5 z-20 w-full bg-base-100 border border-base-300 rounded-lg overflow-hidden overflow-y-auto",
+                          "optionClasses": "py-2 px-4 w-full text-sm text-base-content cursor-pointer hover:bg-base-200 rounded-lg focus:outline-none focus:bg-base-200",
+                          "extraMarkup": "<div class=\"absolute top-1/2 end-3 -translate-y-1/2\"><svg class=\"shrink-0 size-3.5 text-base-content\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"m7 15 5 5 5-5\"/><path d=\"m7 9 5-5 5 5\"/></svg></div>"
+                        }'
+                        class="hidden">
+                  <option value="0.5">0.5x (Slow)</option>
+                  <option value="0.75">0.75x</option>
+                  <option value="1">1x (Normal)</option>
+                  <option value="1.25">1.25x</option>
+                  <option value="1.5">1.5x</option>
+                  <option value="2">2x (Fast)</option>
+                </select>
+              </div>
+            </div>
+            
+            <!-- Pitch Control -->
+            <div class="form-control">
+              <label class="label">
+                <span class="label-text font-medium">Voice Pitch</span>
+                <span class="label-text-alt font-mono text-primary" x-text="$store.tts.pitch"></span>
+              </label>
+              <div class="px-1">
+                <input x-model="$store.tts.pitch" 
+                       @input="$store.tts.updateSettings()"
+                       type="range" 
+                       min="0.5" 
+                       max="2" 
+                       step="0.1" 
+                       class="range range-primary w-full"
+                       aria-label="Voice pitch control"/>
+                <div class="w-full flex justify-between text-xs px-2 mt-2 text-base-content/70">
+                  <span>0.5</span>
+                  <span>1.0</span>
+                  <span>1.5</span>
+                  <span>2.0</span>
+                </div>
+                <div class="w-full flex justify-between text-xs px-2 text-base-content/60">
+                  <span>Lower</span>
+                  <span>Normal</span>
+                  <span>Higher</span>
+                  <span>Highest</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Settings Checkboxes -->
+            <div class="space-y-4">
+              <div class="form-control">
+                <label class="label cursor-pointer">
+                  <span class="label-text font-medium">Highlight text while reading</span>
+                  <input x-model="$store.tts.highlightText" 
+                         type="checkbox" 
+                         class="checkbox checkbox-primary"/>
+                </label>
+                <div class="label">
+                  <span class="label-text-alt text-base-content/70">Visually highlight the current text being read</span>
+                </div>
+              </div>
+
+              <div class="form-control">
+                <label class="label cursor-pointer">
+                  <span class="label-text font-medium">Auto-scroll to current text</span>
+                  <input x-model="$store.tts.autoScroll" 
+                         type="checkbox" 
+                         class="checkbox checkbox-primary"/>
+                </label>
+                <div class="label">
+                  <span class="label-text-alt text-base-content/70">Automatically scroll to follow the reading progress</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-soft btn-secondary" data-overlay="#tts-settings-modal">Close</button>
+            <button type="button" class="btn btn-primary" @click="$store.tts.testVoice($store.tts.selectedVoiceIndex)">
+              <span class="icon-[tabler--volume] size-4 mr-2"></span>
+              Test Voice
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- Mobile Scrollspy -->
   <aside class="md:hidden w-full mb-8">

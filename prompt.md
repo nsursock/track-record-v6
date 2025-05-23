@@ -86,11 +86,11 @@ title: string
 
 # Final Instructions
 * Word Count: Aim for 2,500–3,000 words total
-* Tags: Select exactly 5 tags from this list: ["Art", "Basic Income", "Business", "Creativity", "Culture", "Economy", "Education", "Entertainment", "Environment", "Equality", "Family", "Fitness", "Future", "Health", "History", "Humor", "Justice", "Life", "Love", "Philosophy", "Politics", "Productivity", "Psychology", "Relationships", "Science", "Sexuality", "Society", "Wellness", "World"]
+* Tags: Select exactly 5 tags from this list: ["Art", "Basic Income", "Business", "Creativity", "Culture", "Economy", "Education", "Entertainment", "Environment", "Equality", "Family", "Fitness", "Future", "Health", "History", "Humor", "Justice", "Life", "Love", "Politics", "Productivity", "Psychology", "Relationships", "Science", "Sexuality", "Society", "Wellness", "World"]
   * First tag must be the primary category
   * Other four tags must be relevant secondary themes
   * Only use existing tags from the list
-* Slug: Create a 2–4 word slug using descriptive, lowercase keywords, separated by hyphens
+* Slug: Create a 2–3 word slug using descriptive, lowercase keywords, separated by hyphens
 * Think step by step through the writing process
 * Ensure all sections maintain a cohesive philosophical narrative
 * Prioritize logical rigor and philosophical depth while maintaining clarity
@@ -98,5 +98,4 @@ title: string
 
 # Prompt
 {{Insert prompt here}}
-
-why are some things hard to remember, and some things you'll never forget (chris isaak, nothing's changed)
+are the secrets of the govt regularly at stake in a democracy? (the strokes, the end has no end)

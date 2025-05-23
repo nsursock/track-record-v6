@@ -37,7 +37,7 @@ title: "Blog Posts"
           <div class="flex items-center gap-2">
             <span class="icon-[tabler--calendar] size-4 text-primary"></span>
             <time datetime="{{ post.data.published_date }}">
-              {{ post.data.published_date | date("MMMM D, YYYY") }}
+              {{ post.data.published_date | date("MMM d, yyyy") }}
             </time>
           </div>
         </div>
@@ -47,9 +47,13 @@ title: "Blog Posts"
         </p>
 
         <div class="card-actions justify-end mt-4">
-          <a href="{{ post.url }}" class="btn btn-primary btn-sm text-primary-content hover:bg-primary-focus">
+          <a href="{{ post.url }}" class="btn btn-primary btn-sm text-primary btn-soft hover:bg-primary-focus">
             Read More
             <span class="icon-[tabler--arrow-right] size-4"></span>
+          </a>
+          <a href="{{ post.url }}?listen=true" class="btn btn-secondary btn-soft btn-sm gap-2" title="Listen to this article">
+            <span class="icon-[tabler--headphones] size-4"></span>
+            Listen
           </a>
         </div>
       </div>
