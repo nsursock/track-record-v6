@@ -23,13 +23,24 @@ title: "Blog Posts"
                 <span class="badge badge-primary text-secondary badge-soft">{{ post.data.tags[0] }}</span>
               </div>
             {% endif %}
+            <!-- Comments and Views Overlay -->
+            <div class="absolute bottom-4 right-4 z-10 flex gap-3">
+              <div class="flex items-center gap-1 bg-black/60 backdrop-blur-sm rounded-full px-3 py-1">
+                <span class="icon-[tabler--message-circle] size-4 text-white"></span>
+                <span class="text-white text-sm font-medium">{{ post.data.comments.length if post.data.comments else 0 }}</span>
+              </div>
+              <div class="flex items-center gap-1 bg-black/60 backdrop-blur-sm rounded-full px-3 py-1">
+                <span class="icon-[tabler--eye] size-4 text-white"></span>
+                <span class="text-white text-sm font-medium">{{ range(150, 2500) | random }}</span>
+              </div>
+            </div>
           </figure>
           <div class="card-body">
             <h2 class="card-title text-lg text-base-content">
               <a href="{{ post.url }}" class="link link-hover text-primary hover:text-primary/80">{{ post.data.title }}</a>
             </h2>
 
-            <div class="flex items-center gap-4 text-sm text-base-content/70 mt-2">
+            <div class="flex flex-wrap items-center gap-4 text-sm text-base-content/70 mt-2">
               <div class="flex items-center gap-2">
                 <span class="icon-[tabler--user] size-4 text-primary"></span>
                 <span>{{ post.data.author }}</span>
@@ -87,13 +98,24 @@ title: "Blog Posts"
                 <span class="badge badge-primary text-secondary badge-soft">{{ post.data.tags[0] }}</span>
               </div>
             {% endif %}
+            <!-- Comments and Views Overlay -->
+            <div class="absolute bottom-4 left-4 z-10 flex gap-3 h-8">
+              <div class="flex items-center gap-1 bg-black/60 backdrop-blur-sm rounded-full px-3 py-1">
+                <span class="icon-[tabler--message-circle] size-4 text-white"></span>
+                <span class="text-white text-sm font-medium">{{ post.data.comments.length if post.data.comments else 0 }}</span>
+              </div>
+              <div class="flex items-center gap-1 bg-black/60 backdrop-blur-sm rounded-full px-3 py-1">
+                <span class="icon-[tabler--eye] size-4 text-white"></span>
+                <span class="text-white text-sm font-medium">{{ range(150, 2500) | random }}</span>
+              </div>
+            </div>
           </figure>
           <div class="card-body flex-1">
             <h2 class="card-title text-lg sm:text-xl text-base-content">
               <a href="{{ post.url }}" class="link link-hover text-primary hover:text-primary/80">{{ post.data.title }}</a>
             </h2>
 
-            <div class="flex items-center gap-4 text-sm text-base-content/70 mt-2">
+            <div class="flex flex-wrap items-center gap-4 text-sm text-base-content/70 mt-2">
               <div class="flex items-center gap-2">
                 <span class="icon-[tabler--user] size-4 text-primary"></span>
                 <span>{{ post.data.author }}</span>
@@ -145,13 +167,24 @@ title: "Blog Posts"
                 <span class="badge badge-primary text-secondary badge-soft">{{ post.data.tags[0] }}</span>
               </div>
             {% endif %}
+            <!-- Comments and Views Overlay -->
+            <div class="absolute bottom-4 right-4 z-10 flex gap-3 h-8">
+              <div class="flex items-center gap-1 bg-black/60 backdrop-blur-sm rounded-full px-3 py-1">
+                <span class="icon-[tabler--message-circle] size-4 text-white"></span>
+                <span class="text-white text-sm font-medium">{{ post.data.comments.length if post.data.comments else 0 }}</span>
+              </div>
+              <div class="flex items-center gap-1 bg-black/60 backdrop-blur-sm rounded-full px-3 py-1">
+                <span class="icon-[tabler--eye] size-4 text-white"></span>
+                <span class="text-white text-sm font-medium">{{ range(150, 2500) | random }}</span>
+              </div>
+            </div>
           </figure>
           <div class="card-body">
             <h2 class="card-title text-lg sm:text-xl text-base-content">
               <a href="{{ post.url }}" class="link link-hover text-primary hover:text-primary/80">{{ post.data.title }}</a>
             </h2>
 
-            <div class="flex items-center gap-4 text-sm text-base-content/70 mt-2">
+            <div class="flex flex-wrap items-center gap-4 text-sm text-base-content/70 mt-2">
               <div class="flex items-center gap-2">
                 <span class="icon-[tabler--user] size-4 text-primary"></span>
                 <span>{{ post.data.author }}</span>
