@@ -130,6 +130,7 @@ eleventyNavigation:
                             <span class="badge badge-primary badge-soft text-xs font-medium px-3 py-1">{{ post.data.tags[0] }}</span>
                           </div>
                         {% endif %}
+                        {% if site.env == 'development' %}
                         <!-- Comments and Views Overlay -->
                         <div class="absolute bottom-4 right-4 z-10 flex gap-3">
                           <div class="flex items-center gap-1 bg-black/60 backdrop-blur-sm rounded-full px-3 py-1">
@@ -141,6 +142,7 @@ eleventyNavigation:
                             <span class="text-white text-sm font-medium">{{ range(150, 2500) | random }}</span>
                           </div>
                         </div>
+                        {% endif %}
                         <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
                       </figure>
                       <div class="card-body p-6 space-y-4">
@@ -242,6 +244,7 @@ eleventyNavigation:
                     <span class="badge badge-primary text-secondary badge-soft">{{ post.data.tags[0] }}</span>
                   </div>
                 {% endif %}
+                {% if site.env == 'development' %}
                 <!-- Comments and Views Overlay -->
                 <div class="absolute bottom-4 left-4 z-10 flex gap-3 h-8">
                   <div class="flex items-center gap-1 bg-black/60 backdrop-blur-sm rounded-full px-3 py-1">
@@ -253,6 +256,7 @@ eleventyNavigation:
                     <span class="text-white text-sm font-medium">{{ range(150, 2500) | random }}</span>
                   </div>
                 </div>
+                {% endif %}
               </figure>
               <div class="card-body flex-1">
                 <h2 class="card-title text-lg sm:text-xl text-base-content">
@@ -309,6 +313,7 @@ eleventyNavigation:
                     <span class="badge badge-primary text-secondary badge-soft">{{ post.data.tags[0] }}</span>
                   </div>
                 {% endif %}
+                {% if site.env == 'development' %}
                 <!-- Comments and Views Overlay -->
                 <div class="absolute bottom-4 right-4 z-10 flex gap-3 h-8">
                   <div class="flex items-center gap-1 bg-black/60 backdrop-blur-sm rounded-full px-3 py-1">
@@ -320,6 +325,7 @@ eleventyNavigation:
                     <span class="text-white text-sm font-medium">{{ range(150, 2500) | random }}</span>
                   </div>
                 </div>
+                {% endif %}
               </figure>
               <div class="card-body">
                 <h2 class="card-title text-lg sm:text-xl text-base-content">
