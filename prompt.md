@@ -17,6 +17,14 @@ Write a compelling philosophical summary following these principles:
 4. Use philosophical terminology while maintaining clarity
 
 ## Article Structure
+### Key Takeaways (H2)
+* Include 3 or 4 key takeaways before the introduction
+* Each takeaway should be formatted as a bullet point with:
+  * Title: 2-4 words that capture the essence of the takeaway
+  * Content: 15-20 words that provide a concise insight or conclusion
+* These should preview the main philosophical insights readers will gain
+* Content directly under H2 heading (no H3 subsections)
+
 ### Introduction (H2)
 * Create 3 well-structured paragraphs that:
   1. Hook the reader with a philosophical question, paradox, or thought experiment
@@ -67,10 +75,36 @@ Format your response as a markdown file with the following front matter structur
 ---
 ai_model: string
 author: Nicolas Sursock
+comments:
+  - name: "string - top 1% commenter name"
+    avatar: "https://i.pravatar.cc/150?u=username"
+    published_date: "YYYY-MM-DDTHH:MM:SS+00:00"
+    text: "string - insightful comment about the philosophical argument"
+  - name: "string - top 1% commenter name"
+    avatar: "https://i.pravatar.cc/150?u=username"
+    published_date: "YYYY-MM-DDTHH:MM:SS+00:00"
+    text: "string - thought-provoking response to the main thesis"
+  - name: "string - top 1% commenter name"
+    avatar: "https://i.pravatar.cc/150?u=username"
+    published_date: "YYYY-MM-DDTHH:MM:SS+00:00"
+    text: "string - critical analysis or counterpoint to consider"
+  - name: "string - top 1% commenter name"
+    avatar: "https://i.pravatar.cc/150?u=username"
+    published_date: "YYYY-MM-DDTHH:MM:SS+00:00"
+    text: "string - connection to related philosophical concepts"
+  - name: "string - top 1% commenter name"
+    avatar: "https://i.pravatar.cc/150?u=username"
+    published_date: "YYYY-MM-DDTHH:MM:SS+00:00"
+    text: "string - practical application or real-world implication"
 inspired_by: "'{song name}' by '{artist name}' on '{album name}'"
 layout: post.njk
-meta_description: string
-published_date: YYYY-MM-DD HH:MM:SS+00:00
+meta_description_options:
+- option1: string
+- option2: string
+- option3: string
+- option4: string
+- option5: string
+published_date: "YYYY-MM-DDTHH:MM:SS+00:00"
 slug: string
 tags:
 - tag1 (primary)
@@ -78,7 +112,12 @@ tags:
 - tag3
 - tag4
 - tag5
-title: string
+title_options:
+- option1: string
+- option2: string
+- option3: string
+- option4: string
+- option5: string
 ---
 
 [Article content follows with H2 and H3 headings as specified in Article Structure]
@@ -98,4 +137,3 @@ title: string
 
 # Prompt
 {{Insert prompt here}}
-are the secrets of the govt regularly at stake in a democracy? (the strokes, the end has no end)

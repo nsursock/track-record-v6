@@ -1,0 +1,889 @@
+---
+layout: base.njk
+title: "Article Ratings Dashboard"
+description: "AI-powered content analysis dashboard with ratings for different criteria"
+pagination:
+  data: collections.posts
+  size: 100
+---
+
+<div class="container mx-auto px-4 py-8 bg-base-100">
+  <div class="mb-8">
+    <h1 class="text-4xl font-bold mb-4 text-center text-primary">
+      <span class="icon-[tabler--star] size-8 inline mr-2"></span>
+      Article Ratings Dashboard
+    </h1>
+    <p class="text-lg text-center text-secondary">AI-powered content analysis with detailed ratings and feedback</p>
+  </div>
+
+  <!-- Generate Ratings Button -->
+  <div class="mb-6 text-center">
+    <button 
+      id="generateRatings" 
+      class="btn btn-primary"
+      onclick="generateRatings()"
+    >
+      <span class="icon-[tabler--robot] size-5 mr-2"></span>
+      Generate AI Ratings
+    </button>
+  </div>
+
+  <!-- Mobile Sort Controls -->
+  <div class="block md:hidden mb-4">
+    <div class="flex items-center justify-between">
+      <h2 class="text-lg font-semibold">
+        <span class="icon-[tabler--list] size-5 mr-2"></span>
+        Articles
+      </h2>
+      <div class="dropdown relative inline-flex">
+        <button id="mobile-sort-dropdown" type="button" class="dropdown-toggle btn btn-sm btn-outline" aria-haspopup="menu" aria-expanded="false" aria-label="Sort">
+          <span class="icon-[tabler--arrows-sort] size-4 mr-1"></span>
+          Sort
+          <span class="icon-[tabler--chevron-down] dropdown-open:rotate-180 size-4 ml-1"></span>
+        </button>
+        <ul class="dropdown-menu dropdown-open:opacity-100 hidden min-w-52 p-2 shadow border border-base-300 bg-base-100 z-[1]" role="menu" aria-orientation="vertical" aria-labelledby="mobile-sort-dropdown">
+          <li><button onclick="sortArticles('title', 'asc')" class="dropdown-item text-left">Title A-Z</button></li>
+          <li><button onclick="sortArticles('title', 'desc')" class="dropdown-item text-left">Title Z-A</button></li>
+          <li><button onclick="sortArticles('date', 'desc')" class="dropdown-item text-left">Newest First</button></li>
+          <li><button onclick="sortArticles('date', 'asc')" class="dropdown-item text-left">Oldest First</button></li>
+          <li class="dropdown-title"><span>Ratings</span></li>
+          <li><button onclick="sortArticles('overall', 'desc')" class="dropdown-item text-left">Overall Rating ↓</button></li>
+          <li><button onclick="sortArticles('overall', 'asc')" class="dropdown-item text-left">Overall Rating ↑</button></li>
+          <li><button onclick="sortArticles('writing_quality', 'desc')" class="dropdown-item text-left">Writing Quality ↓</button></li>
+          <li><button onclick="sortArticles('originality', 'desc')" class="dropdown-item text-left">Originality ↓</button></li>
+          <li><button onclick="sortArticles('engagement', 'desc')" class="dropdown-item text-left">Engagement ↓</button></li>
+          <li><button onclick="sortArticles('depth', 'desc')" class="dropdown-item text-left">Depth ↓</button></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Desktop Table Header -->
+  <div class="hidden md:block mb-4">
+    <h2 class="text-xl font-semibold">
+      <span class="icon-[tabler--table] size-6 mr-2"></span>
+      Content Analysis Results
+    </h2>
+  </div>
+
+  <!-- Ratings Table - Desktop -->
+  <div class="overflow-x-auto hidden md:block">
+    <table class="table table-zebra w-full">
+      <thead>
+        <tr class="bg-base-300">
+          <th class="text-left">
+            <button onclick="sortArticles('title')" class="flex items-center space-x-1 hover:bg-base-200 p-2 rounded transition-colors">
+              <span>Article</span>
+              <span id="sort-title" class="icon-[tabler--selector] size-3 opacity-50"></span>
+            </button>
+          </th>
+          <th class="text-center">
+            <button onclick="sortArticles('writing_quality')" class="flex items-center justify-center space-x-1 hover:bg-base-200 p-2 rounded transition-colors w-full">
+              <span>Writing Quality</span>
+              <span id="sort-writing_quality" class="icon-[tabler--selector] size-3 opacity-50"></span>
+            </button>
+          </th>
+          <th class="text-center">
+            <button onclick="sortArticles('originality')" class="flex items-center justify-center space-x-1 hover:bg-base-200 p-2 rounded transition-colors w-full">
+              <span>Originality</span>
+              <span id="sort-originality" class="icon-[tabler--selector] size-3 opacity-50"></span>
+            </button>
+          </th>
+          <th class="text-center">
+            <button onclick="sortArticles('engagement')" class="flex items-center justify-center space-x-1 hover:bg-base-200 p-2 rounded transition-colors w-full">
+              <span>Engagement</span>
+              <span id="sort-engagement" class="icon-[tabler--selector] size-3 opacity-50"></span>
+            </button>
+          </th>
+          <th class="text-center">
+            <button onclick="sortArticles('depth')" class="flex items-center justify-center space-x-1 hover:bg-base-200 p-2 rounded transition-colors w-full">
+              <span>Depth</span>
+              <span id="sort-depth" class="icon-[tabler--selector] size-3 opacity-50"></span>
+            </button>
+          </th>
+          <th class="text-center">
+            <button onclick="sortArticles('overall')" class="flex items-center justify-center space-x-1 hover:bg-base-200 p-2 rounded transition-colors w-full">
+              <span>Overall</span>
+              <span id="sort-overall" class="icon-[tabler--selector] size-3 opacity-50"></span>
+            </button>
+          </th>
+          <th class="text-center">Actions</th>
+        </tr>
+      </thead>
+      <tbody id="ratingsTableBody">
+        {% for post in collections.posts %}
+        <tr class="hover:bg-base-100">
+          <!-- Article Info -->
+          <td class="min-w-0">
+            <div class="flex items-center space-x-3">
+              <div class="avatar avatar-placeholder">
+                <div class="bg-primary text-primary-content w-10 rounded-full">
+                  <span class="text-md uppercase">
+                    {% if post.data.author %}
+                      {% set initials = post.data.author.split(' ') %}
+                      {% if initials.length > 1 %}
+                        {{ initials[0] | first | upper }}{{ initials[1] | first | upper }}
+                      {% else %}
+                        {{ post.data.author | first | upper }}
+                      {% endif %}
+                    {% else %}
+                      {{ post.data.title | first | upper }}
+                    {% endif %}
+                  </span>
+                </div>
+              </div>
+              <div class="min-w-0 flex-1">
+                <div class="font-semibold text-sm truncate max-w-xs" title="{{ post.data.title }}">
+                  {{ post.data.title }}
+                </div>
+                <div class="text-xs text-secondary truncate max-w-xs">
+                  {{ post.data.published_date | date("MMM dd, yyyy") }}
+                  {% if post.data.author %} • {{ post.data.author }}{% endif %}
+                </div>
+              </div>
+            </div>
+          </td>
+          
+          <!-- Rating Columns -->
+          <td class="text-center">
+            <div class="rating-display" 
+                 data-article="{{ post.data.slug }}"
+                 data-criteria="writing_quality">
+              <div class="loading loading-dots loading-sm"></div>
+            </div>
+          </td>
+          <td class="text-center">
+            <div class="rating-display" 
+                 data-article="{{ post.data.slug }}"
+                 data-criteria="originality">
+              <div class="loading loading-dots loading-sm"></div>
+            </div>
+          </td>
+          <td class="text-center">
+            <div class="rating-display" 
+                 data-article="{{ post.data.slug }}"
+                 data-criteria="engagement">
+              <div class="loading loading-dots loading-sm"></div>
+            </div>
+          </td>
+          <td class="text-center">
+            <div class="rating-display" 
+                 data-article="{{ post.data.slug }}"
+                 data-criteria="depth">
+              <div class="loading loading-dots loading-sm"></div>
+            </div>
+          </td>
+          <td class="text-center">
+            <div class="overall-rating" data-article="{{ post.data.slug }}">
+              <div class="loading loading-dots loading-sm"></div>
+            </div>
+          </td>
+          
+          <!-- Actions -->
+          <td class="text-center">
+            <button 
+              class="btn btn-sm btn-ghost"
+              data-overlay="#analysisModal"
+              data-article="{{ post.data.slug }}"
+              aria-haspopup="dialog" 
+              aria-expanded="false" 
+              aria-controls="analysisModal"
+              title="View detailed analysis"
+              onclick="loadModalData('{{ post.data.slug }}')"
+              disabled
+            >
+              <span class="icon-[tabler--eye] size-4"></span>
+            </button>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Mobile Card Layout -->
+  <div class="block md:hidden space-y-4">
+    {% for post in collections.posts %}
+    <div class="card bg-base-100 shadow-md">
+      <div class="card-body p-4">
+        <!-- Article Header -->
+        <div class="flex items-center space-x-3 mb-4">
+          <div class="avatar avatar-placeholder">
+            <div class="bg-primary text-primary-content w-12 rounded-full">
+              <span class="text-lg uppercase">
+                {% if post.data.author %}
+                  {% set initials = post.data.author.split(' ') %}
+                  {% if initials.length > 1 %}
+                    {{ initials[0] | first | upper }}{{ initials[1] | first | upper }}
+                  {% else %}
+                    {{ post.data.author | first | upper }}
+                  {% endif %}
+                {% else %}
+                  {{ post.data.title | first | upper }}
+                {% endif %}
+              </span>
+            </div>
+          </div>
+          <div class="flex-1 min-w-0">
+            <h3 class="font-semibold text-base mb-1" title="{{ post.data.title }}">
+              {{ post.data.title }}
+            </h3>
+            <div class="text-sm text-secondary">
+              {{ post.data.published_date | date("MMM dd, yyyy") }}
+              {% if post.data.author %} • {{ post.data.author }}{% endif %}
+            </div>
+          </div>
+          <button 
+            class="btn btn-sm btn-circle btn-ghost"
+            data-overlay="#analysisModal"
+            data-article="{{ post.data.slug }}"
+            aria-haspopup="dialog" 
+            aria-expanded="false" 
+            aria-controls="analysisModal"
+            title="View detailed analysis"
+            onclick="loadModalData('{{ post.data.slug }}')"
+            disabled
+          >
+            <span class="icon-[tabler--eye] size-4"></span>
+          </button>
+        </div>
+
+        <!-- Overall Rating -->
+        <div class="flex items-center justify-between mb-4 p-3 bg-base-200 rounded-lg">
+          <span class="font-medium">Overall Rating</span>
+          <div class="overall-rating" data-article="{{ post.data.slug }}">
+            <div class="loading loading-dots loading-sm"></div>
+          </div>
+        </div>
+
+        <!-- Criteria Ratings Grid -->
+        <div class="grid grid-cols-2 gap-3">
+          <div class="flex flex-col items-center p-3 bg-base-200 rounded-lg">
+            <span class="text-xs font-medium text-center mb-2">Writing Quality</span>
+            <div class="rating-display" 
+                 data-article="{{ post.data.slug }}"
+                 data-criteria="writing_quality">
+              <div class="loading loading-dots loading-sm"></div>
+            </div>
+          </div>
+          
+          <div class="flex flex-col items-center p-3 bg-base-200 rounded-lg">
+            <span class="text-xs font-medium text-center mb-2">Originality</span>
+            <div class="rating-display" 
+                 data-article="{{ post.data.slug }}"
+                 data-criteria="originality">
+              <div class="loading loading-dots loading-sm"></div>
+            </div>
+          </div>
+          
+          <div class="flex flex-col items-center p-3 bg-base-200 rounded-lg">
+            <span class="text-xs font-medium text-center mb-2">Engagement</span>
+            <div class="rating-display" 
+                 data-article="{{ post.data.slug }}"
+                 data-criteria="engagement">
+              <div class="loading loading-dots loading-sm"></div>
+            </div>
+          </div>
+          
+          <div class="flex flex-col items-center p-3 bg-base-200 rounded-lg">
+            <span class="text-xs font-medium text-center mb-2">Depth</span>
+            <div class="rating-display" 
+                 data-article="{{ post.data.slug }}"
+                 data-criteria="depth">
+              <div class="loading loading-dots loading-sm"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- Modal for Detailed Analysis -->
+<div id="analysisModal" class="overlay modal overlay-open:opacity-100 overlay-open:duration-300 hidden" role="dialog" tabindex="-1">
+  <div class="modal-dialog overlay-open:opacity-100 overlay-open:duration-300 modal-dialog-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modalTitle">
+          <span class="icon-[tabler--analysis] size-6 mr-2"></span>
+          Detailed Analysis
+        </h3>
+        <button type="button" class="btn btn-text btn-circle btn-sm absolute end-3 top-3" aria-label="Close" data-overlay="#analysisModal">
+          <span class="icon-[tabler--x] size-4"></span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div id="modalContent" class="space-y-6">
+          <!-- Content will be populated by JavaScript -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Tooltip for ratings -->
+<div id="ratingTooltip" class="tooltip-content hidden absolute z-50 p-4 bg-base-200 border border-base-300 rounded-lg shadow-lg max-w-sm">
+  <div class="font-semibold mb-2" id="tooltipTitle"></div>
+  <div class="text-sm space-y-2">
+    <div>
+      <strong class="text-success">Strengths:</strong>
+      <ul id="tooltipStrengths" class="list-disc list-inside mt-1 text-xs"></ul>
+    </div>
+    <div>
+      <strong class="text-warning">Suggestions:</strong>
+      <ul id="tooltipSuggestions" class="list-disc list-inside mt-1 text-xs"></ul>
+    </div>
+  </div>
+</div>
+
+<script>
+let ratingsData = {};
+let currentSort = { field: null, direction: 'asc' };
+let articlesData = [];
+
+// Initialize articles data from the page
+document.addEventListener('DOMContentLoaded', function() {
+  // Extract article data from the DOM
+  articlesData = [
+    {% for post in collections.posts %}
+    {
+      slug: '{{ post.data.slug }}',
+      title: '{{ post.data.title | escape }}',
+      author: '{% if post.data.author %}{{ post.data.author | escape }}{% endif %}',
+      date: '{{ post.data.published_date }}',
+      dateFormatted: '{{ post.data.published_date | date("MMM dd, yyyy") }}'
+    }{% if not loop.last %},{% endif %}
+    {% endfor %}
+  ];
+  
+  loadRatings();
+});
+
+// Sort articles function
+function sortArticles(field, direction = null) {
+  // Toggle direction if same field, or use provided direction
+  if (direction) {
+    currentSort.direction = direction;
+  } else if (currentSort.field === field) {
+    currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+  } else {
+    currentSort.direction = 'desc'; // Default to desc for ratings, asc for text
+    if (field === 'title') currentSort.direction = 'asc';
+  }
+  
+  currentSort.field = field;
+  
+  // Update sort indicators
+  updateSortIndicators();
+  
+  // Sort the articles
+  const sortedArticles = [...articlesData].sort((a, b) => {
+    let valueA, valueB;
+    
+    switch (field) {
+      case 'title':
+        valueA = a.title.toLowerCase();
+        valueB = b.title.toLowerCase();
+        break;
+      case 'date':
+        valueA = new Date(a.date);
+        valueB = new Date(b.date);
+        break;
+      case 'overall':
+        valueA = ratingsData[a.slug]?.overall_rating || 0;
+        valueB = ratingsData[b.slug]?.overall_rating || 0;
+        break;
+      default: // rating criteria
+        valueA = ratingsData[a.slug]?.criteria[field]?.score || 0;
+        valueB = ratingsData[b.slug]?.criteria[field]?.score || 0;
+    }
+    
+    if (valueA < valueB) return currentSort.direction === 'asc' ? -1 : 1;
+    if (valueA > valueB) return currentSort.direction === 'asc' ? 1 : -1;
+    return 0;
+  });
+  
+  // Re-render both table and mobile views
+  rerenderArticles(sortedArticles);
+}
+
+// Update sort indicators in table headers
+function updateSortIndicators() {
+  // Reset all indicators
+  document.querySelectorAll('[id^="sort-"]').forEach(indicator => {
+    indicator.className = 'icon-[tabler--selector] size-3 opacity-50';
+  });
+  
+  // Set active indicator
+  if (currentSort.field) {
+    const indicator = document.getElementById(`sort-${currentSort.field}`);
+    if (indicator) {
+      const iconClass = currentSort.direction === 'asc' 
+        ? 'icon-[tabler--chevron-up]' 
+        : 'icon-[tabler--chevron-down]';
+      indicator.className = `${iconClass} size-3 opacity-100`;
+    }
+  }
+}
+
+// Re-render articles in sorted order
+function rerenderArticles(sortedArticles) {
+  const tableBody = document.getElementById('ratingsTableBody');
+  const mobileContainer = document.querySelector('.block.md\\:hidden.space-y-4');
+  
+  // Clear existing content
+  if (tableBody) tableBody.innerHTML = '';
+  if (mobileContainer) mobileContainer.innerHTML = '';
+  
+  // Re-render each article
+  sortedArticles.forEach(article => {
+    if (tableBody) {
+      tableBody.appendChild(createTableRow(article));
+    }
+    if (mobileContainer) {
+      mobileContainer.appendChild(createMobileCard(article));
+    }
+  });
+  
+  // Re-apply ratings display
+  updateRatingsDisplay();
+}
+
+// Create table row for an article
+function createTableRow(article) {
+  const initials = getAuthorInitials(article.author, article.title);
+  const row = document.createElement('tr');
+  row.className = 'hover:bg-base-100';
+  row.innerHTML = `
+    <td class="min-w-0">
+      <div class="flex items-center space-x-3">
+        <div class="avatar avatar-placeholder">
+          <div class="bg-primary text-primary-content w-10 rounded-full">
+            <span class="text-md uppercase">${initials}</span>
+          </div>
+        </div>
+        <div class="min-w-0 flex-1">
+          <div class="font-semibold text-sm truncate max-w-xs" title="${article.title}">
+            ${article.title}
+          </div>
+          <div class="text-xs text-secondary truncate max-w-xs">
+            ${article.dateFormatted}${article.author ? ' • ' + article.author : ''}
+          </div>
+        </div>
+      </div>
+    </td>
+    <td class="text-center">
+      <div class="rating-display" data-article="${article.slug}" data-criteria="writing_quality">
+        <div class="loading loading-dots loading-sm"></div>
+      </div>
+    </td>
+    <td class="text-center">
+      <div class="rating-display" data-article="${article.slug}" data-criteria="originality">
+        <div class="loading loading-dots loading-sm"></div>
+      </div>
+    </td>
+    <td class="text-center">
+      <div class="rating-display" data-article="${article.slug}" data-criteria="engagement">
+        <div class="loading loading-dots loading-sm"></div>
+      </div>
+    </td>
+    <td class="text-center">
+      <div class="rating-display" data-article="${article.slug}" data-criteria="depth">
+        <div class="loading loading-dots loading-sm"></div>
+      </div>
+    </td>
+    <td class="text-center">
+      <div class="overall-rating" data-article="${article.slug}">
+        <div class="loading loading-dots loading-sm"></div>
+      </div>
+    </td>
+    <td class="text-center">
+      <button 
+        class="btn btn-sm btn-ghost"
+        data-overlay="#analysisModal"
+        data-article="${article.slug}"
+        aria-haspopup="dialog" 
+        aria-expanded="false" 
+        aria-controls="analysisModal"
+        title="View detailed analysis"
+        onclick="loadModalData('${article.slug}')"
+        disabled
+      >
+        <span class="icon-[tabler--eye] size-4"></span>
+      </button>
+    </td>
+  `;
+  return row;
+}
+
+// Create mobile card for an article
+function createMobileCard(article) {
+  const initials = getAuthorInitials(article.author, article.title);
+  const card = document.createElement('div');
+  card.className = 'card bg-base-100 shadow-md';
+  card.innerHTML = `
+    <div class="card-body p-4">
+      <div class="flex items-center space-x-3 mb-4">
+        <div class="avatar avatar-placeholder">
+          <div class="bg-primary text-primary-content w-12 rounded-full">
+            <span class="text-lg uppercase">${initials}</span>
+          </div>
+        </div>
+        <div class="flex-1 min-w-0">
+          <h3 class="font-semibold text-base mb-1" title="${article.title}">
+            ${article.title}
+          </h3>
+          <div class="text-sm text-secondary">
+            ${article.dateFormatted}${article.author ? ' • ' + article.author : ''}
+          </div>
+        </div>
+        <button 
+          class="btn btn-sm btn-circle btn-ghost"
+          data-overlay="#analysisModal"
+          data-article="${article.slug}"
+          aria-haspopup="dialog" 
+          aria-expanded="false" 
+          aria-controls="analysisModal"
+          title="View detailed analysis"
+          onclick="loadModalData('${article.slug}')"
+          disabled
+        >
+          <span class="icon-[tabler--eye] size-4"></span>
+        </button>
+      </div>
+      <div class="flex items-center justify-between mb-4 p-3 bg-base-200 rounded-lg">
+        <span class="font-medium">Overall Rating</span>
+        <div class="overall-rating" data-article="${article.slug}">
+          <div class="loading loading-dots loading-sm"></div>
+        </div>
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <div class="flex flex-col items-center p-3 bg-base-200 rounded-lg">
+          <span class="text-xs font-medium text-center mb-2">Writing Quality</span>
+          <div class="rating-display" data-article="${article.slug}" data-criteria="writing_quality">
+            <div class="loading loading-dots loading-sm"></div>
+          </div>
+        </div>
+        <div class="flex flex-col items-center p-3 bg-base-200 rounded-lg">
+          <span class="text-xs font-medium text-center mb-2">Originality</span>
+          <div class="rating-display" data-article="${article.slug}" data-criteria="originality">
+            <div class="loading loading-dots loading-sm"></div>
+          </div>
+        </div>
+        <div class="flex flex-col items-center p-3 bg-base-200 rounded-lg">
+          <span class="text-xs font-medium text-center mb-2">Engagement</span>
+          <div class="rating-display" data-article="${article.slug}" data-criteria="engagement">
+            <div class="loading loading-dots loading-sm"></div>
+          </div>
+        </div>
+        <div class="flex flex-col items-center p-3 bg-base-200 rounded-lg">
+          <span class="text-xs font-medium text-center mb-2">Depth</span>
+          <div class="rating-display" data-article="${article.slug}" data-criteria="depth">
+            <div class="loading loading-dots loading-sm"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+  return card;
+}
+
+// Helper function to get author initials
+function getAuthorInitials(author, title) {
+  if (author) {
+    const words = author.split(' ');
+    if (words.length > 1) {
+      return (words[0].charAt(0) + words[1].charAt(0)).toUpperCase();
+    } else {
+      return author.charAt(0).toUpperCase();
+    }
+  } else {
+    return title.charAt(0).toUpperCase();
+  }
+}
+
+// Generate star rating HTML
+function generateStarRating(rating, criteria, articleSlug) {
+  const stars = [];
+  const fullStars = Math.floor(rating);
+  const hasHalfStar = rating % 1 >= 0.5;
+  
+  for (let i = 1; i <= 5; i++) {
+    if (i <= fullStars) {
+      stars.push(`<span class="icon-[tabler--star-filled] size-4 text-warning cursor-pointer hover:scale-110 transition-transform" data-rating="${i}"></span>`);
+    } else if (i === fullStars + 1 && hasHalfStar) {
+      stars.push(`<span class="icon-[tabler--star-half-filled] size-4 text-warning cursor-pointer hover:scale-110 transition-transform" data-rating="${i}"></span>`);
+    } else {
+      stars.push(`<span class="icon-[tabler--star] size-4 text-base-300 cursor-pointer hover:scale-110 transition-transform" data-rating="${i}"></span>`);
+    }
+  }
+  
+  return `
+    <div class="rating-stars flex items-center justify-center space-x-1" 
+         data-article="${articleSlug}" 
+         data-criteria="${criteria}"
+         onmouseenter="showTooltip(event, '${criteria}', '${articleSlug}')"
+         onmouseleave="hideTooltip()">
+      ${stars.join('')}
+      <span class="ml-2 text-xs font-semibold">${rating.toFixed(1)}</span>
+    </div>
+  `;
+}
+
+// Generate overall rating badge
+function generateOverallRating(rating) {
+  let badgeClass = 'badge-error';
+  let label = 'Poor';
+  
+  if (rating >= 4.5) {
+    badgeClass = 'badge-success';
+    label = 'Excellent';
+  } else if (rating >= 4.0) {
+    badgeClass = 'badge-info';
+    label = 'Very Good';
+  } else if (rating >= 3.5) {
+    badgeClass = 'badge-warning';
+    label = 'Good';
+  } else if (rating >= 3.0) {
+    badgeClass = 'badge-secondary';
+    label = 'Fair';
+  }
+  
+  return `
+    <div class="badge ${badgeClass} badge-lg">
+      <span class="icon-[tabler--star] size-3 mr-1"></span>
+      ${rating.toFixed(1)} - ${label}
+    </div>
+  `;
+}
+
+// Show tooltip with detailed information
+function showTooltip(event, criteria, articleSlug) {
+  const tooltip = document.getElementById('ratingTooltip');
+  const data = ratingsData[articleSlug]?.criteria[criteria];
+  
+  if (!data) return;
+  
+  document.getElementById('tooltipTitle').textContent = `${criteria.replace('_', ' ').toUpperCase()} - ${data.score}/5`;
+  
+  const strengthsList = document.getElementById('tooltipStrengths');
+  const suggestionsList = document.getElementById('tooltipSuggestions');
+  
+  strengthsList.innerHTML = data.strengths.map(s => `<li>${s}</li>`).join('');
+  suggestionsList.innerHTML = data.suggestions.map(s => `<li>${s}</li>`).join('');
+  
+  tooltip.classList.remove('hidden');
+  tooltip.style.left = event.pageX + 10 + 'px';
+  tooltip.style.top = event.pageY - 10 + 'px';
+}
+
+// Hide tooltip
+function hideTooltip() {
+  document.getElementById('ratingTooltip').classList.add('hidden');
+}
+
+// Load modal data before showing
+function loadModalData(articleSlug) {
+  const data = ratingsData[articleSlug];
+  if (!data) {
+    console.log('No data found for article:', articleSlug);
+    return;
+  }
+  
+  document.getElementById('modalTitle').innerHTML = `
+    <span class="icon-[tabler--analysis] size-6 mr-2"></span>
+    Analysis: ${data.title}
+  `;
+  
+  const content = document.getElementById('modalContent');
+  content.innerHTML = `
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      ${Object.entries(data.criteria).map(([criteria, info]) => `
+        <div class="card bg-base-100">
+          <div class="card-body">
+            <h4 class="card-title text-lg">${criteria.replace('_', ' ').toUpperCase()}</h4>
+            <div class="mb-3">
+              ${generateStarRating(info.score, criteria, articleSlug)}
+            </div>
+            <div class="space-y-3">
+              <div>
+                <h5 class="font-semibold text-success mb-2">Strengths:</h5>
+                <ul class="list-disc list-inside text-sm space-y-1">
+                  ${info.strengths.map(s => `<li>${s}</li>`).join('')}
+                </ul>
+              </div>
+              <div>
+                <h5 class="font-semibold text-warning mb-2">Suggestions:</h5>
+                <ul class="list-disc list-inside text-sm space-y-1">
+                  ${info.suggestions.map(s => `<li>${s}</li>`).join('')}
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+    
+    <div class="mt-6 p-4 bg-base-100 rounded-lg">
+      <h4 class="font-semibold mb-2">Overall Assessment:</h4>
+      <p class="text-sm">${data.overall_assessment}</p>
+    </div>
+  `;
+}
+
+// Load ratings data
+async function loadRatings() {
+  try {
+    const response = await fetch('/api/ratings.json');
+    if (response.ok) {
+      ratingsData = await response.json();
+      updateRatingsDisplay();
+    } else {
+      console.log('No ratings data found. Generate ratings first.');
+    }
+  } catch (error) {
+    console.error('Error loading ratings:', error);
+  }
+}
+
+// Update the ratings display in the table
+function updateRatingsDisplay() {
+  document.querySelectorAll('.rating-display').forEach(element => {
+    const articleSlug = element.dataset.article;
+    const criteria = element.dataset.criteria;
+    const data = ratingsData[articleSlug];
+    
+    if (data && data.criteria[criteria]) {
+      element.innerHTML = generateStarRating(data.criteria[criteria].score, criteria, articleSlug);
+    } else {
+      element.innerHTML = '<span class="text-base-300">Not rated</span>';
+    }
+  });
+  
+  document.querySelectorAll('.overall-rating').forEach(element => {
+    const articleSlug = element.dataset.article;
+    const data = ratingsData[articleSlug];
+    
+    if (data) {
+      element.innerHTML = generateOverallRating(data.overall_rating);
+    } else {
+      element.innerHTML = '<span class="text-base-300">Not rated</span>';
+    }
+  });
+
+  // Enable action buttons for articles with ratings data
+  document.querySelectorAll('button[data-article]').forEach(button => {
+    const articleSlug = button.dataset.article;
+    const data = ratingsData[articleSlug];
+    
+    if (data) {
+      button.disabled = false;
+      button.title = 'View detailed analysis';
+      button.classList.remove('btn-disabled');
+    } else {
+      button.disabled = true;
+      button.title = 'No analysis available - generate ratings first';
+      button.classList.add('btn-disabled');
+    }
+  });
+}
+
+// Generate ratings using AI
+async function generateRatings() {
+  const button = document.getElementById('generateRatings');
+  const originalText = button.innerHTML;
+  
+  button.innerHTML = '<span class="loading loading-spinner loading-sm mr-2"></span>Generating...';
+  button.disabled = true;
+  
+  try {
+    const response = await fetch('/api/generate-ratings', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+    
+    if (response.ok) {
+      await loadRatings();
+      // Show success notification
+      const notification = document.createElement('div');
+      notification.className = 'alert alert-success fixed top-4 right-4 z-50 w-auto';
+      notification.innerHTML = `
+        <span class="icon-[tabler--check] size-5"></span>
+        <span>Ratings generated successfully!</span>
+      `;
+      document.body.appendChild(notification);
+      setTimeout(() => notification.remove(), 3000);
+    } else {
+      throw new Error('Failed to generate ratings');
+    }
+  } catch (error) {
+    console.error('Error generating ratings:', error);
+    // Show error notification
+    const notification = document.createElement('div');
+    notification.className = 'alert alert-error fixed top-4 right-4 z-50 w-auto';
+    notification.innerHTML = `
+      <span class="icon-[tabler--x] size-5"></span>
+      <span>Failed to generate ratings</span>
+    `;
+    document.body.appendChild(notification);
+    setTimeout(() => notification.remove(), 3000);
+  } finally {
+    button.innerHTML = originalText;
+    button.disabled = false;
+  }
+}
+
+// FlyonUI mobile sort dropdown toggle
+// Ensures the mobile sort dropdown opens/closes as expected
+(function() {
+  document.addEventListener('DOMContentLoaded', function() {
+    const sortBtn = document.getElementById('mobile-sort-dropdown');
+    const sortMenu = sortBtn?.nextElementSibling;
+
+    if (sortBtn && sortMenu) {
+      sortBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        sortMenu.classList.toggle('hidden');
+      });
+
+      // Close dropdown when clicking outside
+      document.addEventListener('click', function(e) {
+        if (!sortBtn.contains(e.target) && !sortMenu.contains(e.target)) {
+          sortMenu.classList.add('hidden');
+        }
+      });
+
+      // Close dropdown after selecting a sort option
+      sortMenu.querySelectorAll('button').forEach(btn => {
+        btn.addEventListener('click', () => {
+          sortMenu.classList.add('hidden');
+        });
+      });
+    }
+  });
+})();
+</script>
+
+<style>
+.tooltip-content {
+  z-index: 1000;
+}
+
+.rating-stars:hover {
+  transform: scale(1.05);
+  transition: transform 0.2s ease;
+}
+
+/* Additional modal backdrop styling to ensure proper dimming */
+.overlay.modal {
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+}
+
+.overlay.modal.overlay-open\:opacity-100 {
+  background-color: rgba(0, 0, 0, 0.6);
+}
+</style> 
