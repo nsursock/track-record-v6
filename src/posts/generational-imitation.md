@@ -1,6 +1,6 @@
 ---
 ai_model: GPT-4.1
-author: Nicolas Sursock
+author: Joseph Accaoui
 inspired_by: "'Cat's in the Cradle' by 'Ugly Kid Joe' on 'America's Least Wanted'"
 layout: post.njk
 meta_description: "Can we escape our parents' influence? This essay examines the tension between inherited patterns and existential self-creation."

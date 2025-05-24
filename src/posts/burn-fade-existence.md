@@ -1,6 +1,6 @@
 ---
 ai_model: claude-3.5-sonnet
-author: Nicolas Sursock
+author: Camille Debbane
 inspired_by: "'I'll Sleep When I'm Dead' by 'Bon Jovi' on 'Slippery When Wet'"
 layout: post.njk
 meta_description: "Find your rhythm between passion and peace. Learn how to balance intensity and tranquility for lasting happiness."

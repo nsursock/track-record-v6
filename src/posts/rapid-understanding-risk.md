@@ -6,13 +6,6 @@ layout: post.njk
 meta_description: "Find out the hidden dangers of quick thinking and how to avoid common pitfalls while staying sharp and creative."
 published_date: 2025-05-23 02:23:17+00:00
 slug: rapid-understanding-risk
-
-# Tags
-# - Psychology (primary)
-# - Culture
-# - Education
-# - Society
-# - Entertainment
 tags:
 - Psychology
 - Culture

@@ -542,6 +542,387 @@ layout: base.njk
             </div>
           </div>
 
+            <!-- Related Articles Section -->
+            <section class="mt-12 mb-8">
+              <div class="border-t border-base-300/20 pt-8">
+                <h2 class="text-2xl font-bold text-primary mb-6 flex items-center gap-2">
+                  <span class="icon-[tabler--bookmark] size-6"></span>
+                  Related Articles
+                </h2>
+                
+                {% set currentPostTags = tags or [] %}
+                {% set currentPostSlug = page.fileSlug %}
+                {% set relatedPosts = collections.posts | relatedPosts(currentPostSlug, currentPostTags, 3) %}
+                
+                {% if relatedPosts.length > 0 %}
+                  <!-- Mobile Layout: Carousel of Vertical Cards -->
+                  <div class="block md:hidden">
+                    <div class="flex gap-4 overflow-x-auto pb-4 -mx-4 px-4 snap-x snap-mandatory scrollbar-hide">
+                      {% for post in relatedPosts %}
+                        <div class="card bg-base-100 shadow-base-300/20 hover:shadow-base-300/40 transition-all duration-200 border-2 border-base-300/60 flex-shrink-0 w-72 snap-center">
+                          <figure class="relative h-40 overflow-hidden">
+                            {% set firstImage = post.rawContent | matchImage %}
+                            <img 
+                              src="{{ firstImage.url if firstImage else 'https://picsum.photos/seed/' + post.data.title | slug + '/400/300' }}" 
+                              alt="{{ firstImage.alt if firstImage else post.data.title }}"
+                              class="w-full h-full object-cover"
+                            />
+                            {% if post.data.tags and post.data.tags.length > 0 %}
+                              <div class="absolute top-3 left-3 z-10">
+                                <span class="badge badge-secondary badge-soft text-xs">{{ post.data.tags[0] }}</span>
+                              </div>
+                            {% endif %}
+                          </figure>
+                          <div class="card-body p-4">
+                            <h3 class="card-title text-base text-base-content leading-tight line-clamp-2">
+                              <a href="{{ post.url }}" class="link link-hover text-primary hover:text-primary/80">{{ post.data.title }}</a>
+                            </h3>
+                            
+                            <div class="flex items-center gap-3 text-xs text-base-content/60 mt-2">
+                              <div class="flex items-center gap-1">
+                                <span class="icon-[tabler--user] size-3"></span>
+                                <span>{{ post.data.author }}</span>
+                              </div>
+                              <div class="flex items-center gap-1">
+                                <span class="icon-[tabler--calendar] size-3"></span>
+                                <time datetime="{{ post.data.published_date }}">
+                                  {{ post.data.published_date | date("MMM dd, yyyy") }}
+                                </time>
+                              </div>
+                            </div>
+                            
+                            <p class="text-sm text-base-content/70 line-clamp-2 mt-2">
+                              {{ post.data.meta_description }}
+                            </p>
+                            
+                            <!-- Show additional tags -->
+                            {% if post.data.tags and post.data.tags.length > 1 %}
+                              <div class="flex flex-wrap gap-1 mt-3">
+                                {% for tag in post.data.tags %}
+                                  {% if loop.index > 1 and loop.index <= 5 %}
+                                    <span class="badge badge-soft badge-xs text-secondary">{{ tag }}</span>
+                                  {% endif %}
+                                {% endfor %}
+                              </div>
+                            {% endif %}
+                          </div>
+                        </div>
+                      {% endfor %}
+                    </div>
+                  </div>
+
+                  <!-- Desktop Layout: 1 Horizontal Card (full width) + 2 Vertical Cards -->
+                  <div class="hidden md:block">
+                    <div class="space-y-6">
+                      <!-- Top Row: 1 Horizontal Card spanning full width -->
+                      {% for post in relatedPosts %}
+                        {% if loop.index == 1 %}
+                          <div class="card card-side bg-base-100 shadow-base-300/20 hover:shadow-base-300/40 transition-all duration-200 border-2 border-base-300/60">
+                            <figure class="relative w-48 sm:w-56 flex-shrink-0">
+                              {% set firstImage = post.rawContent | matchImage %}
+                              <img 
+                                src="{{ firstImage.url if firstImage else 'https://picsum.photos/seed/' + post.data.title | slug + '/400/300' }}" 
+                                alt="{{ firstImage.alt if firstImage else post.data.title }}"
+                                class="w-full h-full object-cover"
+                              />
+                              {% if post.data.tags and post.data.tags.length > 0 %}
+                                <div class="absolute top-3 left-3 z-10">
+                                  <span class="badge badge-secondary badge-soft text-xs">{{ post.data.tags[0] }}</span>
+                                </div>
+                              {% endif %}
+                            </figure>
+                            <div class="card-body flex-1 p-4">
+                              <h3 class="card-title text-lg sm:text-xl text-base-content leading-tight line-clamp-2">
+                                <a href="{{ post.url }}" class="link link-hover text-primary hover:text-primary/80">{{ post.data.title }}</a>
+                              </h3>
+                              
+                              <div class="flex items-center gap-3 text-sm text-base-content/60 mt-2">
+                                <div class="flex items-center gap-1">
+                                  <span class="icon-[tabler--user] size-4"></span>
+                                  <span>{{ post.data.author }}</span>
+                                </div>
+                                <div class="flex items-center gap-1">
+                                  <span class="icon-[tabler--calendar] size-4"></span>
+                                  <time datetime="{{ post.data.published_date }}">
+                                    {{ post.data.published_date | date("MMM dd, yyyy") }}
+                                  </time>
+                                </div>
+                              </div>
+                              
+                              <p class="text-sm text-base-content/70 line-clamp-3 mt-3">
+                                {{ post.data.meta_description }}
+                              </p>
+                              
+                              <!-- Show additional tags -->
+                              {% if post.data.tags and post.data.tags.length > 1 %}
+                                <div class="flex flex-wrap gap-1 mt-3">
+                                  {% for tag in post.data.tags %}
+                                    {% if loop.index > 1 and loop.index <= 5 %}
+                                      <span class="badge badge-soft badge-xs text-secondary">{{ tag }}</span>
+                                    {% endif %}
+                                  {% endfor %}
+                                </div>
+                              {% endif %}
+                            </div>
+                          </div>
+                        {% endif %}
+                      {% endfor %}
+                      
+                      <!-- Bottom Row: 2 Vertical Cards -->
+                      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        {% for post in relatedPosts %}
+                          {% if loop.index > 1 and loop.index <= 3 %}
+                            <div class="card bg-base-100 shadow-base-300/20 hover:shadow-base-300/40 transition-all duration-200 border-2 border-base-300/60">
+                              <figure class="relative h-40 overflow-hidden">
+                                {% set firstImage = post.rawContent | matchImage %}
+                                <img 
+                                  src="{{ firstImage.url if firstImage else 'https://picsum.photos/seed/' + post.data.title | slug + '/400/300' }}" 
+                                  alt="{{ firstImage.alt if firstImage else post.data.title }}"
+                                  class="w-full h-full object-cover"
+                                />
+                                {% if post.data.tags and post.data.tags.length > 0 %}
+                                  <div class="absolute top-3 left-3 z-10">
+                                    <span class="badge badge-secondary badge-soft text-xs">{{ post.data.tags[0] }}</span>
+                                  </div>
+                                {% endif %}
+                              </figure>
+                              <div class="card-body p-4">
+                                <h3 class="card-title text-base text-base-content leading-tight line-clamp-2">
+                                  <a href="{{ post.url }}" class="link link-hover text-primary hover:text-primary/80">{{ post.data.title }}</a>
+                                </h3>
+                                
+                                <div class="flex items-center gap-3 text-xs text-base-content/60 mt-2">
+                                  <div class="flex items-center gap-1">
+                                    <span class="icon-[tabler--user] size-3"></span>
+                                    <span>{{ post.data.author }}</span>
+                                  </div>
+                                  <div class="flex items-center gap-1">
+                                    <span class="icon-[tabler--calendar] size-3"></span>
+                                    <time datetime="{{ post.data.published_date }}">
+                                      {{ post.data.published_date | date("MMM dd, yyyy") }}
+                                    </time>
+                                  </div>
+                                </div>
+                                
+                                <p class="text-sm text-base-content/70 line-clamp-2 mt-2">
+                                  {{ post.data.meta_description }}
+                                </p>
+                                
+                                <!-- Show additional tags -->
+                                {% if post.data.tags and post.data.tags.length > 1 %}
+                                  <div class="flex flex-wrap gap-1 mt-3">
+                                    {% for tag in post.data.tags %}
+                                      {% if loop.index > 1 and loop.index <= 5 %}
+                                        <span class="badge badge-soft badge-xs text-secondary">{{ tag }}</span>
+                                      {% endif %}
+                                    {% endfor %}
+                                  </div>
+                                {% endif %}
+                              </div>
+                            </div>
+                          {% endif %}
+                        {% endfor %}
+                      </div>
+                    </div>
+                  </div>
+                {% else %}
+                  <!-- Fallback: Show recent posts if no related posts found -->
+                  <!-- Mobile Layout: Carousel of Vertical Cards -->
+                  <div class="block md:hidden">
+                    <div class="flex gap-4 overflow-x-auto pb-4 -mx-4 px-4 snap-x snap-mandatory scrollbar-hide">
+                      {% for post in collections.posts | reverse %}
+                        {% if post.fileSlug != currentPostSlug and loop.index <= 3 %}
+                          <div class="card bg-base-100 shadow-base-300/20 hover:shadow-base-300/40 transition-all duration-200 border-2 border-base-300/60 flex-shrink-0 w-72 snap-center">
+                            <figure class="relative h-40 overflow-hidden">
+                              {% set firstImage = post.rawContent | matchImage %}
+                              <img 
+                                src="{{ firstImage.url if firstImage else 'https://picsum.photos/seed/' + post.data.title | slug + '/400/300' }}" 
+                                alt="{{ firstImage.alt if firstImage else post.data.title }}"
+                                class="w-full h-full object-cover"
+                              />
+                              {% if post.data.tags and post.data.tags.length > 0 %}
+                                <div class="absolute top-3 left-3 z-10">
+                                  <span class="badge badge-secondary badge-soft text-xs">{{ post.data.tags[0] }}</span>
+                                </div>
+                              {% endif %}
+                            </figure>
+                            <div class="card-body p-4">
+                              <h3 class="card-title text-base text-base-content leading-tight line-clamp-2">
+                                <a href="{{ post.url }}" class="link link-hover text-primary hover:text-primary/80">{{ post.data.title }}</a>
+                              </h3>
+                              
+                              <div class="flex items-center gap-3 text-xs text-base-content/60 mt-2">
+                                <div class="flex items-center gap-1">
+                                  <span class="icon-[tabler--user] size-3"></span>
+                                  <span>{{ post.data.author }}</span>
+                                </div>
+                                <div class="flex items-center gap-1">
+                                  <span class="icon-[tabler--calendar] size-3"></span>
+                                  <time datetime="{{ post.data.published_date }}">
+                                    {{ post.data.published_date | date("MMM dd, yyyy") }}
+                                  </time>
+                                </div>
+                              </div>
+                              
+                              <p class="text-sm text-base-content/70 line-clamp-2 mt-2">
+                                {{ post.data.meta_description }}
+                              </p>
+                              
+                              <!-- Show additional tags -->
+                              {% if post.data.tags and post.data.tags.length > 1 %}
+                                <div class="flex flex-wrap gap-1 mt-3">
+                                  {% for tag in post.data.tags %}
+                                    {% if loop.index > 1 and loop.index <= 5 %}
+                                      <span class="badge badge-soft badge-xs text-secondary">{{ tag }}</span>
+                                    {% endif %}
+                                  {% endfor %}
+                                </div>
+                              {% endif %}
+                            </div>
+                          </div>
+                        {% endif %}
+                      {% endfor %}
+                    </div>
+                  </div>
+
+                  <!-- Desktop Layout: 1 Horizontal Card (full width) + 2 Vertical Cards -->
+                  <div class="hidden md:block">
+                    <div class="space-y-6">
+                      <!-- Top Row: 1 Horizontal Card spanning full width -->
+                      {% for post in collections.posts | reverse %}
+                        {% if post.fileSlug != currentPostSlug and loop.index == 1 %}
+                          <div class="card card-side bg-base-100 shadow-base-300/20 hover:shadow-base-300/40 transition-all duration-200 border-2 border-base-300/60">
+                            <figure class="relative w-48 sm:w-56 flex-shrink-0">
+                              {% set firstImage = post.rawContent | matchImage %}
+                              <img 
+                                src="{{ firstImage.url if firstImage else 'https://picsum.photos/seed/' + post.data.title | slug + '/400/300' }}" 
+                                alt="{{ firstImage.alt if firstImage else post.data.title }}"
+                                class="w-full h-full object-cover"
+                              />
+                              {% if post.data.tags and post.data.tags.length > 0 %}
+                                <div class="absolute top-3 left-3 z-10">
+                                  <span class="badge badge-secondary badge-soft text-xs">{{ post.data.tags[0] }}</span>
+                                </div>
+                              {% endif %}
+                            </figure>
+                            <div class="card-body flex-1 p-4">
+                              <h3 class="card-title text-lg sm:text-xl text-base-content leading-tight line-clamp-2">
+                                <a href="{{ post.url }}" class="link link-hover text-primary hover:text-primary/80">{{ post.data.title }}</a>
+                              </h3>
+                              
+                              <div class="flex items-center gap-3 text-sm text-base-content/60 mt-2">
+                                <div class="flex items-center gap-1">
+                                  <span class="icon-[tabler--user] size-4"></span>
+                                  <span>{{ post.data.author }}</span>
+                                </div>
+                                <div class="flex items-center gap-1">
+                                  <span class="icon-[tabler--calendar] size-4"></span>
+                                  <time datetime="{{ post.data.published_date }}">
+                                    {{ post.data.published_date | date("MMM dd, yyyy") }}
+                                  </time>
+                                </div>
+                              </div>
+                              
+                              <p class="text-sm text-base-content/70 line-clamp-3 mt-3">
+                                {{ post.data.meta_description }}
+                              </p>
+                              
+                              <!-- Show additional tags -->
+                              {% if post.data.tags and post.data.tags.length > 1 %}
+                                <div class="flex flex-wrap gap-1 mt-3">
+                                  {% for tag in post.data.tags %}
+                                    {% if loop.index > 1 and loop.index <= 5 %}
+                                      <span class="badge badge-soft badge-xs text-secondary">{{ tag }}</span>
+                                    {% endif %}
+                                  {% endfor %}
+                                </div>
+                              {% endif %}
+                            </div>
+                          </div>
+                        {% endif %}
+                      {% endfor %}
+                      
+                      <!-- Bottom Row: 2 Vertical Cards -->
+                      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        {% for post in collections.posts | reverse %}
+                          {% if post.fileSlug != currentPostSlug and loop.index > 1 and loop.index <= 3 %}
+                            <div class="card bg-base-100 shadow-base-300/20 hover:shadow-base-300/40 transition-all duration-200 border-2 border-base-300/60">
+                              <figure class="relative h-40 overflow-hidden">
+                                {% set firstImage = post.rawContent | matchImage %}
+                                <img 
+                                  src="{{ firstImage.url if firstImage else 'https://picsum.photos/seed/' + post.data.title | slug + '/400/300' }}" 
+                                  alt="{{ firstImage.alt if firstImage else post.data.title }}"
+                                  class="w-full h-full object-cover"
+                                />
+                                {% if post.data.tags and post.data.tags.length > 0 %}
+                                  <div class="absolute top-3 left-3 z-10">
+                                    <span class="badge badge-secondary badge-soft text-xs">{{ post.data.tags[0] }}</span>
+                                  </div>
+                                {% endif %}
+                              </figure>
+                              <div class="card-body p-4">
+                                <h3 class="card-title text-base text-base-content leading-tight line-clamp-2">
+                                  <a href="{{ post.url }}" class="link link-hover text-primary hover:text-primary/80">{{ post.data.title }}</a>
+                                </h3>
+                                
+                                <div class="flex items-center gap-3 text-xs text-base-content/60 mt-2">
+                                  <div class="flex items-center gap-1">
+                                    <span class="icon-[tabler--user] size-3"></span>
+                                    <span>{{ post.data.author }}</span>
+                                  </div>
+                                  <div class="flex items-center gap-1">
+                                    <span class="icon-[tabler--calendar] size-3"></span>
+                                    <time datetime="{{ post.data.published_date }}">
+                                      {{ post.data.published_date | date("MMM dd, yyyy") }}
+                                    </time>
+                                  </div>
+                                </div>
+                                
+                                <p class="text-sm text-base-content/70 line-clamp-2 mt-2">
+                                  {{ post.data.meta_description }}
+                                </p>
+                                
+                                <!-- Show additional tags -->
+                                {% if post.data.tags and post.data.tags.length > 1 %}
+                                  <div class="flex flex-wrap gap-1 mt-3">
+                                    {% for tag in post.data.tags %}
+                                      {% if loop.index > 1 and loop.index <= 5 %}
+                                        <span class="badge badge-soft badge-xs text-secondary">{{ tag }}</span>
+                                      {% endif %}
+                                    {% endfor %}
+                                  </div>
+                                {% endif %}
+                              </div>
+                            </div>
+                          {% endif %}
+                        {% endfor %}
+                      </div>
+                    </div>
+                  </div>
+                {% endif %}
+                
+                <!-- More Articles Links -->
+                <div class="flex flex-col sm:flex-row gap-4 mt-8">
+                  <a href="/posts/" class="btn btn-outline btn-primary">
+                    <span class="icon-[tabler--list] size-4"></span>
+                    View All Articles
+                  </a>
+                  {% if author %}
+                    <a href="/posts/?author={{ author | slug }}" class="btn btn-outline btn-secondary">
+                      <span class="icon-[tabler--user] size-4"></span>
+                      More by {{ author }}
+                    </a>
+                  {% endif %}
+                  {% if tags and tags.length > 0 %}
+                    <a href="/posts/?tag={{ tags[0] | slug }}" class="btn btn-outline btn-secondary">
+                      <span class="icon-[tabler--tag] size-4"></span>
+                      More in {{ tags[0] }}
+                    </a>
+                  {% endif %}
+                </div>
+              </div>
+            </section>
+
             <!-- Newsletter Section -->
             <section class="mt-12 pt-8 border-t border-primary/10">
               <div class="card bg-primary/5 border border-primary/10">
@@ -593,9 +974,9 @@ layout: base.njk
                         <h3 class="text-sm font-semibold text-primary">Tags</h3>
                         <div class="flex flex-wrap gap-2">
                           {% for tag in tags %}
-                            <span class="badge badge-outline badge-secondary">
+                            <a href="/posts/?tag={{ tag | slug }}" class="badge badge-outline badge-secondary hover:badge-secondary transition-colors">
                               {{ tag }}
-                            </span>
+                            </a>
                           {% endfor %}
                         </div>
                       </div>
@@ -704,9 +1085,9 @@ layout: base.njk
                     <h3 class="text-sm font-semibold text-primary">Tags</h3>
                     <div class="flex flex-wrap gap-2">
                       {% for tag in tags %}
-                        <span class="badge badge-outline badge-secondary">
+                        <a href="/posts/?tag={{ tag | slug }}" class="badge badge-outline badge-secondary hover:badge-secondary transition-colors">
                           {{ tag }}
-                        </span>
+                        </a>
                       {% endfor %}
                     </div>
                   </div>

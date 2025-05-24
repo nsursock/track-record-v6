@@ -344,6 +344,49 @@ export default function (eleventyConfig) {
     return words.length;
   });
 
+  // Add filter to find related posts based on shared tags
+  eleventyConfig.addFilter("relatedPosts", function(allPosts, currentPostSlug, currentPostTags, limit = 3) {
+    if (!allPosts || !currentPostTags || currentPostTags.length === 0) {
+      return [];
+    }
+    
+    const relatedPosts = [];
+    
+    // Find posts with shared tags
+    allPosts.forEach(post => {
+      if (post.fileSlug !== currentPostSlug && post.data.tags) {
+        let sharedTagCount = 0;
+        post.data.tags.forEach(tag => {
+          if (currentPostTags.includes(tag)) {
+            sharedTagCount++;
+          }
+        });
+        
+        if (sharedTagCount > 0) {
+          relatedPosts.push({
+            ...post,
+            sharedTagCount: sharedTagCount
+          });
+        }
+      }
+    });
+    
+    // Sort by shared tag count (descending) and then by date (newest first)
+    relatedPosts.sort((a, b) => {
+      if (b.sharedTagCount !== a.sharedTagCount) {
+        return b.sharedTagCount - a.sharedTagCount;
+      }
+      return new Date(b.data.published_date) - new Date(a.data.published_date);
+    });
+    
+    return relatedPosts.slice(0, limit);
+  });
+
+  // Add filter for unique array values
+  eleventyConfig.addFilter("unique", function(arr) {
+    return [...new Set(arr)];
+  });
+
   // If you have other `addPlugin` calls, it's important that UpgradeHelper is added last.
   // eleventyConfig.addPlugin(UpgradeHelper);
 

@@ -1,6 +1,6 @@
 ---
 ai_model: claude-4-sonnet-thinking
-author: Nicolas Sursock
+author: Paul Barakat
 inspired_by: "'Alfie' by 'Joss Stone' on 'The Soul Sessions'"
 layout: post.njk
 meta_description: "Uncover the surprising truth about kindness, cruelty, and wisdom. Learn why real wisdom requires both heart and strength."
