@@ -8,6 +8,7 @@ import auth from "./stores/auth.js"
 
 window.Alpine = Alpine
 window.auth = auth  // Make auth store globally accessible
+window.notifications = notifications  // Make notifications store globally accessible
 
 
 // Add Alpine extensions here
@@ -64,133 +65,6 @@ Alpine.data('themes', () => ({
         this.selectedTheme = theme;
     }
 }))
-
-// Testimonials Carousel
-document.addEventListener('alpine:init', () => {
-  Alpine.data('testimonials', () => ({
-    currentIndex: 0,
-    testimonials: [
-      {
-        id: 1,
-        name: "Sarah Johnson",
-        role: "Music Enthusiast",
-        avatar: "https://i.pravatar.cc/150?img=1",
-        text: "Track Record has completely transformed how I discover and organize my music. The playlist creation tools are intuitive and make it easy to create the perfect mix for any occasion. The music personality feature is spot on and has helped me discover artists I never would have found otherwise. I love how I can share my playlists with friends and see what they're listening to.",
-        rating: 5,
-        date: "2 days ago"
-      },
-      {
-        id: 2,
-        name: "Michael Chen",
-        role: "DJ & Producer",
-        avatar: "https://i.pravatar.cc/150?img=2",
-        text: "As a DJ, I need to stay organized with my music collection. Track Record's playlist management and discovery features have been invaluable for my work. The analytics help me understand what tracks are resonating with my audience. I can easily create different playlists for different venues and events.",
-        rating: 5,
-        date: "1 week ago"
-      },
-      {
-        id: 3,
-        name: "Emma Rodriguez",
-        role: "Music Blogger",
-        avatar: "https://i.pravatar.cc/150?img=3",
-        text: "The music personality feature is incredibly accurate! It's helped me discover so many new artists that perfectly match my taste. The interface is beautiful and easy to use, making it simple to organize my music collection. I love how I can create different playlists for different moods and activities.",
-        rating: 4.5,
-        date: "2 weeks ago"
-      },
-      {
-        id: 4,
-        name: "David Wilson",
-        role: "Music Teacher",
-        avatar: "https://i.pravatar.cc/150?img=4",
-        text: "I use Track Record to create playlists for my music classes. The sharing features make it easy to distribute music to my students, and the organization tools are perfect for lesson planning. The ability to add notes to each track helps me remember why I included it in the playlist.",
-        rating: 5,
-        date: "3 weeks ago"
-      },
-      {
-        id: 5,
-        name: "Lisa Thompson",
-        role: "Podcast Host",
-        avatar: "https://i.pravatar.cc/150?img=5",
-        text: "The music discovery features have been a game-changer for my podcast. I can easily find new tracks that fit my show's theme and create playlists for each episode. The mood-based organization helps me find the perfect background music for different segments.",
-        rating: 5,
-        date: "1 month ago"
-      },
-      {
-        id: 6,
-        name: "James Miller",
-        role: "Music Producer",
-        avatar: "https://i.pravatar.cc/150?img=6",
-        text: "The playlist organization and sharing features are top-notch. I can easily collaborate with other producers and share my work with clients. The ability to create different versions of playlists for different purposes has streamlined my workflow. Highly recommended!",
-        rating: 4.5,
-        date: "1 month ago"
-      },
-      {
-        id: 7,
-        name: "Alex Rivera",
-        role: "Music Therapist",
-        avatar: "https://i.pravatar.cc/150?img=7",
-        text: "Track Record has revolutionized how I create therapeutic playlists for my clients. The mood-based organization and sharing features are perfect for my practice. I can easily create different playlists for different therapeutic goals and share them with my clients. The ability to add notes and track progress has been invaluable.",
-        rating: 5,
-        date: "3 days ago"
-      },
-      {
-        id: 8,
-        name: "Sophie Zhang",
-        role: "Radio Host",
-        avatar: "https://i.pravatar.cc/150?img=8",
-        text: "The music discovery algorithm is brilliant! It's helped me find fresh tracks for my radio show that I wouldn't have discovered otherwise. The interface is sleek and professional, making it easy to organize my playlists. I love how I can create different playlists for different segments of my show.",
-        rating: 4.5,
-        date: "5 days ago"
-      },
-      {
-        id: 9,
-        name: "Carlos Mendez",
-        role: "Music Store Owner",
-        avatar: "https://i.pravatar.cc/150?img=9",
-        text: "I use Track Record to curate playlists for my store. The analytics help me understand what's trending, and the sharing features make it easy to promote new releases. The ability to create different playlists for different sections of the store has improved the shopping experience for my customers.",
-        rating: 5,
-        date: "1 week ago"
-      },
-      {
-        id: 10,
-        name: "Aisha Patel",
-        role: "Yoga Instructor",
-        avatar: "https://i.pravatar.cc/150?img=10",
-        text: "Creating the perfect yoga playlists has never been easier. The mood-based organization and seamless transitions between tracks are exactly what I needed for my classes. I can easily create different playlists for different types of yoga sessions. The ability to share playlists with my students has been a great addition to my teaching.",
-        rating: 5,
-        date: "2 weeks ago"
-      },
-      {
-        id: 11,
-        name: "Marcus O'Connor",
-        role: "Music Journalist",
-        avatar: "https://i.pravatar.cc/150?img=11",
-        text: "As a music journalist, I need to stay on top of new releases. Track Record's discovery features and playlist organization have become essential tools for my work. The ability to create different playlists for different articles helps me stay organized. The sharing features make it easy to collaborate with other journalists.",
-        rating: 4.5,
-        date: "3 weeks ago"
-      },
-      {
-        id: 12,
-        name: "Nina Kowalski",
-        role: "Event Planner",
-        avatar: "https://i.pravatar.cc/150?img=12",
-        text: "The playlist creation tools have transformed how I handle music for events. I can easily create and share playlists with clients, and the mood-based organization is perfect for different event types. The ability to create different versions of playlists for different parts of the event has been incredibly helpful.",
-        rating: 5,
-        date: "1 month ago"
-      }
-    ],
-    
-    getStarClass(rating, index) {
-      if (index < rating) {
-        return 'icon-[tabler--star]';
-      } else if (index - 0.5 === rating) {
-        return 'icon-[tabler--star-half]';
-      } else {
-        return 'icon-[tabler--star] opacity-30';
-      }
-    }
-  }));
-});
 
 // Scrollspy Component
 document.addEventListener('alpine:init', () => {
@@ -341,21 +215,68 @@ document.addEventListener('alpine:init', () => {
 
     async init() {
       try {
+        // Check if we have a session first
         const session = JSON.parse(localStorage.getItem('session'));
-        if (session) {
-          const response = await fetch('/api/credentials?action=profile', {
-            headers: {
-              'Authorization': `Bearer ${session.access_token}`
-            }
-          });
+        if (!session) {
+          return;
+        }
 
-          if (response.ok) {
-            const data = await response.json();
-            this.user = data.user;
+        // Check if token is expired
+        const tokenExp = session.expires_at;
+        const now = Math.floor(Date.now() / 1000);
+        
+        let accessToken = session.access_token;
+        
+        // If token is expired or will expire soon, try to refresh it
+        if (!tokenExp || tokenExp < now + 300) { // 5 minute buffer
+          console.log('Token expired or expiring soon, attempting refresh...');
+          try {
+            const refreshResponse = await fetch('/api/credentials?action=refresh', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ 
+                refresh_token: session.refresh_token 
+              })
+            });
+
+            if (refreshResponse.ok) {
+              const refreshData = await refreshResponse.json();
+              if (refreshData.session) {
+                localStorage.setItem('session', JSON.stringify(refreshData.session));
+                accessToken = refreshData.session.access_token;
+                console.log('Token refreshed successfully');
+              }
+            } else {
+              console.error('Token refresh failed, clearing session');
+              localStorage.removeItem('session');
+              return;
+            }
+          } catch (refreshError) {
+            console.error('Token refresh error:', refreshError);
+            localStorage.removeItem('session');
+            return;
           }
         }
+
+        // Now make the profile request with valid token
+        const response = await fetch('/api/credentials?action=profile', {
+          headers: {
+            'Authorization': `Bearer ${accessToken}`
+          }
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          this.user = data.user;
+        } else if (response.status === 401 || response.status === 403) {
+          console.log('Profile request failed with auth error, clearing session');
+          localStorage.removeItem('session');
+        }
       } catch (error) {
-        console.error('Error:', error);
+        console.error('Header init error:', error);
+        localStorage.removeItem('session');
       }
     },
 

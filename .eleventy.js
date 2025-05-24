@@ -20,6 +20,7 @@ const globalSiteData = {
   description: "A blog sharing deep insights and critiques on music, past and present.",
   locale: 'en',
   baseUrl: baseUrl,
+  env: process.env.NODE_ENV || (baseUrl.includes('localhost') ? 'development' : 'production'),
 }
 
 export default function (eleventyConfig) {

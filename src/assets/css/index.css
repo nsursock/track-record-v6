@@ -34,7 +34,6 @@
 @import "./themes/caramellatte.css";
 /* End of DaisyUI themes with custom fonts */
 
-
 @plugin "flyonui"{
     themes: cyberpunk --default, light, dark, gourmet, corporate, luxury, soft, black, ghibli, mintlify, shadcn, slack, valorant, acid, caramellatte;
 }

@@ -4,7 +4,8 @@
     <!-- Title and tagline at start -->
     <div class="navbar-start items-center justify-between max-md:w-full">
       <a class="link text-base-content link-neutral no-underline flex items-center gap-2" href="/">
-        <span class="icon-[tabler--music] size-6 text-primary"></span>
+        <span class="icon-[tabler--fish-bone] size-10 ml-3 sm:ml-4 text-primary">
+        </span>
         <div class="hidden sm:flex items-center gap-2 whitespace-nowrap">
           <span class="text-xl font-bold text-base-content">Track Record</span>
           <span class="text-sm uppercase tracking-wider text-secondary">Musical Wisdom</span>
@@ -23,7 +24,7 @@
     <!-- Desktop navigation items -->
     <div class="navbar-end hidden md:flex items-center gap-4">
       {% include "switcher.njk" %}
-      
+
       <!-- User dropdown -->
       <div class="dropdown relative inline-flex [--auto-close:inside] [--offset:8] [--placement:bottom-end]" x-show="user">
         <button id="dropdown-scrollable" type="button" class="cursor-pointer dropdown-toggle flex items-center" aria-haspopup="menu" aria-expanded="false" aria-label="Dropdown">
@@ -115,7 +116,7 @@
     <div class="collapse-content flex flex-col gap-4 p-4 bg-base-100">
       <!-- Theme switcher -->
       {% include "switcher.njk" %}
-      
+
       <!-- User section -->
       <template x-if="user">
         <div class="flex items-center justify-center gap-4 p-2">

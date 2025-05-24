@@ -5,11 +5,11 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "npx @11ty/eleventy --serve",
-    "dev": "npx @11ty/eleventy --serve",
-    "serve": "npx @11ty/eleventy --serve",
-    "watch": "npx @11ty/eleventy --watch",
-    "build": "npx @11ty/eleventy",
+    "start": "NODE_ENV=development npx @11ty/eleventy --serve",
+    "dev": "NODE_ENV=development npx @11ty/eleventy --serve",
+    "serve": "NODE_ENV=development npx @11ty/eleventy --serve",
+    "watch": "NODE_ENV=development npx @11ty/eleventy --watch",
+    "build": "NODE_ENV=production npx @11ty/eleventy",
     "clean": "del-cli _site"
   },
   "keywords": [],

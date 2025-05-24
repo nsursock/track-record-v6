@@ -1,0 +1,24 @@
+- id: "faq-start"
+  question: "How do I start tracking my music?"
+  answer: "Getting started is easy! Simply create an account and connect your music streaming service. You can then start creating playlists, tracking your listening habits, and discovering new music."
+  active: true
+
+- id: "faq-import"
+  question: "Can I import my existing playlists?"
+  answer: "Yes! We support importing playlists from popular streaming services like Spotify, Apple Music, and YouTube Music. Your existing playlists will be seamlessly integrated into your Track Record profile."
+  active: false
+
+- id: "faq-personality"
+  question: "How does the music personality feature work?"
+  answer: "Our music personality feature analyzes your listening patterns, favorite genres, and playlist creation habits to provide insights about your musical preferences and help you discover new music that matches your taste."
+  active: false
+
+- id: "faq-security"
+  question: "Is my data secure?"
+  answer: "Absolutely! We take data security seriously. Your personal information and music data are encrypted and protected. We only access the minimum required data to provide our services."
+  active: false
+
+- id: "faq-sharing"
+  question: "Can I share my music journey with friends?"
+  answer: "Yes! You can share your playlists, listening stats, and music personality insights with friends. You can also follow other users and discover new music through their recommendations."
+  active: false 
