@@ -114,21 +114,33 @@ For each article, provide analysis in this exact JSON structure:
 
 ## Usage Instructions
 
-1. **Input**: Provide the article title and full content
-2. **Analysis**: Evaluate against all four criteria
-3. **Output**: Return structured JSON response
-4. **Quality**: Ensure specific, actionable feedback
+1. **Pre-check**: Before analyzing any post, check if a corresponding {slug}.json file already exists in src/data/eval folder
+2. **Skip if exists**: If the analysis file already exists, skip that post entirely - do not re-analyze
+3. **Input**: For posts without existing analysis, provide the article title and full content
+4. **Analysis**: Evaluate against all four criteria
+5. **Output**: Return structured JSON response
+6. **Quality**: Ensure specific, actionable feedback
 
 ## Important Guidance
 The field ai_model is not the one from the md file (the model who wrote the piece), but it's the model used for analysis.
 
+## Analysis Workflow
+
+1. **Scan posts folder**: Identify all markdown files in src/posts folder (excluding subfolders)
+2. **Check existing analyses**: For each post, check if {slug}.json exists in src/data/eval folder
+3. **Filter unanalyzed**: Only process posts that don't have existing analysis files
+4. **Analyze remaining**: Apply the full analysis criteria to unanalyzed posts only
+
 ## Example Usage
 
 **Inputs**:
-Markdown files from src/posts folder (without subfolders).
+Markdown files from src/posts folder (without subfolders) that don't have corresponding analysis files.
 
 **Expected Output**: 
 Complete JSON analysis following the specified format with detailed, article-specific feedback in src/data/eval folder with filename: {slug}.json.
+
+**Skip Condition**: 
+If src/data/eval/{slug}.json already exists, skip analysis for that post.
 
 ---
 

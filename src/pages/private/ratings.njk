@@ -198,6 +198,36 @@ pagination:
         </tr>
         {% endfor %}
       </tbody>
+      <tfoot id="statisticsFooter" class="hidden">
+        <tr class="bg-base-200 border-t-2 border-base-300">
+          <td class="font-semibold">
+            <div class="flex items-center space-x-2">
+              <span class="icon-[tabler--calculator] size-4"></span>
+              <span>Average</span>
+            </div>
+          </td>
+          <td class="text-center font-semibold" id="avg-writing_quality">-</td>
+          <td class="text-center font-semibold" id="avg-originality">-</td>
+          <td class="text-center font-semibold" id="avg-engagement">-</td>
+          <td class="text-center font-semibold" id="avg-depth">-</td>
+          <td class="text-center font-semibold" id="avg-overall">-</td>
+          <td class="text-center">-</td>
+        </tr>
+        <tr class="bg-base-200">
+          <td class="font-semibold">
+            <div class="flex items-center space-x-2">
+              <span class="icon-[tabler--chart-bar] size-4"></span>
+              <span>Std Dev</span>
+            </div>
+          </td>
+          <td class="text-center font-semibold text-sm" id="std-writing_quality">-</td>
+          <td class="text-center font-semibold text-sm" id="std-originality">-</td>
+          <td class="text-center font-semibold text-sm" id="std-engagement">-</td>
+          <td class="text-center font-semibold text-sm" id="std-depth">-</td>
+          <td class="text-center font-semibold text-sm" id="std-overall">-</td>
+          <td class="text-center">-</td>
+        </tr>
+      </tfoot>
     </table>
   </div>
 
@@ -258,36 +288,64 @@ pagination:
 
         <!-- Criteria Ratings Grid -->
         <div class="grid grid-cols-2 gap-3">
-          <div class="flex flex-col items-center p-3 bg-base-200 rounded-lg">
-            <span class="text-xs font-medium text-center mb-2">Writing Quality</span>
-            <div class="rating-display" 
+          <div class="flex flex-col p-3 bg-base-200 rounded-lg">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-medium">Writing Quality</span>
+              <div class="rating-grade" 
+                   data-article="{{ post.data.slug }}"
+                   data-criteria="writing_quality">
+                <div class="loading loading-dots loading-sm"></div>
+              </div>
+            </div>
+            <div class="rating-stars-only" 
                  data-article="{{ post.data.slug }}"
                  data-criteria="writing_quality">
               <div class="loading loading-dots loading-sm"></div>
             </div>
           </div>
           
-          <div class="flex flex-col items-center p-3 bg-base-200 rounded-lg">
-            <span class="text-xs font-medium text-center mb-2">Originality</span>
-            <div class="rating-display" 
+          <div class="flex flex-col p-3 bg-base-200 rounded-lg">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-medium">Originality</span>
+              <div class="rating-grade" 
+                   data-article="{{ post.data.slug }}"
+                   data-criteria="originality">
+                <div class="loading loading-dots loading-sm"></div>
+              </div>
+            </div>
+            <div class="rating-stars-only" 
                  data-article="{{ post.data.slug }}"
                  data-criteria="originality">
               <div class="loading loading-dots loading-sm"></div>
             </div>
           </div>
           
-          <div class="flex flex-col items-center p-3 bg-base-200 rounded-lg">
-            <span class="text-xs font-medium text-center mb-2">Engagement</span>
-            <div class="rating-display" 
+          <div class="flex flex-col p-3 bg-base-200 rounded-lg">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-medium">Engagement</span>
+              <div class="rating-grade" 
+                   data-article="{{ post.data.slug }}"
+                   data-criteria="engagement">
+                <div class="loading loading-dots loading-sm"></div>
+              </div>
+            </div>
+            <div class="rating-stars-only" 
                  data-article="{{ post.data.slug }}"
                  data-criteria="engagement">
               <div class="loading loading-dots loading-sm"></div>
             </div>
           </div>
           
-          <div class="flex flex-col items-center p-3 bg-base-200 rounded-lg">
-            <span class="text-xs font-medium text-center mb-2">Depth</span>
-            <div class="rating-display" 
+          <div class="flex flex-col p-3 bg-base-200 rounded-lg">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-medium">Depth</span>
+              <div class="rating-grade" 
+                   data-article="{{ post.data.slug }}"
+                   data-criteria="depth">
+                <div class="loading loading-dots loading-sm"></div>
+              </div>
+            </div>
+            <div class="rating-stars-only" 
                  data-article="{{ post.data.slug }}"
                  data-criteria="depth">
               <div class="loading loading-dots loading-sm"></div>
@@ -297,6 +355,54 @@ pagination:
       </div>
     </div>
     {% endfor %}
+    
+    <!-- Mobile Statistics Summary -->
+    <div id="mobileStatistics" class="card bg-base-200 shadow-md hidden">
+      <div class="card-body p-4">
+        <h3 class="font-semibold text-lg mb-4 flex items-center">
+          <span class="icon-[tabler--chart-bar] size-5 mr-2"></span>
+          Statistics Summary
+        </h3>
+        
+        <!-- Overall Stats -->
+        <div class="mb-4 p-3 bg-base-100 rounded-lg">
+          <div class="flex items-center justify-between mb-2">
+            <span class="font-medium">Overall Rating</span>
+            <div class="text-right">
+              <div id="mobile-avg-overall" class="font-bold">-</div>
+              <div id="mobile-std-overall" class="text-xs text-base-content/60">-</div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Criteria Stats Grid -->
+        <div class="grid grid-cols-2 gap-3">
+          <div class="flex flex-col items-center p-3 bg-base-100 rounded-lg">
+            <span class="text-xs font-medium text-center mb-2">Writing Quality</span>
+            <div id="mobile-avg-writing_quality" class="font-bold text-sm">-</div>
+            <div id="mobile-std-writing_quality" class="text-xs text-base-content/60">-</div>
+          </div>
+          
+          <div class="flex flex-col items-center p-3 bg-base-100 rounded-lg">
+            <span class="text-xs font-medium text-center mb-2">Originality</span>
+            <div id="mobile-avg-originality" class="font-bold text-sm">-</div>
+            <div id="mobile-std-originality" class="text-xs text-base-content/60">-</div>
+          </div>
+          
+          <div class="flex flex-col items-center p-3 bg-base-100 rounded-lg">
+            <span class="text-xs font-medium text-center mb-2">Engagement</span>
+            <div id="mobile-avg-engagement" class="font-bold text-sm">-</div>
+            <div id="mobile-std-engagement" class="text-xs text-base-content/60">-</div>
+          </div>
+          
+          <div class="flex flex-col items-center p-3 bg-base-100 rounded-lg">
+            <span class="text-xs font-medium text-center mb-2">Depth</span>
+            <div id="mobile-avg-depth" class="font-bold text-sm">-</div>
+            <div id="mobile-std-depth" class="text-xs text-base-content/60">-</div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -446,7 +552,7 @@ function rerenderArticles(sortedArticles) {
     }
   });
   
-  // Re-apply ratings display
+  // Re-apply ratings display and statistics
   updateRatingsDisplay();
 }
 
@@ -558,32 +664,52 @@ function createMobileCard(article) {
           <div class="loading loading-dots loading-sm"></div>
         </div>
       </div>
-      <div class="grid grid-cols-2 gap-3">
-        <div class="flex flex-col items-center p-3 bg-base-200 rounded-lg">
-          <span class="text-xs font-medium text-center mb-2">Writing Quality</span>
-          <div class="rating-display" data-article="${article.slug}" data-criteria="writing_quality">
-            <div class="loading loading-dots loading-sm"></div>
+              <div class="grid grid-cols-2 gap-3">
+          <div class="flex flex-col p-3 bg-base-200 rounded-lg">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-medium">Writing Quality</span>
+              <div class="rating-grade" data-article="${article.slug}" data-criteria="writing_quality">
+                <div class="loading loading-dots loading-sm"></div>
+              </div>
+            </div>
+            <div class="rating-stars-only" data-article="${article.slug}" data-criteria="writing_quality">
+              <div class="loading loading-dots loading-sm"></div>
+            </div>
+          </div>
+          <div class="flex flex-col p-3 bg-base-200 rounded-lg">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-medium">Originality</span>
+              <div class="rating-grade" data-article="${article.slug}" data-criteria="originality">
+                <div class="loading loading-dots loading-sm"></div>
+              </div>
+            </div>
+            <div class="rating-stars-only" data-article="${article.slug}" data-criteria="originality">
+              <div class="loading loading-dots loading-sm"></div>
+            </div>
+          </div>
+          <div class="flex flex-col p-3 bg-base-200 rounded-lg">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-medium">Engagement</span>
+              <div class="rating-grade" data-article="${article.slug}" data-criteria="engagement">
+                <div class="loading loading-dots loading-sm"></div>
+              </div>
+            </div>
+            <div class="rating-stars-only" data-article="${article.slug}" data-criteria="engagement">
+              <div class="loading loading-dots loading-sm"></div>
+            </div>
+          </div>
+          <div class="flex flex-col p-3 bg-base-200 rounded-lg">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-medium">Depth</span>
+              <div class="rating-grade" data-article="${article.slug}" data-criteria="depth">
+                <div class="loading loading-dots loading-sm"></div>
+              </div>
+            </div>
+            <div class="rating-stars-only" data-article="${article.slug}" data-criteria="depth">
+              <div class="loading loading-dots loading-sm"></div>
+            </div>
           </div>
         </div>
-        <div class="flex flex-col items-center p-3 bg-base-200 rounded-lg">
-          <span class="text-xs font-medium text-center mb-2">Originality</span>
-          <div class="rating-display" data-article="${article.slug}" data-criteria="originality">
-            <div class="loading loading-dots loading-sm"></div>
-          </div>
-        </div>
-        <div class="flex flex-col items-center p-3 bg-base-200 rounded-lg">
-          <span class="text-xs font-medium text-center mb-2">Engagement</span>
-          <div class="rating-display" data-article="${article.slug}" data-criteria="engagement">
-            <div class="loading loading-dots loading-sm"></div>
-          </div>
-        </div>
-        <div class="flex flex-col items-center p-3 bg-base-200 rounded-lg">
-          <span class="text-xs font-medium text-center mb-2">Depth</span>
-          <div class="rating-display" data-article="${article.slug}" data-criteria="depth">
-            <div class="loading loading-dots loading-sm"></div>
-          </div>
-        </div>
-      </div>
     </div>
   `;
   return card;
@@ -603,30 +729,106 @@ function getAuthorInitials(author, title) {
   }
 }
 
+// Generate letter grade based on rating
+function getLetterGrade(rating) {
+  if (rating >= 4.7) return { grade: 'A+', class: 'text-success' };
+  if (rating >= 4.3) return { grade: 'A', class: 'text-success' };
+  if (rating >= 4.0) return { grade: 'A-', class: 'text-success' };
+  if (rating >= 3.7) return { grade: 'B+', class: 'text-info' };
+  if (rating >= 3.3) return { grade: 'B', class: 'text-info' };
+  if (rating >= 3.0) return { grade: 'B-', class: 'text-info' };
+  if (rating >= 2.7) return { grade: 'C+', class: 'text-warning' };
+  if (rating >= 2.3) return { grade: 'C', class: 'text-warning' };
+  if (rating >= 2.0) return { grade: 'C-', class: 'text-warning' };
+  if (rating >= 1.7) return { grade: 'D+', class: 'text-error' };
+  if (rating >= 1.3) return { grade: 'D', class: 'text-error' };
+  if (rating >= 1.0) return { grade: 'D-', class: 'text-error' };
+  return { grade: 'F', class: 'text-error' };
+}
+
 // Generate star rating HTML
-function generateStarRating(rating, criteria, articleSlug) {
+function generateStarRating(rating, criteria, articleSlug, isMobile = false) {
+  const stars = [];
+  const fullStars = Math.floor(rating);
+  const hasHalfStar = rating % 1 >= 0.5;
+  const letterGrade = getLetterGrade(rating);
+  
+  const starSize = isMobile ? 'size-3' : 'size-4';
+  
+  for (let i = 1; i <= 5; i++) {
+    if (i <= fullStars) {
+      stars.push(`<span class="icon-[tabler--star-filled] ${starSize} text-warning cursor-pointer hover:scale-110 transition-transform" data-rating="${i}"></span>`);
+    } else if (i === fullStars + 1 && hasHalfStar) {
+      stars.push(`<span class="icon-[tabler--star-half-filled] ${starSize} text-warning cursor-pointer hover:scale-110 transition-transform" data-rating="${i}"></span>`);
+    } else {
+      stars.push(`<span class="icon-[tabler--star] ${starSize} text-base-300 cursor-pointer hover:scale-110 transition-transform" data-rating="${i}"></span>`);
+    }
+  }
+  
+  if (isMobile) {
+    return `
+      <div class="rating-stars flex items-center space-x-0.5" 
+           data-article="${articleSlug}" 
+           data-criteria="${criteria}"
+           onmouseenter="showTooltip(event, '${criteria}', '${articleSlug}')"
+           onmouseleave="hideTooltip()">
+        <div class="flex space-x-0.5">
+          ${stars.join('')}
+        </div>
+        <span class="text-xs font-bold ${letterGrade.class} bg-base-300 px-1 py-0.5 rounded ml-1">${letterGrade.grade}</span>
+      </div>
+    `;
+  } else {
+    return `
+      <div class="rating-stars flex items-center justify-center space-x-1" 
+           data-article="${articleSlug}" 
+           data-criteria="${criteria}"
+           onmouseenter="showTooltip(event, '${criteria}', '${articleSlug}')"
+           onmouseleave="hideTooltip()">
+        ${stars.join('')}
+        <div class="ml-2 flex items-center space-x-1">
+          <span class="text-xs font-semibold">${rating.toFixed(1)}</span>
+          <span class="text-xs font-bold ${letterGrade.class} bg-base-200 px-1.5 py-0.5 rounded">${letterGrade.grade}</span>
+        </div>
+      </div>
+    `;
+  }
+}
+
+// Generate grade display (rating + letter grade) for mobile
+function generateRatingGrade(rating) {
+  const letterGrade = getLetterGrade(rating);
+  return `
+    <div class="flex items-center space-x-1">
+      <span class="text-xs font-semibold">${rating.toFixed(1)}</span>
+      <span class="text-xs font-bold ${letterGrade.class} bg-base-300 px-1 py-0.5 rounded">${letterGrade.grade}</span>
+    </div>
+  `;
+}
+
+// Generate stars only display for mobile
+function generateStarsOnly(rating, criteria, articleSlug) {
   const stars = [];
   const fullStars = Math.floor(rating);
   const hasHalfStar = rating % 1 >= 0.5;
   
   for (let i = 1; i <= 5; i++) {
     if (i <= fullStars) {
-      stars.push(`<span class="icon-[tabler--star-filled] size-4 text-warning cursor-pointer hover:scale-110 transition-transform" data-rating="${i}"></span>`);
+      stars.push(`<span class="icon-[tabler--star-filled] size-3 text-warning cursor-pointer hover:scale-110 transition-transform" data-rating="${i}"></span>`);
     } else if (i === fullStars + 1 && hasHalfStar) {
-      stars.push(`<span class="icon-[tabler--star-half-filled] size-4 text-warning cursor-pointer hover:scale-110 transition-transform" data-rating="${i}"></span>`);
+      stars.push(`<span class="icon-[tabler--star-half-filled] size-3 text-warning cursor-pointer hover:scale-110 transition-transform" data-rating="${i}"></span>`);
     } else {
-      stars.push(`<span class="icon-[tabler--star] size-4 text-base-300 cursor-pointer hover:scale-110 transition-transform" data-rating="${i}"></span>`);
+      stars.push(`<span class="icon-[tabler--star] size-3 text-base-300 cursor-pointer hover:scale-110 transition-transform" data-rating="${i}"></span>`);
     }
   }
   
   return `
-    <div class="rating-stars flex items-center justify-center space-x-1" 
+    <div class="rating-stars flex items-center justify-center space-x-0.5" 
          data-article="${articleSlug}" 
          data-criteria="${criteria}"
          onmouseenter="showTooltip(event, '${criteria}', '${articleSlug}')"
          onmouseleave="hideTooltip()">
       ${stars.join('')}
-      <span class="ml-2 text-xs font-semibold">${rating.toFixed(1)}</span>
     </div>
   `;
 }
@@ -635,6 +837,7 @@ function generateStarRating(rating, criteria, articleSlug) {
 function generateOverallRating(rating) {
   let badgeClass = 'badge-error';
   let label = 'Poor';
+  const letterGrade = getLetterGrade(rating);
   
   if (rating >= 4.5) {
     badgeClass = 'badge-success';
@@ -653,7 +856,7 @@ function generateOverallRating(rating) {
   return `
     <div class="badge ${badgeClass} badge-lg">
       <span class="icon-[tabler--star] size-3 mr-1"></span>
-      ${rating.toFixed(1)} - ${label}
+      ${rating.toFixed(1)} (${letterGrade.grade}) - ${label}
     </div>
   `;
 }
@@ -747,17 +950,162 @@ async function loadRatings() {
   }
 }
 
+// Calculate statistics for ratings
+function calculateStatistics() {
+  const criteria = ['writing_quality', 'originality', 'engagement', 'depth'];
+  const stats = {};
+  
+  // Get all ratings for each criteria and overall
+  const allCriteria = [...criteria, 'overall'];
+  
+  allCriteria.forEach(criterion => {
+    const values = [];
+    
+    Object.values(ratingsData).forEach(articleData => {
+      if (criterion === 'overall') {
+        if (articleData.overall_rating !== undefined) {
+          values.push(articleData.overall_rating);
+        }
+      } else {
+        if (articleData.criteria && articleData.criteria[criterion] && articleData.criteria[criterion].score !== undefined) {
+          values.push(articleData.criteria[criterion].score);
+        }
+      }
+    });
+    
+    if (values.length > 0) {
+      // Calculate average
+      const average = values.reduce((sum, val) => sum + val, 0) / values.length;
+      
+      // Calculate standard deviation
+      const variance = values.reduce((sum, val) => sum + Math.pow(val - average, 2), 0) / values.length;
+      const stdDev = Math.sqrt(variance);
+      
+      stats[criterion] = {
+        average: average,
+        stdDev: stdDev,
+        count: values.length
+      };
+    } else {
+      stats[criterion] = {
+        average: 0,
+        stdDev: 0,
+        count: 0
+      };
+    }
+  });
+  
+  return stats;
+}
+
+// Update statistics display
+function updateStatisticsDisplay() {
+  const stats = calculateStatistics();
+  const footer = document.getElementById('statisticsFooter');
+  const mobileStats = document.getElementById('mobileStatistics');
+  
+  // Show footer and mobile stats if we have any ratings data
+  const hasData = Object.keys(ratingsData).length > 0;
+  if (hasData) {
+    footer.classList.remove('hidden');
+    mobileStats.classList.remove('hidden');
+  } else {
+    footer.classList.add('hidden');
+    mobileStats.classList.add('hidden');
+    return;
+  }
+  
+  // Update desktop table statistics
+  ['writing_quality', 'originality', 'engagement', 'depth', 'overall'].forEach(criterion => {
+    const avgElement = document.getElementById(`avg-${criterion}`);
+    const stdElement = document.getElementById(`std-${criterion}`);
+    
+    if (stats[criterion] && stats[criterion].count > 0) {
+      const avg = stats[criterion].average;
+      const std = stats[criterion].stdDev;
+      const letterGrade = getLetterGrade(avg);
+      
+      avgElement.innerHTML = `
+        <div class="flex flex-col items-center">
+          <span class="text-sm font-bold">${avg.toFixed(2)}</span>
+          <span class="text-xs ${letterGrade.class} bg-base-300 px-1 py-0.5 rounded">${letterGrade.grade}</span>
+        </div>
+      `;
+      
+      stdElement.innerHTML = `
+        <div class="flex flex-col items-center">
+          <span class="text-xs">±${std.toFixed(2)}</span>
+          <span class="text-xs text-base-content/60">(n=${stats[criterion].count})</span>
+        </div>
+      `;
+    } else {
+      avgElement.innerHTML = '<span class="text-base-300">-</span>';
+      stdElement.innerHTML = '<span class="text-base-300">-</span>';
+    }
+  });
+  
+  // Update mobile statistics
+  ['writing_quality', 'originality', 'engagement', 'depth', 'overall'].forEach(criterion => {
+    const mobileAvgElement = document.getElementById(`mobile-avg-${criterion}`);
+    const mobileStdElement = document.getElementById(`mobile-std-${criterion}`);
+    
+    if (stats[criterion] && stats[criterion].count > 0) {
+      const avg = stats[criterion].average;
+      const std = stats[criterion].stdDev;
+      const letterGrade = getLetterGrade(avg);
+      
+      if (criterion === 'overall') {
+        mobileAvgElement.innerHTML = `${avg.toFixed(2)} (${letterGrade.grade})`;
+        mobileStdElement.innerHTML = `±${std.toFixed(2)} (n=${stats[criterion].count})`;
+      } else {
+        mobileAvgElement.innerHTML = `${avg.toFixed(2)} (${letterGrade.grade})`;
+        mobileStdElement.innerHTML = `±${std.toFixed(2)}`;
+      }
+    } else {
+      mobileAvgElement.innerHTML = '-';
+      mobileStdElement.innerHTML = '-';
+    }
+  });
+}
+
 // Update the ratings display in the table
 function updateRatingsDisplay() {
+  // Handle desktop rating displays
   document.querySelectorAll('.rating-display').forEach(element => {
     const articleSlug = element.dataset.article;
     const criteria = element.dataset.criteria;
     const data = ratingsData[articleSlug];
     
     if (data && data.criteria[criteria]) {
-      element.innerHTML = generateStarRating(data.criteria[criteria].score, criteria, articleSlug);
+      element.innerHTML = generateStarRating(data.criteria[criteria].score, criteria, articleSlug, false);
     } else {
       element.innerHTML = '<span class="text-base-300">Not rated</span>';
+    }
+  });
+  
+  // Handle mobile rating grades (numerical + letter grade)
+  document.querySelectorAll('.rating-grade').forEach(element => {
+    const articleSlug = element.dataset.article;
+    const criteria = element.dataset.criteria;
+    const data = ratingsData[articleSlug];
+    
+    if (data && data.criteria[criteria]) {
+      element.innerHTML = generateRatingGrade(data.criteria[criteria].score);
+    } else {
+      element.innerHTML = '<span class="text-base-300">-</span>';
+    }
+  });
+  
+  // Handle mobile stars only displays
+  document.querySelectorAll('.rating-stars-only').forEach(element => {
+    const articleSlug = element.dataset.article;
+    const criteria = element.dataset.criteria;
+    const data = ratingsData[articleSlug];
+    
+    if (data && data.criteria[criteria]) {
+      element.innerHTML = generateStarsOnly(data.criteria[criteria].score, criteria, articleSlug);
+    } else {
+      element.innerHTML = '<span class="text-base-300">No stars</span>';
     }
   });
   
@@ -787,6 +1135,9 @@ function updateRatingsDisplay() {
       button.classList.add('btn-disabled');
     }
   });
+  
+  // Update statistics
+  updateStatisticsDisplay();
 }
 
 // Generate ratings using AI

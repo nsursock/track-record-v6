@@ -45,7 +45,7 @@ title: "America's Natural Solution: A Comprehensive Guide"
 ```
 
 # Context
-Input files: random 3 md files from temp/blog folder
+Input files: random 14 md files from temp/blog folder that haven't already been processed (i.e., don't have corresponding files in src/posts folder)
 Output files: {slug}.md in src/posts folder
 
 # Final Instructions

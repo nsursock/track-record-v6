@@ -1,0 +1,60 @@
+{
+  "ai_model": "claude-3-5-sonnet-20241022",
+  "title": "Does Your Brain Suddenly Play Risky Tricks On You Night And Day?",
+  "criteria": {
+    "writing_quality": {
+      "score": 3.6,
+      "strengths": [
+        "Raw emotional honesty that creates authentic connection with readers",
+        "Effective use of personal narrative to explore universal themes",
+        "Strong opening that immediately establishes the emotional stakes"
+      ],
+      "suggestions": [
+        "Improve sentence structure and grammar throughout",
+        "Clarify some confusing transitions between ideas",
+        "Strengthen the conclusion to provide better resolution"
+      ]
+    },
+    "originality": {
+      "score": 4.3,
+      "strengths": [
+        "Deeply personal perspective on trauma and survivor's guilt",
+        "Unique connection between personal mental health and geopolitical events",
+        "Brave exploration of difficult psychological territory rarely discussed openly"
+      ],
+      "suggestions": [
+        "Develop the broader implications of trauma beyond personal experience",
+        "Explore more connections between individual and collective trauma",
+        "Provide more insight into coping mechanisms or recovery"
+      ]
+    },
+    "engagement": {
+      "score": 4.2,
+      "strengths": [
+        "Compelling personal story that draws readers into the experience",
+        "Emotional vulnerability that creates strong reader connection",
+        "Relevant contemporary context with the Beirut blast and COVID-19"
+      ],
+      "suggestions": [
+        "Balance heavy emotional content with moments of hope or insight",
+        "Provide more context for readers unfamiliar with the Beirut situation",
+        "Add more actionable insights for readers facing similar struggles"
+      ]
+    },
+    "depth": {
+      "score": 4.0,
+      "strengths": [
+        "Sophisticated exploration of survivor's guilt and trauma psychology",
+        "Meaningful connection between personal and collective suffering",
+        "Honest examination of how external events affect mental health"
+      ],
+      "suggestions": [
+        "Provide more analysis of the psychological mechanisms at work",
+        "Explore the broader social and political implications more thoroughly",
+        "Include more reflection on resilience and recovery processes"
+      ]
+    }
+  },
+  "overall_rating": 4.0,
+  "overall_assessment": "This article stands out for its raw emotional honesty and willingness to explore difficult psychological territory in the wake of trauma. The author's personal experience with the Beirut blast provides a powerful lens for examining survivor's guilt and the impact of collective trauma on individual mental health. The writing demonstrates courage and authenticity that many readers will find deeply moving and relatable. While the piece would benefit from clearer structure and improved grammar, its emotional depth and originality make it a compelling and important contribution to discussions about trauma, mental health, and resilience."
+} 
