@@ -1,0 +1,173 @@
+---
+layout: base
+permalink: /404.html
+eleventyExcludeFromCollections: true
+meta:
+  title: Page Not Found
+  description: The page you're looking for doesn't exist.
+---
+
+<div class="min-h-screen flex items-center justify-center px-4 py-8 sm:py-12">
+  <div class="max-w-2xl mx-auto text-center w-full">
+    <!-- 404 Illustration -->
+    <div class="mb-6 sm:mb-8">
+      <div class="relative inline-block">
+        <!-- Large 404 Text -->
+        <div class="text-6xl sm:text-8xl md:text-9xl lg:text-[12rem] font-bold text-primary/10 select-none">
+          404
+        </div>
+
+        <!-- Floating Icons -->
+        {# <div class="absolute inset-0 flex items-center justify-center">
+          <div class="relative">
+            <!-- Search Icon -->
+            <div class="absolute -top-4 sm:-top-8 -left-4 sm:-left-8 animate-bounce" style="animation-delay: 0s;">
+              <i class="icon-[tabler--search] text-2xl sm:text-3xl md:text-4xl text-primary/60"></i>
+            </div>
+            
+            <!-- Question Mark -->
+            <div class="absolute -top-2 sm:-top-4 right-4 sm:right-8 animate-bounce" style="animation-delay: 0.5s;">
+              <i class="icon-[tabler--help] text-xl sm:text-2xl md:text-3xl text-secondary/60"></i>
+            </div>
+            
+            <!-- Alert Icon -->
+            <div class="absolute bottom-2 sm:bottom-4 -left-2 sm:-left-4 animate-bounce" style="animation-delay: 1s;">
+              <i class="icon-[tabler--alert-triangle] text-xl sm:text-2xl md:text-3xl text-warning/60"></i>
+            </div>
+            
+            <!-- Compass Icon -->
+            <div class="absolute bottom-4 sm:bottom-8 right-2 sm:right-4 animate-bounce" style="animation-delay: 1.5s;">
+              <i class="icon-[tabler--compass] text-2xl sm:text-3xl md:text-4xl text-info/60"></i>
+            </div>
+          </div>
+        </div> #}
+      </div>
+    </div>
+
+    <!-- Error Message -->
+    <div class="space-y-4 sm:space-y-6 mb-8 sm:mb-12 px-4">
+      <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold text-primary">
+        Oops! Page Not Found
+      </h1>
+
+      <p class="text-base sm:text-lg md:text-xl text-secondary leading-relaxed max-w-lg mx-auto">
+        The page you're looking for seems to have wandered off into the digital wilderness. 
+        Don't worry, even the best explorers sometimes take a wrong turn!
+      </p>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center mb-8 sm:mb-12 px-4">
+      <a href="/" class="btn btn-primary btn-soft btn-sm sm:btn-md lg:btn-lg group w-full sm:w-auto">
+        <i class="icon-[tabler--home] text-lg sm:text-xl group-hover:scale-110 transition-transform"></i>
+        Go Home
+      </a>
+
+      <button onclick="history.back()" class="btn btn-secondary btn-soft btn-sm sm:btn-md lg:btn-lg group w-full sm:w-auto">
+        <i class="icon-[tabler--arrow-left] text-lg sm:text-xl group-hover:-translate-x-1 transition-transform"></i>
+        Go Back
+      </button>
+
+            <a href="/about" class="btn btn-accent btn-soft btn-sm sm:btn-md lg:btn-lg group w-full sm:w-auto">
+        <i class="icon-[tabler--user] text-lg sm:text-xl group-hover:scale-110 transition-transform"></i>
+        About
+      </a>
+    </div>
+
+    <!-- Search Box -->
+    <div class="max-w-md mx-auto mb-8 sm:mb-12 px-4">
+      <div class="form-control">
+        <div class="flex w-full">
+          <input 
+            type="text" 
+            placeholder="Search for something..." 
+            class="input input-bordered input-sm sm:input-md lg:input-lg flex-1 rounded-r-none focus:z-10"
+            id="search-input"
+/>
+          <button class="btn btn-primary btn-sm sm:btn-md lg:btn-lg rounded-l-none border-l-0" onclick="performSearch()">
+            <i class="icon-[tabler--search] text-base sm:text-lg lg:text-xl"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Helpful Links -->
+    <div class="border-t border-secondary/20 pt-6 sm:pt-8 px-4">
+      <h3 class="text-base sm:text-lg font-semibold text-secondary mb-3 sm:mb-4">
+        Maybe you were looking for:
+      </h3>
+
+      <div class="flex flex-wrap gap-2 sm:gap-3 justify-center text-sm sm:text-base">
+        <a href="/" class="link link-primary hover:link-primary-focus transition-colors">
+          Home
+        </a>
+        <span class="text-secondary/40">•</span>
+                <a href="/about" class="link link-primary hover:link-primary-focus transition-colors">
+          About
+        </a>
+        <span class="text-secondary/40">•</span>
+        <a href="/posts" class="link link-primary hover:link-primary-focus transition-colors">
+          Blog Posts
+        </a>
+        <span class="text-secondary/40">•</span>
+        <a href="/login" class="link link-primary hover:link-primary-focus transition-colors">
+          Login
+        </a>
+      </div>
+    </div>
+
+    <!-- Fun Fact -->
+    <div class="mt-8 sm:mt-12 p-4 sm:p-6 bg-base-200 rounded-lg max-w-lg mx-auto">
+      <div class="flex items-center gap-3 mb-3">
+        <i class="icon-[tabler--bulb] text-xl sm:text-2xl text-warning"></i>
+        <h4 class="font-semibold text-secondary text-sm sm:text-base">Did you know?</h4>
+      </div>
+      <p class="text-xs sm:text-sm text-secondary/80">
+        The HTTP 404 error was named after room 404 at CERN, where the original web servers were located. 
+        When a file couldn't be found, it was like looking for something in a room that didn't exist!
+      </p>
+    </div>
+  </div>
+</div>
+
+<script>
+  function performSearch() {
+    const searchInput = document.getElementById('search-input');
+    const query = searchInput
+      .value
+      .trim();
+
+    if (query) {
+      // You can customize this to integrate with your site's search functionality
+      // For now, we'll redirect to a search page or Google search
+      window.location.href = `/?search=${encodeURIComponent(query)}`;
+    }
+  }
+
+  // Allow Enter key to trigger search
+  document
+    .getElementById('search-input')
+    .addEventListener('keypress', function (e) {
+      if (e.key === 'Enter') {
+        performSearch();
+      }
+    });
+
+  // Add some interactive hover effects
+  document.addEventListener('DOMContentLoaded', function () {
+    // Add subtle parallax effect to floating icons
+    document.addEventListener('mousemove', function (e) {
+      const icons = document.querySelectorAll('.absolute i');
+      const centerX = window.innerWidth / 2;
+      const centerY = window.innerHeight / 2;
+
+      icons.forEach((icon, index) => {
+        const speed = (index + 1) * 0.02;
+        const x = (e.clientX - centerX) * speed;
+        const y = (e.clientY - centerY) * speed;
+
+        icon.style.transform = `translate(${x}px, ${y}px)`;
+      });
+    });
+  });
+</script>

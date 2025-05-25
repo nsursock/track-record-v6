@@ -38,6 +38,8 @@ For each article, provide analysis in this exact JSON structure:
 
 ```json
 {
+  "ai_model": "string",
+  "title": "string",
   "criteria": {
     "writing_quality": {
       "score": 4.2,
@@ -117,16 +119,16 @@ For each article, provide analysis in this exact JSON structure:
 3. **Output**: Return structured JSON response
 4. **Quality**: Ensure specific, actionable feedback
 
+## Important Guidance
+The field ai_model is not the one from the md file (the model who wrote the piece), but it's the model used for analysis.
+
 ## Example Usage
 
-**Input**: 
-```
-Title: "The Art of Mindful Decision Making"
-Content: [full article text]
-```
+**Inputs**:
+Markdown files from src/posts folder (without subfolders).
 
 **Expected Output**: 
-Complete JSON analysis following the specified format with detailed, article-specific feedback.
+Complete JSON analysis following the specified format with detailed, article-specific feedback in src/data/eval folder with filename: {slug}.json.
 
 ---
 

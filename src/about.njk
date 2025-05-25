@@ -70,6 +70,16 @@ meta:
             your.email@example.com
           </a>
         </div>
+
+        <!-- Resume Link (Development Only) -->
+        {% if site.env == 'development' %}
+        <div class="border-t border-secondary/20 pt-4">
+          <a href="/resume/" class="btn btn-primary btn-soft btn-block gap-2">
+            <i class="icon-[tabler--file-cv] text-xl"></i>
+            View My Resume
+          </a>
+        </div>
+        {% endif %}
       </div>
     </div>
 

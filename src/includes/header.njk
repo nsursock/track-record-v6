@@ -88,6 +88,14 @@
               </a>
             </li>
           </template>
+          <template x-if="user && user.email === 'nicolas.sursock@gmail.com'">
+            <li>
+              <a class="dropdown-item" href="/pages/private/ratings/">
+                <span class="icon-[tabler--star]"></span>
+                Article Ratings
+              </a>
+            </li>
+          </template>
           <li class="dropdown-footer gap-2">
             <button class="btn btn-error btn-soft btn-block" @click="logout">
               <span class="icon-[tabler--logout]"></span>
@@ -160,6 +168,12 @@
             <a href="/pages/private/" class="btn btn-ghost btn-block justify-center gap-2">
               <span class="icon-[tabler--building]"></span>
               CEO Dashboard
+            </a>
+          </template>
+          <template x-if="user.email === 'nicolas.sursock@gmail.com'">
+            <a href="/pages/private/ratings/" class="btn btn-ghost btn-block justify-center gap-2">
+              <span class="icon-[tabler--star]"></span>
+              Article Ratings
             </a>
           </template>
           <button class="btn btn-error btn-ghost btn-block justify-center gap-2" @click="logout">

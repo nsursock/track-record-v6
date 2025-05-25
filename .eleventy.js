@@ -38,6 +38,7 @@ export default function (eleventyConfig) {
 
   eleventyConfig.addPassthroughCopy('src/assets/css')
   eleventyConfig.addPassthroughCopy('src/assets/js')
+  eleventyConfig.addPassthroughCopy('src/assets/resume.pdf')
 
 
   /* --- PLUGINS --- */
@@ -392,19 +393,28 @@ export default function (eleventyConfig) {
 
   /* --- COLLECTIONS --- */
   eleventyConfig.addCollection("posts", async function(collectionApi) {
+
     const posts = await Promise.all(
-      collectionApi.getFilteredByGlob("src/posts/*.md").map(async (post) => {
-        // Store the raw content before markdown processing
-        const rawContent = await post.template.read();
-        post.rawContent = rawContent.content; // Access the content property
-        
-        // Ensure tags are properly processed
-        if (post.data.tags && Array.isArray(post.data.tags)) {
-          // Remove 'post' tag if it exists
-          post.data.tags = post.data.tags.filter(tag => tag !== 'post');
-        }
-        return post;
-      })
+      collectionApi.getFilteredByGlob("src/posts/*.md")
+        .filter(post => {
+          // Only include files directly in src/posts/, not in subdirectories
+          const relativePath = post.inputPath.replace(/^\.\//, ''); // Remove leading ./
+          const pathParts = relativePath.split('/');
+          // Should be exactly: src/posts/filename.md (3 parts)
+          return pathParts.length === 3 && pathParts[0] === 'src' && pathParts[1] === 'posts' && pathParts[2].endsWith('.md');
+        })
+        .map(async (post) => {
+          // Store the raw content before markdown processing
+          const rawContent = await post.template.read();
+          post.rawContent = rawContent.content; // Access the content property
+
+          // Ensure tags are properly processed
+          if (post.data.tags && Array.isArray(post.data.tags)) {
+            // Remove 'post' tag if it exists
+            post.data.tags = post.data.tags.filter(tag => tag !== 'post');
+          }
+          return post;
+        })
     );
 
     // Sort posts by published_date in descending order (newest first)
