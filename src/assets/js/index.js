@@ -150,7 +150,7 @@ document.addEventListener('alpine:init', () => {
         let accessToken = session.access_token;
         
         // If token is expired or will expire soon, try to refresh it
-        if (!tokenExp || tokenExp < now + 300) { // 5 minute buffer
+        if (!tokenExp || tokenExp < now + 60) { // 1 minute buffer
           console.log('Token expired or expiring soon, attempting refresh...');
           try {
             const refreshResponse = await fetch('/api/credentials?action=refresh', {

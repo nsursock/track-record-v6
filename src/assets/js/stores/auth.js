@@ -62,7 +62,7 @@ export default {
     },
 
     startSessionCheck() {
-        // Check session every 2 minutes instead of 5
+        // Check session every 15 minutes - less aggressive
         this.sessionCheckInterval = setInterval(async () => {
             if (this.session) {
                 const isValid = await this.validateSession();
@@ -72,7 +72,7 @@ export default {
             } else {
                 clearInterval(this.sessionCheckInterval);
             }
-        }, 2 * 60 * 1000);
+        }, 15 * 60 * 1000);
     },
 
     async validateSession() {
@@ -83,8 +83,15 @@ export default {
             const tokenExp = this.session.expires_at;
             const now = Math.floor(Date.now() / 1000);
             
-            // If token is expired or will expire in the next 30 minutes, try to refresh it
-            if (!tokenExp || tokenExp < now + 1800) {
+            console.log('Session validation check:', {
+                tokenExp,
+                now,
+                timeUntilExpiry: tokenExp ? (tokenExp - now) : 'unknown',
+                timeUntilExpiryMinutes: tokenExp ? Math.round((tokenExp - now) / 60) : 'unknown'
+            });
+            
+            // If token is expired or will expire in the next 5 minutes, try to refresh it
+            if (!tokenExp || tokenExp < now + 300) {
                 console.log('Token is expiring soon, attempting refresh...');
                 const refreshed = await this.refreshToken();
                 if (!refreshed) {
@@ -117,11 +124,13 @@ export default {
                         this.logout();
                         return false;
                     }
-                    console.log('Token refreshed after validation error, retrying validation...');
-                    // Retry the validation with new token
-                    return this.validateSession();
+                    console.log('Token refreshed after validation error');
+                    // Don't retry validation immediately, just return success since we refreshed
+                    return true;
                 }
-                throw new Error(data.error || 'Session validation failed');
+                // Don't throw error for other status codes, just log and continue
+                console.warn('Session validation warning:', data.error || 'Unknown error');
+                return true;
             }
 
             // Update session if refreshed

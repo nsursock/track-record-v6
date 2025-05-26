@@ -40,268 +40,31 @@ title: "Blog Posts"
   
   <!-- Mobile Layout: All Vertical Cards -->
   <div class="block md:hidden">
-    <div class="grid grid-cols-1 gap-6">
-      {% for post in collections.posts | reverse %}
-        <div class="card bg-base-100 shadow-base-300/20 shadow-sm hover:shadow-base-300/40 transition-shadow duration-200 border border-base-300/20">
-          <figure class="relative h-48 overflow-hidden">
-            {% set firstImage = post.rawContent | matchImage %}
-            <img 
-              src="{{ firstImage.url if firstImage else 'https://picsum.photos/seed/' + post.data.title | slug + '/800/400' }}" 
-              alt="{{ firstImage.alt if firstImage else post.data.title }}"
-              class="w-full h-full object-cover"
-            />
-            {% if post.data.tags and post.data.tags.length > 0 %}
-              <div class="absolute top-4 left-4 z-10">
-                <a href="/posts/?tag={{ post.data.tags[0] | slug }}" class="badge badge-primary text-secondary badge-soft hover:bg-primary hover:text-primary-content transition-colors">
-                  {{ post.data.tags[0] }}
-                </a>
-              </div>
-            {% endif %}
-            <!-- Comments and Views Overlay -->
-            <div class="absolute bottom-4 right-4 z-10 flex gap-3">
-              <div class="flex items-center gap-1 bg-black/60 backdrop-blur-sm rounded-full px-3 py-1">
-                <span class="icon-[tabler--message-circle] size-4 text-white"></span>
-                <span class="text-white text-sm font-medium">{{ post.data.comments.length if post.data.comments else 0 }}</span>
-              </div>
-              <div class="flex items-center gap-1 bg-black/60 backdrop-blur-sm rounded-full px-3 py-1">
-                <span class="icon-[tabler--eye] size-4 text-white"></span>
-                <span class="text-white text-sm font-medium">{{ range(150, 2500) | random }}</span>
-              </div>
-            </div>
-          </figure>
-          <div class="card-body">
-            <h2 class="card-title text-lg text-base-content">
-              <a href="{{ post.url }}" class="link link-hover text-primary hover:text-primary/80">{{ post.data.title }}</a>
-            </h2>
-
-            <div class="flex flex-wrap items-center gap-4 text-sm text-base-content/70 mt-2">
-              <div class="flex items-center gap-2">
-                <span class="icon-[tabler--user] size-4 text-primary"></span>
-                <a href="/posts/?author={{ post.data.author | slug }}" class="hover:text-primary transition-colors">{{ post.data.author }}</a>
-              </div>
-              <div class="flex items-center gap-2">
-                <span class="icon-[tabler--calendar] size-4 text-primary"></span>
-                <time datetime="{{ post.data.published_date }}">
-                  {{ post.data.published_date | date("MMM d, yyyy") }}
-                </time>
-              </div>
-            </div>
-
-            <p class="mt-4 text-secondary/80 line-clamp-3">
-              {{ post.data.meta_description }}
-            </p>
-
-            <!-- Related tags for discovery -->
-            {% if post.data.tags and post.data.tags.length > 1 %}
-              <div class="mt-3 flex flex-wrap gap-1">
-                {% for tag in post.data.tags %}
-                  {% if loop.index > 1 and loop.index <= 5 %}
-                    <a href="/posts/?tag={{ tag | slug }}" class="badge badge-soft hover:badge-primary transition-colors">
-                      {{ tag }}
-                    </a>
-                  {% endif %}
-                {% endfor %}
-              </div>
-            {% endif %}
-
-            <div class="card-actions justify-end mt-4">
-              <a href="{{ post.url }}" class="btn btn-primary btn-sm text-primary btn-soft hover:bg-primary-focus">
-                Read More
-                <span class="icon-[tabler--arrow-right] size-4"></span>
-              </a>
-              <a href="{{ post.url }}?listen=true" class="btn btn-secondary btn-soft btn-sm gap-2" title="Listen to this article">
-                <span class="icon-[tabler--headphones] size-4"></span>
-                Listen
-              </a>
-            </div>
-          </div>
-        </div>
-      {% endfor %}
+    <div id="mobile-posts-container" class="grid grid-cols-1 gap-6">
+      <!-- Posts will be loaded here -->
     </div>
   </div>
 
   <!-- Desktop Layout: Alternating Layout -->
   <div class="hidden md:block">
-    {% for post in collections.posts | reverse %}
-      {% set positionInGroup = loop.index0 % 5 %}
-      
-      <!-- Start new group: 2 Horizontal Cards -->
-      {% if positionInGroup == 0 %}
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 mb-6 sm:mb-8">
-      {% endif %}
-      
-      <!-- Horizontal cards (positions 0 and 1) -->
-      {% if positionInGroup < 2 %}
-        <div class="card card-side bg-base-100 shadow-base-300/20 shadow-sm hover:shadow-base-300/40 transition-shadow duration-200 border border-base-300/20 max-w-none">
-          <figure class="relative w-48 sm:w-56 flex-shrink-0">
-            {% set firstImage = post.rawContent | matchImage %}
-            <img 
-              src="{{ firstImage.url if firstImage else 'https://picsum.photos/seed/' + post.data.title | slug + '/400/300' }}" 
-              alt="{{ firstImage.alt if firstImage else post.data.title }}"
-              class="w-full h-full object-cover"
-            />
-            {% if post.data.tags and post.data.tags.length > 0 %}
-              <div class="absolute top-4 left-4 z-10">
-                <a href="/posts/?tag={{ post.data.tags[0] | slug }}" class="badge badge-primary text-secondary badge-soft hover:bg-primary hover:text-primary-content transition-colors">
-                  {{ post.data.tags[0] }}
-                </a>
-              </div>
-            {% endif %}
-            {% if site.env == 'development' %}
-            <!-- Comments and Views Overlay -->
-            <div class="absolute bottom-4 left-4 z-10 flex gap-3 h-8">
-              <div class="flex items-center gap-1 bg-black/60 backdrop-blur-sm rounded-full px-3 py-1">
-                <span class="icon-[tabler--message-circle] size-4 text-white"></span>
-                <span class="text-white text-sm font-medium">{{ post.data.comments.length if post.data.comments else 0 }}</span>
-              </div>
-              <div class="flex items-center gap-1 bg-black/60 backdrop-blur-sm rounded-full px-3 py-1">
-                <span class="icon-[tabler--eye] size-4 text-white"></span>
-                <span class="text-white text-sm font-medium">{{ range(150, 2500) | random }}</span>
-              </div>
-            </div>
-            {% endif %}
-          </figure>
-          <div class="card-body flex-1">
-            <h2 class="card-title text-lg sm:text-xl text-base-content">
-              <a href="{{ post.url }}" class="link link-hover text-primary hover:text-primary/80">{{ post.data.title }}</a>
-            </h2>
+    <div id="desktop-posts-container">
+      <!-- Posts will be loaded here -->
+    </div>
+  </div>
 
-            <div class="flex flex-wrap items-center gap-4 text-sm text-base-content/70 mt-2">
-              <div class="flex items-center gap-2">
-                <span class="icon-[tabler--user] size-4 text-primary"></span>
-                <a href="/posts/?author={{ post.data.author | slug }}" class="hover:text-primary transition-colors">{{ post.data.author }}</a>
-              </div>
-              <div class="flex items-center gap-2">
-                <span class="icon-[tabler--calendar] size-4 text-primary"></span>
-                <time datetime="{{ post.data.published_date }}">
-                  {{ post.data.published_date | date("MMM d, yyyy") }}
-                </time>
-              </div>
-            </div>
+  <!-- Loading indicator -->
+  <div id="loading-indicator" class="hidden text-center py-8">
+    <div class="loading loading-spinner loading-lg text-primary"></div>
+    <p class="text-base-content/70 mt-2">Loading more posts...</p>
+  </div>
 
-            <p class="mt-3 text-secondary/80 line-clamp-3 text-sm sm:text-base">
-              {{ post.data.meta_description }}
-            </p>
-
-            <!-- Related tags for discovery -->
-            {% if post.data.tags and post.data.tags.length > 1 %}
-              <div class="mt-3 flex flex-wrap gap-1">
-                {% for tag in post.data.tags %}
-                  {% if loop.index > 1 and loop.index <= 5 %}
-                    <a href="/posts/?tag={{ tag | slug }}" class="badge badge-soft hover:badge-primary transition-colors">
-                      {{ tag }}
-                    </a>
-                  {% endif %}
-                {% endfor %}
-              </div>
-            {% endif %}
-
-            <div class="card-actions justify-end mt-4">
-              <a href="{{ post.url }}" class="btn btn-primary btn-sm text-primary btn-soft hover:bg-primary-focus">
-                Read More
-                <span class="icon-[tabler--arrow-right] size-4"></span>
-              </a>
-              <a href="{{ post.url }}?listen=true" class="btn btn-secondary btn-soft btn-sm gap-2" title="Listen to this article">
-                <span class="icon-[tabler--headphones] size-4"></span>
-                Listen
-              </a>
-            </div>
-          </div>
-        </div>
-      {% endif %}
-      
-      <!-- Close horizontal cards grid and start vertical cards grid -->
-      {% if positionInGroup == 1 %}
-        </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 {% if not (loop.index == loop.length or (loop.index + 3) % 5 == 0) %}mb-12{% endif %}">
-      {% endif %}
-      
-      <!-- Vertical cards (positions 2, 3, and 4) -->
-      {% if positionInGroup >= 2 %}
-        <div class="card bg-base-100 shadow-base-300/20 shadow-sm hover:shadow-base-300/40 transition-shadow duration-200 border border-base-300/20 max-w-2xl">
-          <figure class="relative h-48 overflow-hidden">
-            {% set firstImage = post.rawContent | matchImage %}
-            <img 
-              src="{{ firstImage.url if firstImage else 'https://picsum.photos/seed/' + post.data.title | slug + '/800/400' }}" 
-              alt="{{ firstImage.alt if firstImage else post.data.title }}"
-              class="w-full h-full object-cover"
-            />
-            {% if post.data.tags and post.data.tags.length > 0 %}
-              <div class="absolute top-4 left-4 z-10">
-                <a href="/posts/?tag={{ post.data.tags[0] | slug }}" class="badge badge-primary text-secondary badge-soft hover:bg-primary hover:text-primary-content transition-colors">
-                  {{ post.data.tags[0] }}
-                </a>
-              </div>
-            {% endif %}
-            {% if site.env == 'development' %}
-            <!-- Comments and Views Overlay -->
-            <div class="absolute bottom-4 right-4 z-10 flex gap-3 h-8">
-              <div class="flex items-center gap-1 bg-black/60 backdrop-blur-sm rounded-full px-3 py-1">
-                <span class="icon-[tabler--message-circle] size-4 text-white"></span>
-                <span class="text-white text-sm font-medium">{{ post.data.comments.length if post.data.comments else 0 }}</span>
-              </div>
-              <div class="flex items-center gap-1 bg-black/60 backdrop-blur-sm rounded-full px-3 py-1">
-                <span class="icon-[tabler--eye] size-4 text-white"></span>
-                <span class="text-white text-sm font-medium">{{ range(150, 2500) | random }}</span>
-              </div>
-            </div>
-            {% endif %}
-          </figure>
-          <div class="card-body">
-            <h2 class="card-title text-lg sm:text-xl text-base-content">
-              <a href="{{ post.url }}" class="link link-hover text-primary hover:text-primary/80">{{ post.data.title }}</a>
-            </h2>
-
-            <div class="flex flex-wrap items-center gap-4 text-sm text-base-content/70 mt-2">
-              <div class="flex items-center gap-2">
-                <span class="icon-[tabler--user] size-4 text-primary"></span>
-                <a href="/posts/?author={{ post.data.author | slug }}" class="hover:text-primary transition-colors">{{ post.data.author }}</a>
-              </div>
-              <div class="flex items-center gap-2">
-                <span class="icon-[tabler--calendar] size-4 text-primary"></span>
-                <time datetime="{{ post.data.published_date }}">
-                  {{ post.data.published_date | date("MMM d, yyyy") }}
-                </time>
-              </div>
-            </div>
-
-            <p class="mt-4 text-secondary/80 line-clamp-4">
-              {{ post.data.meta_description }}
-            </p>
-
-            <!-- Related tags for discovery -->
-            {% if post.data.tags and post.data.tags.length > 1 %}
-              <div class="mt-3 flex flex-wrap gap-1">
-                {% for tag in post.data.tags %}
-                  {% if loop.index > 1 and loop.index <= 5 %}
-                    <a href="/posts/?tag={{ tag | slug }}" class="badge badge-soft hover:badge-primary transition-colors">
-                      {{ tag }}
-                    </a>
-                  {% endif %}
-                {% endfor %}
-              </div>
-            {% endif %}
-
-            <div class="card-actions justify-end mt-4">
-              <a href="{{ post.url }}" class="btn btn-primary btn-sm text-primary btn-soft hover:bg-primary-focus">
-                Read More
-                <span class="icon-[tabler--arrow-right] size-4"></span>
-              </a>
-              <a href="{{ post.url }}?listen=true" class="btn btn-secondary btn-soft btn-sm gap-2" title="Listen to this article">
-                <span class="icon-[tabler--headphones] size-4"></span>
-                Listen
-              </a>
-            </div>
-          </div>
-        </div>
-      {% endif %}
-      
-      <!-- Close vertical cards grid at the end of group or at the very end -->
-      {% if positionInGroup == 4 or loop.last %}
-        </div>
-        {% if not loop.last %}<div class="mb-12"></div>{% endif %}
-      {% endif %}
-    {% endfor %}
+  <!-- End of posts indicator -->
+  <div id="end-of-posts" class="hidden text-center py-8">
+    <p class="text-base-content/70">You've reached the end of our articles!</p>
+    <a href="#" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="btn btn-primary btn-sm mt-4">
+      Back to Top
+      <span class="icon-[tabler--arrow-up] size-4"></span>
+    </a>
   </div>
 
   <!-- Related Articles Discovery Section -->
@@ -376,47 +139,68 @@ title: "Blog Posts"
   {% endif %}
 </div>
 
-<!-- JavaScript for Tag and Author Filtering -->
+<!-- Store all posts data for JavaScript -->
+<script type="application/json" id="posts-data">
+[
+{% for post in collections.posts | reverse %}
+  {
+    "url": "{{ post.url }}",
+    "data": {
+      "title": "{{ post.data.title | replace('"', '\\"') }}",
+      "author": "{{ post.data.author | replace('"', '\\"') }}",
+      "published_date": "{{ post.data.published_date }}",
+      "meta_description": "{{ post.data.meta_description | replace('"', '\\"') }}",
+      "tags": [{% if post.data.tags %}{% for tag in post.data.tags %}"{{ tag | replace('"', '\\"') }}"{% if not loop.last %},{% endif %}{% endfor %}{% endif %}],
+      "comments": {% if post.data.comments %}{{ post.data.comments | length }}{% else %}0{% endif %}
+    },
+    "image": {% set firstImage = post.rawContent | matchImage %}{% if firstImage %}{"url": "{{ firstImage.url }}", "alt": "{{ firstImage.alt | replace('"', '\\"') }}"}{% else %}null{% endif %}
+  }{% if not loop.last %},{% endif %}
+{% endfor %}
+]
+</script>
+
+<!-- JavaScript for Infinite Scroll and Filtering -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-  // Get URL parameters
+  // Get all posts data
+  let postsData;
+  try {
+    const postsDataElement = document.getElementById('posts-data');
+    postsData = JSON.parse(postsDataElement.textContent);
+  } catch (error) {
+    console.error('Error parsing posts data:', error);
+    postsData = [];
+  }
+  
+  // Infinite scroll state
+  let currentPage = 0;
+  const postsPerPage = 5;
+  let isLoading = false;
+  let hasMorePosts = true;
+  let filteredPosts = postsData;
+  
+  // Get URL parameters for filtering
   const urlParams = new URLSearchParams(window.location.search);
   const tagFilter = urlParams.get('tag');
   const authorFilter = urlParams.get('author');
   
+  // Filter posts based on URL parameters
   if (tagFilter || authorFilter) {
-    // Filter articles based on URL parameters
-    const cards = document.querySelectorAll('.card');
-    let visibleCount = 0;
-    
-    cards.forEach(card => {
-      const titleLink = card.querySelector('h2 a[href^="/posts/"]');
-      if (!titleLink) return;
+    filteredPosts = postsData.filter(post => {
+      let shouldInclude = true;
       
-      let shouldShow = true;
-      
-      if (tagFilter) {
-        const tagLinks = card.querySelectorAll('a[href*="tag="]');
-        const hasTags = Array.from(tagLinks).some(link => 
-          link.getAttribute('href').includes(`tag=${tagFilter}`)
+      if (tagFilter && post.data.tags) {
+        shouldInclude = shouldInclude && post.data.tags.some(tag => 
+          tag.toLowerCase().replace(/\s+/g, '-') === tagFilter
         );
-        shouldShow = shouldShow && hasTags;
       }
       
-      if (authorFilter) {
-        const authorLinks = card.querySelectorAll('a[href*="author="]');
-        const hasAuthor = Array.from(authorLinks).some(link => 
-          link.getAttribute('href').includes(`author=${authorFilter}`)
-        );
-        shouldShow = shouldShow && hasAuthor;
+      if (authorFilter && post.data.author) {
+        shouldInclude = shouldInclude && 
+          post.data.author.toLowerCase().replace(/\s+/g, '-') === authorFilter;
       }
       
-      if (shouldShow) {
-        card.style.display = '';
-        visibleCount++;
-      } else {
-        card.style.display = 'none';
-      }
+      return shouldInclude;
     });
     
     // Update page title
@@ -430,14 +214,373 @@ document.addEventListener('DOMContentLoaded', function() {
         title.textContent = `Articles by ${authorFilter.replace('-', ' ')}`;
       }
     }
+  }
+  
+  // Helper function to generate random views
+  function getRandomViews() {
+    return Math.floor(Math.random() * (2500 - 150 + 1)) + 150;
+  }
+  
+  // Helper function to get first image from post content
+  function getFirstImage(post) {
+    if (post.image && post.image.url) {
+      return post.image.url;
+    }
+    // Fallback to placeholder image
+    return `https://picsum.photos/seed/${post.data.title.toLowerCase().replace(/\s+/g, '-')}/800/400`;
+  }
+  
+  // Helper function to format date
+  function formatDate(dateString) {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { 
+      year: 'numeric', 
+      month: 'short', 
+      day: 'numeric' 
+    });
+  }
+  
+  // Helper function to create mobile post card
+  function createMobilePostCard(post) {
+    const commentsCount = post.data.comments || 0;
+    const viewsCount = getRandomViews();
+    const firstImage = getFirstImage(post);
     
-    // Show count
-    if (visibleCount === 0) {
-      const container = document.querySelector('.grid');
-      if (container) {
-        container.innerHTML = '<div class="col-span-full text-center py-8"><p class="text-secondary">No articles found for this filter.</p><a href="/posts/" class="btn btn-primary mt-4">View All Articles</a></div>';
+    return `
+      <div class="card bg-base-100 shadow-base-300/20 shadow-sm hover:shadow-base-300/40 transition-shadow duration-200 border border-base-300/20">
+        <figure class="relative h-48 overflow-hidden">
+          <img 
+            src="${firstImage}" 
+            alt="${post.data.title}"
+            class="w-full h-full object-cover"
+          />
+          ${post.data.tags && post.data.tags.length > 0 ? `
+            <div class="absolute top-4 left-4 z-10">
+              <a href="/posts/?tag=${post.data.tags[0].toLowerCase().replace(/\s+/g, '-')}" class="badge badge-primary text-secondary badge-soft hover:bg-primary hover:text-primary-content transition-colors">
+                ${post.data.tags[0]}
+              </a>
+            </div>
+          ` : ''}
+          <div class="absolute bottom-4 right-4 z-10 flex gap-3">
+            <div class="flex items-center gap-1 bg-black/60 backdrop-blur-sm rounded-full px-3 py-1">
+              <span class="icon-[tabler--message-circle] size-4 text-white"></span>
+              <span class="text-white text-sm font-medium">${commentsCount}</span>
+            </div>
+            <div class="flex items-center gap-1 bg-black/60 backdrop-blur-sm rounded-full px-3 py-1">
+              <span class="icon-[tabler--eye] size-4 text-white"></span>
+              <span class="text-white text-sm font-medium">${viewsCount}</span>
+            </div>
+          </div>
+        </figure>
+        <div class="card-body">
+          <h2 class="card-title text-lg text-base-content">
+            <a href="${post.url}" class="link link-hover text-primary hover:text-primary/80">${post.data.title}</a>
+          </h2>
+
+          <div class="flex flex-wrap items-center gap-4 text-sm text-base-content/70 mt-2">
+            <div class="flex items-center gap-2">
+              <span class="icon-[tabler--user] size-4 text-primary"></span>
+              <a href="/posts/?author=${post.data.author.toLowerCase().replace(/\s+/g, '-')}" class="hover:text-primary transition-colors">${post.data.author}</a>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="icon-[tabler--calendar] size-4 text-primary"></span>
+              <time datetime="${post.data.published_date}">
+                ${formatDate(post.data.published_date)}
+              </time>
+            </div>
+          </div>
+
+          <p class="mt-4 text-secondary/80 line-clamp-3">
+            ${post.data.meta_description}
+          </p>
+
+          ${post.data.tags && post.data.tags.length > 1 ? `
+            <div class="mt-3 flex flex-wrap gap-1">
+              ${post.data.tags.slice(1, 5).map(tag => `
+                <a href="/posts/?tag=${tag.toLowerCase().replace(/\s+/g, '-')}" class="badge badge-soft hover:badge-primary transition-colors">
+                  ${tag}
+                </a>
+              `).join('')}
+            </div>
+          ` : ''}
+
+          <div class="card-actions justify-end mt-4">
+            <a href="${post.url}" class="btn btn-primary btn-sm text-primary btn-soft hover:bg-primary-focus">
+              Read More
+              <span class="icon-[tabler--arrow-right] size-4"></span>
+            </a>
+            <a href="${post.url}?listen=true" class="btn btn-secondary btn-soft btn-sm gap-2" title="Listen to this article">
+              <span class="icon-[tabler--headphones] size-4"></span>
+              Listen
+            </a>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+  
+    // Helper function to create desktop post cards
+  function createDesktopPostCards(posts, startIndex) {
+    let html = '';
+    let i = 0;
+    
+    while (i < posts.length) {
+      // Create a group of 5 posts: 2 horizontal + 3 vertical
+      
+      // Start horizontal cards section
+      html += '<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 mb-6 sm:mb-8">';
+      
+      // Add 2 horizontal cards
+      for (let h = 0; h < 2 && i < posts.length; h++) {
+        const post = posts[i];
+        const commentsCount = post.data.comments || 0;
+        const viewsCount = getRandomViews();
+        const firstImage = getFirstImage(post);
+        
+        html += `
+          <div class="card card-side bg-base-100 shadow-base-300/20 shadow-sm hover:shadow-base-300/40 transition-shadow duration-200 border border-base-300/20 max-w-none">
+            <figure class="relative w-48 sm:w-56 flex-shrink-0">
+              <img 
+                src="${firstImage}" 
+                alt="${post.data.title}"
+                class="w-full h-full object-cover"
+              />
+              ${post.data.tags && post.data.tags.length > 0 ? `
+                <div class="absolute top-4 left-4 z-10">
+                  <a href="/posts/?tag=${post.data.tags[0].toLowerCase().replace(/\s+/g, '-')}" class="badge badge-primary text-secondary badge-soft hover:bg-primary hover:text-primary-content transition-colors">
+                    ${post.data.tags[0]}
+                  </a>
+                </div>
+              ` : ''}
+              <div class="absolute bottom-4 left-4 z-10 flex gap-3 h-8">
+                <div class="flex items-center gap-1 bg-black/60 backdrop-blur-sm rounded-full px-3 py-1">
+                  <span class="icon-[tabler--message-circle] size-4 text-white"></span>
+                  <span class="text-white text-sm font-medium">${commentsCount}</span>
+                </div>
+                <div class="flex items-center gap-1 bg-black/60 backdrop-blur-sm rounded-full px-3 py-1">
+                  <span class="icon-[tabler--eye] size-4 text-white"></span>
+                  <span class="text-white text-sm font-medium">${viewsCount}</span>
+                </div>
+              </div>
+            </figure>
+            <div class="card-body flex-1">
+              <h2 class="card-title text-lg sm:text-xl text-base-content">
+                <a href="${post.url}" class="link link-hover text-primary hover:text-primary/80">${post.data.title}</a>
+              </h2>
+
+              <div class="flex flex-wrap items-center gap-4 text-sm text-base-content/70 mt-2">
+                <div class="flex items-center gap-2">
+                  <span class="icon-[tabler--user] size-4 text-primary"></span>
+                  <a href="/posts/?author=${post.data.author.toLowerCase().replace(/\s+/g, '-')}" class="hover:text-primary transition-colors">${post.data.author}</a>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="icon-[tabler--calendar] size-4 text-primary"></span>
+                  <time datetime="${post.data.published_date}">
+                    ${formatDate(post.data.published_date)}
+                  </time>
+                </div>
+              </div>
+
+              <p class="mt-3 text-secondary/80 line-clamp-3 text-sm sm:text-base">
+                ${post.data.meta_description}
+              </p>
+
+              ${post.data.tags && post.data.tags.length > 1 ? `
+                <div class="mt-3 flex flex-wrap gap-1">
+                  ${post.data.tags.slice(1, 5).map(tag => `
+                    <a href="/posts/?tag=${tag.toLowerCase().replace(/\s+/g, '-')}" class="badge badge-soft hover:badge-primary transition-colors">
+                      ${tag}
+                    </a>
+                  `).join('')}
+                </div>
+              ` : ''}
+
+              <div class="card-actions justify-end mt-4">
+                <a href="${post.url}" class="btn btn-primary btn-sm text-primary btn-soft hover:bg-primary-focus">
+                  Read More
+                  <span class="icon-[tabler--arrow-right] size-4"></span>
+                </a>
+                <a href="${post.url}?listen=true" class="btn btn-secondary btn-soft btn-sm gap-2" title="Listen to this article">
+                  <span class="icon-[tabler--headphones] size-4"></span>
+                  Listen
+                </a>
+              </div>
+            </div>
+          </div>
+        `;
+        i++;
+      }
+      
+      // Close horizontal cards section
+      html += '</div>';
+      
+      // Start vertical cards section if we have more posts
+      if (i < posts.length) {
+        html += '<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 mb-12">';
+        
+        // Add up to 3 vertical cards
+        for (let v = 0; v < 3 && i < posts.length; v++) {
+          const post = posts[i];
+          const commentsCount = post.data.comments || 0;
+          const viewsCount = getRandomViews();
+          const firstImage = getFirstImage(post);
+          
+          html += `
+            <div class="card bg-base-100 shadow-base-300/20 shadow-sm hover:shadow-base-300/40 transition-shadow duration-200 border border-base-300/20 max-w-2xl">
+              <figure class="relative h-48 overflow-hidden">
+                <img 
+                  src="${firstImage}" 
+                  alt="${post.data.title}"
+                  class="w-full h-full object-cover"
+                />
+                ${post.data.tags && post.data.tags.length > 0 ? `
+                  <div class="absolute top-4 left-4 z-10">
+                    <a href="/posts/?tag=${post.data.tags[0].toLowerCase().replace(/\s+/g, '-')}" class="badge badge-primary text-secondary badge-soft hover:bg-primary hover:text-primary-content transition-colors">
+                      ${post.data.tags[0]}
+                    </a>
+                  </div>
+                ` : ''}
+                <div class="absolute bottom-4 right-4 z-10 flex gap-3 h-8">
+                  <div class="flex items-center gap-1 bg-black/60 backdrop-blur-sm rounded-full px-3 py-1">
+                    <span class="icon-[tabler--message-circle] size-4 text-white"></span>
+                    <span class="text-white text-sm font-medium">${commentsCount}</span>
+                  </div>
+                  <div class="flex items-center gap-1 bg-black/60 backdrop-blur-sm rounded-full px-3 py-1">
+                    <span class="icon-[tabler--eye] size-4 text-white"></span>
+                    <span class="text-white text-sm font-medium">${viewsCount}</span>
+                  </div>
+                </div>
+              </figure>
+              <div class="card-body">
+                <h2 class="card-title text-lg sm:text-xl text-base-content">
+                  <a href="${post.url}" class="link link-hover text-primary hover:text-primary/80">${post.data.title}</a>
+                </h2>
+
+                <div class="flex flex-wrap items-center gap-4 text-sm text-base-content/70 mt-2">
+                  <div class="flex items-center gap-2">
+                    <span class="icon-[tabler--user] size-4 text-primary"></span>
+                    <a href="/posts/?author=${post.data.author.toLowerCase().replace(/\s+/g, '-')}" class="hover:text-primary transition-colors">${post.data.author}</a>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span class="icon-[tabler--calendar] size-4 text-primary"></span>
+                    <time datetime="${post.data.published_date}">
+                      ${formatDate(post.data.published_date)}
+                    </time>
+                  </div>
+                </div>
+
+                <p class="mt-4 text-secondary/80 line-clamp-4">
+                  ${post.data.meta_description}
+                </p>
+
+                ${post.data.tags && post.data.tags.length > 1 ? `
+                  <div class="mt-3 flex flex-wrap gap-1">
+                    ${post.data.tags.slice(1, 5).map(tag => `
+                      <a href="/posts/?tag=${tag.toLowerCase().replace(/\s+/g, '-')}" class="badge badge-soft hover:badge-primary transition-colors">
+                        ${tag}
+                      </a>
+                    `).join('')}
+                  </div>
+                ` : ''}
+
+                <div class="card-actions justify-end mt-4">
+                  <a href="${post.url}" class="btn btn-primary btn-sm text-primary btn-soft hover:bg-primary-focus">
+                    Read More
+                    <span class="icon-[tabler--arrow-right] size-4"></span>
+                  </a>
+                  <a href="${post.url}?listen=true" class="btn btn-secondary btn-soft btn-sm gap-2" title="Listen to this article">
+                    <span class="icon-[tabler--headphones] size-4"></span>
+                    Listen
+                  </a>
+                </div>
+              </div>
+            </div>
+          `;
+          i++;
+        }
+        
+        // Close vertical cards section
+        html += '</div>';
       }
     }
+    
+    return { html, nextIndex: i };
+  }
+  
+  // Function to load more posts
+  function loadMorePosts() {
+    if (isLoading || !hasMorePosts) return;
+    
+    isLoading = true;
+    document.getElementById('loading-indicator').classList.remove('hidden');
+    
+    // Simulate network delay for better UX
+    setTimeout(() => {
+      const startIndex = currentPage * postsPerPage;
+      const endIndex = Math.min(startIndex + postsPerPage, filteredPosts.length);
+      const postsToLoad = filteredPosts.slice(startIndex, endIndex);
+      
+      if (postsToLoad.length === 0) {
+        hasMorePosts = false;
+        document.getElementById('loading-indicator').classList.add('hidden');
+        document.getElementById('end-of-posts').classList.remove('hidden');
+        return;
+      }
+      
+      // Load mobile posts
+      const mobileContainer = document.getElementById('mobile-posts-container');
+      postsToLoad.forEach(post => {
+        mobileContainer.insertAdjacentHTML('beforeend', createMobilePostCard(post));
+      });
+      
+      // Load desktop posts
+      const desktopContainer = document.getElementById('desktop-posts-container');
+      const result = createDesktopPostCards(postsToLoad, 0);
+      desktopContainer.insertAdjacentHTML('beforeend', result.html);
+      
+      currentPage++;
+      isLoading = false;
+      document.getElementById('loading-indicator').classList.add('hidden');
+      
+      // Check if we've loaded all posts
+      if (endIndex >= filteredPosts.length) {
+        hasMorePosts = false;
+        document.getElementById('end-of-posts').classList.remove('hidden');
+      }
+    }, 500);
+  }
+  
+  // Infinite scroll event listener
+  function handleScroll() {
+    if (isLoading || !hasMorePosts) return;
+    
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    const windowHeight = window.innerHeight;
+    const documentHeight = document.documentElement.scrollHeight;
+    
+    // Load more when user is 200px from bottom
+    if (scrollTop + windowHeight >= documentHeight - 200) {
+      loadMorePosts();
+    }
+  }
+  
+  // Add scroll event listener with throttling
+  let scrollTimeout;
+  window.addEventListener('scroll', () => {
+    if (scrollTimeout) {
+      clearTimeout(scrollTimeout);
+    }
+    scrollTimeout = setTimeout(handleScroll, 100);
+  });
+  
+  // Initial load
+  if (filteredPosts.length === 0) {
+    document.getElementById('mobile-posts-container').innerHTML = 
+      '<div class="col-span-full text-center py-8"><p class="text-secondary">No articles found for this filter.</p><a href="/posts/" class="btn btn-primary mt-4">View All Articles</a></div>';
+    document.getElementById('desktop-posts-container').innerHTML = 
+      '<div class="col-span-full text-center py-8"><p class="text-secondary">No articles found for this filter.</p><a href="/posts/" class="btn btn-primary mt-4">View All Articles</a></div>';
+  } else {
+    loadMorePosts();
   }
 });
 </script>
