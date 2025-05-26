@@ -122,7 +122,7 @@ pagination:
         </tr>
       </thead>
       <tbody>
-        <template x-for="article in sortedArticles" :key="article.slug">
+        <template x-for="article in getSortedArticles()" :key="article.slug">
           <tr class="hover:bg-base-100">
             <!-- Article Info -->
             <td class="min-w-0">
@@ -144,19 +144,117 @@ pagination:
             
             <!-- Rating Columns -->
             <td class="text-center">
-              <div x-html="generateStarRating(getRating(article.slug, 'writing_quality'), 'writing_quality', article.slug, false)"></div>
+              <template x-if="getRating(article.slug, 'writing_quality') === null">
+                <span class="text-base-300">Not rated</span>
+              </template>
+              <template x-if="getRating(article.slug, 'writing_quality') !== null">
+                <div class="rating-stars flex items-center justify-center space-x-1" 
+                     @mouseenter="showTooltip($event, 'writing_quality', article.slug)"
+                     @mouseleave="hideTooltip()">
+                  <template x-for="star in [1,2,3,4,5]" :key="star">
+                    <span :class="getStarIcon(getStarType(getRating(article.slug, 'writing_quality'), star)) + ' ' + getStarClass(getStarType(getRating(article.slug, 'writing_quality'), star))" 
+                          :data-rating="star"></span>
+                  </template>
+                  <div class="ml-2 flex items-center space-x-1">
+                    <span class="text-xs font-semibold" x-text="getRating(article.slug, 'writing_quality').toFixed(1)"></span>
+                    <template x-if="showLetterGrades">
+                      <span class="text-xs font-bold bg-base-200 px-1.5 py-0.5 rounded" 
+                            :class="getLetterGrade(getRating(article.slug, 'writing_quality')).class" 
+                            x-text="getLetterGrade(getRating(article.slug, 'writing_quality')).grade"></span>
+                    </template>
+                  </div>
+                </div>
+              </template>
             </td>
             <td class="text-center">
-              <div x-html="generateStarRating(getRating(article.slug, 'originality'), 'originality', article.slug, false)"></div>
+              <template x-if="getRating(article.slug, 'originality') === null">
+                <span class="text-base-300">Not rated</span>
+              </template>
+              <template x-if="getRating(article.slug, 'originality') !== null">
+                <div class="rating-stars flex items-center justify-center space-x-1" 
+                     @mouseenter="showTooltip($event, 'originality', article.slug)"
+                     @mouseleave="hideTooltip()">
+                  <template x-for="star in [1,2,3,4,5]" :key="star">
+                    <span :class="getStarIcon(getStarType(getRating(article.slug, 'originality'), star)) + ' ' + getStarClass(getStarType(getRating(article.slug, 'originality'), star))" 
+                          :data-rating="star"></span>
+                  </template>
+                  <div class="ml-2 flex items-center space-x-1">
+                    <span class="text-xs font-semibold" x-text="getRating(article.slug, 'originality').toFixed(1)"></span>
+                    <template x-if="showLetterGrades">
+                      <span class="text-xs font-bold bg-base-200 px-1.5 py-0.5 rounded" 
+                            :class="getLetterGrade(getRating(article.slug, 'originality')).class" 
+                            x-text="getLetterGrade(getRating(article.slug, 'originality')).grade"></span>
+                    </template>
+                  </div>
+                </div>
+              </template>
             </td>
             <td class="text-center">
-              <div x-html="generateStarRating(getRating(article.slug, 'engagement'), 'engagement', article.slug, false)"></div>
+              <template x-if="getRating(article.slug, 'engagement') === null">
+                <span class="text-base-300">Not rated</span>
+              </template>
+              <template x-if="getRating(article.slug, 'engagement') !== null">
+                <div class="rating-stars flex items-center justify-center space-x-1" 
+                     @mouseenter="showTooltip($event, 'engagement', article.slug)"
+                     @mouseleave="hideTooltip()">
+                  <template x-for="star in [1,2,3,4,5]" :key="star">
+                    <span :class="getStarIcon(getStarType(getRating(article.slug, 'engagement'), star)) + ' ' + getStarClass(getStarType(getRating(article.slug, 'engagement'), star))" 
+                          :data-rating="star"></span>
+                  </template>
+                  <div class="ml-2 flex items-center space-x-1">
+                    <span class="text-xs font-semibold" x-text="getRating(article.slug, 'engagement').toFixed(1)"></span>
+                    <template x-if="showLetterGrades">
+                      <span class="text-xs font-bold bg-base-200 px-1.5 py-0.5 rounded" 
+                            :class="getLetterGrade(getRating(article.slug, 'engagement')).class" 
+                            x-text="getLetterGrade(getRating(article.slug, 'engagement')).grade"></span>
+                    </template>
+                  </div>
+                </div>
+              </template>
             </td>
             <td class="text-center">
-              <div x-html="generateStarRating(getRating(article.slug, 'depth'), 'depth', article.slug, false)"></div>
+              <template x-if="getRating(article.slug, 'depth') === null">
+                <span class="text-base-300">Not rated</span>
+              </template>
+              <template x-if="getRating(article.slug, 'depth') !== null">
+                <div class="rating-stars flex items-center justify-center space-x-1" 
+                     @mouseenter="showTooltip($event, 'depth', article.slug)"
+                     @mouseleave="hideTooltip()">
+                  <template x-for="star in [1,2,3,4,5]" :key="star">
+                    <span :class="getStarIcon(getStarType(getRating(article.slug, 'depth'), star)) + ' ' + getStarClass(getStarType(getRating(article.slug, 'depth'), star))" 
+                          :data-rating="star"></span>
+                  </template>
+                  <div class="ml-2 flex items-center space-x-1">
+                    <span class="text-xs font-semibold" x-text="getRating(article.slug, 'depth').toFixed(1)"></span>
+                    <template x-if="showLetterGrades">
+                      <span class="text-xs font-bold bg-base-200 px-1.5 py-0.5 rounded" 
+                            :class="getLetterGrade(getRating(article.slug, 'depth')).class" 
+                            x-text="getLetterGrade(getRating(article.slug, 'depth')).grade"></span>
+                    </template>
+                  </div>
+                </div>
+              </template>
             </td>
             <td class="text-center">
-              <div x-html="generateOverallRating(getOverallRating(article.slug))"></div>
+              <template x-if="getOverallRating(article.slug) === null">
+                <span class="text-base-300">Not rated</span>
+              </template>
+              <template x-if="getOverallRating(article.slug) !== null">
+                <div class="badge badge-lg border flex items-center gap-2" 
+                     :class="getOverallBadgeClasses(getOverallRating(article.slug)).badgeClass">
+                  <span class="flex items-center gap-1">
+                    <span class="icon-[tabler--star] size-3"></span>
+                    <span x-text="getOverallBadgeClasses(getOverallRating(article.slug)).label"></span>
+                  </span>
+                  <span class="badge badge-sm" 
+                        :class="getOverallBadgeClasses(getOverallRating(article.slug)).nestedBadgeClass">
+                    <span x-text="getOverallRating(article.slug).toFixed(1)"></span>
+                    <template x-if="showLetterGrades">
+                      <span x-text="' (' + getLetterGrade(getOverallRating(article.slug)).grade + ')'"></span>
+                    </template>
+                  </span>
+                </div>
+              </template>
             </td>
             
             <!-- Actions -->
@@ -177,7 +275,7 @@ pagination:
           </tr>
         </template>
       </tbody>
-      <tfoot x-show="hasAnyRatings" class="bg-base-200 border-t-2 border-base-300">
+      <tfoot x-show="statistics && Object.keys(statistics).length > 0" class="bg-base-200 border-t-2 border-base-300">
         <tr>
           <td class="font-semibold">
             <div class="flex items-center space-x-2">
@@ -185,11 +283,23 @@ pagination:
               <span>Average</span>
             </div>
           </td>
-          <td class="text-center font-semibold" x-html="getStatDisplay('writing_quality', 'avg')"></td>
-          <td class="text-center font-semibold" x-html="getStatDisplay('originality', 'avg')"></td>
-          <td class="text-center font-semibold" x-html="getStatDisplay('engagement', 'avg')"></td>
-          <td class="text-center font-semibold" x-html="getStatDisplay('depth', 'avg')"></td>
-          <td class="text-center font-semibold" x-html="getStatDisplay('overall', 'avg')"></td>
+          <template x-for="criteria in ['writing_quality', 'originality', 'engagement', 'depth', 'overall']" :key="criteria">
+            <td class="text-center font-semibold">
+              <template x-if="!statistics[criteria] || statistics[criteria].count === 0">
+                <span class="text-base-300">-</span>
+              </template>
+              <template x-if="statistics[criteria] && statistics[criteria].count > 0">
+                <div class="flex flex-col items-center">
+                  <span class="text-sm font-bold" x-text="statistics[criteria].average.toFixed(2)"></span>
+                  <template x-if="showLetterGrades">
+                    <span class="text-xs bg-base-300 px-1 py-0.5 rounded" 
+                          :class="getLetterGrade(statistics[criteria].average).class" 
+                          x-text="getLetterGrade(statistics[criteria].average).grade"></span>
+                  </template>
+                </div>
+              </template>
+            </td>
+          </template>
           <td class="text-center">-</td>
         </tr>
         <tr>
@@ -199,11 +309,19 @@ pagination:
               <span>Std Dev</span>
             </div>
           </td>
-          <td class="text-center font-semibold text-sm" x-html="getStatDisplay('writing_quality', 'std')"></td>
-          <td class="text-center font-semibold text-sm" x-html="getStatDisplay('originality', 'std')"></td>
-          <td class="text-center font-semibold text-sm" x-html="getStatDisplay('engagement', 'std')"></td>
-          <td class="text-center font-semibold text-sm" x-html="getStatDisplay('depth', 'std')"></td>
-          <td class="text-center font-semibold text-sm" x-html="getStatDisplay('overall', 'std')"></td>
+          <template x-for="criteria in ['writing_quality', 'originality', 'engagement', 'depth', 'overall']" :key="criteria">
+            <td class="text-center font-semibold text-sm">
+              <template x-if="!statistics[criteria] || statistics[criteria].count === 0">
+                <span class="text-base-300">-</span>
+              </template>
+              <template x-if="statistics[criteria] && statistics[criteria].count > 0">
+                <div class="flex flex-col items-center">
+                  <span class="text-xs" x-text="'±' + statistics[criteria].stdDev.toFixed(2)"></span>
+                  <span class="text-xs text-base-content/60" x-text="'(n=' + statistics[criteria].count + ')'"></span>
+                </div>
+              </template>
+            </td>
+          </template>
           <td class="text-center">-</td>
         </tr>
       </tfoot>
@@ -212,7 +330,7 @@ pagination:
 
   <!-- Mobile Card Layout -->
   <div class="block md:hidden space-y-4">
-    <template x-for="article in sortedArticles" :key="article.slug">
+    <template x-for="article in getSortedArticles()" :key="article.slug">
       <div class="card bg-base-100 shadow-md">
         <div class="card-body p-4">
           <!-- Article Header -->
@@ -246,7 +364,25 @@ pagination:
           <!-- Overall Rating -->
           <div class="flex items-center justify-between mb-4 p-3 bg-base-200 rounded-lg">
             <span class="font-medium">Overall Rating</span>
-            <div x-html="generateOverallRating(getOverallRating(article.slug))"></div>
+            <template x-if="getOverallRating(article.slug) === null">
+              <span class="text-base-300">Not rated</span>
+            </template>
+            <template x-if="getOverallRating(article.slug) !== null">
+              <div class="badge badge-lg border flex items-center gap-2" 
+                   :class="getOverallBadgeClasses(getOverallRating(article.slug)).badgeClass">
+                <span class="flex items-center gap-1">
+                  <span class="icon-[tabler--star] size-3"></span>
+                  <span x-text="getOverallBadgeClasses(getOverallRating(article.slug)).label"></span>
+                </span>
+                <span class="badge badge-sm" 
+                      :class="getOverallBadgeClasses(getOverallRating(article.slug)).nestedBadgeClass">
+                  <span x-text="getOverallRating(article.slug).toFixed(1)"></span>
+                  <template x-if="showLetterGrades">
+                    <span x-text="' (' + getLetterGrade(getOverallRating(article.slug)).grade + ')'"></span>
+                  </template>
+                </span>
+              </div>
+            </template>
           </div>
 
           <!-- Criteria Ratings Grid -->
@@ -254,9 +390,27 @@ pagination:
             <template x-for="criteria in ['writing_quality', 'originality', 'engagement', 'depth']" :key="criteria">
               <div class="flex flex-col p-3 bg-base-200 rounded-lg">
                 <div class="flex items-center justify-center mb-2">
-                  <span class="text-xs font-medium text-center" x-text="criteria.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())"></span>
+                  <span class="text-xs font-medium text-center" x-text="formatCriteriaName(criteria)"></span>
                 </div>
-                <div x-html="generateStarsOnly(getRating(article.slug, criteria), criteria, article.slug)"></div>
+                <template x-if="getRating(article.slug, criteria) === null">
+                  <span class="text-base-300 text-center text-xs">No stars</span>
+                </template>
+                <template x-if="getRating(article.slug, criteria) !== null">
+                  <div class="rating-stars flex items-center justify-center space-x-0.5" 
+                       @mouseenter="showTooltip($event, criteria, article.slug)"
+                       @mouseleave="hideTooltip()">
+                    <template x-for="star in [1,2,3,4,5]" :key="star">
+                      <span :class="getStarIcon(getStarType(getRating(article.slug, criteria), star)) + ' ' + getStarClass(getStarType(getRating(article.slug, criteria), star), 'size-3')" 
+                            :data-rating="star"></span>
+                    </template>
+                    <span class="text-xs font-semibold ml-2" x-text="getRating(article.slug, criteria).toFixed(1)"></span>
+                    <template x-if="showLetterGrades">
+                      <span class="text-xs font-bold bg-base-300 px-1 py-0.5 rounded ml-1" 
+                            :class="getLetterGrade(getRating(article.slug, criteria)).class" 
+                            x-text="getLetterGrade(getRating(article.slug, criteria)).grade"></span>
+                    </template>
+                  </div>
+                </template>
               </div>
             </template>
           </div>
@@ -265,7 +419,7 @@ pagination:
     </template>
     
     <!-- Mobile Statistics Summary -->
-    <div x-show="hasAnyRatings" class="card bg-base-200 shadow-md">
+    <div x-show="statistics && Object.keys(statistics).length > 0" class="card bg-base-200 shadow-md">
       <div class="card-body p-4">
         <h3 class="font-semibold text-lg mb-4 flex items-center">
           <span class="icon-[tabler--chart-bar] size-5 mr-2"></span>
@@ -277,8 +431,22 @@ pagination:
           <div class="flex items-center justify-between mb-2">
             <span class="font-medium">Overall Rating</span>
             <div class="text-right">
-              <div x-html="getMobileStatDisplay('overall', 'avg')" class="font-bold"></div>
-              <div x-html="getMobileStatDisplay('overall', 'std')" class="text-xs text-base-content/60"></div>
+              <template x-if="!statistics.overall || statistics.overall.count === 0">
+                <span class="text-base-300">-</span>
+              </template>
+              <template x-if="statistics.overall && statistics.overall.count > 0">
+                <div>
+                  <div class="font-bold">
+                    <span x-text="statistics.overall.average.toFixed(2)"></span>
+                    <template x-if="showLetterGrades">
+                      <span x-text="' (' + getLetterGrade(statistics.overall.average).grade + ')'"></span>
+                    </template>
+                  </div>
+                  <div class="text-xs text-base-content/60">
+                    <span x-text="'±' + statistics.overall.stdDev.toFixed(2) + ' (n=' + statistics.overall.count + ')'"></span>
+                  </div>
+                </div>
+              </template>
             </div>
           </div>
         </div>
@@ -287,18 +455,31 @@ pagination:
         <div class="grid grid-cols-2 gap-3">
           <template x-for="criteria in ['writing_quality', 'originality', 'engagement', 'depth']" :key="criteria">
             <div class="flex flex-col items-center p-3 bg-base-100 rounded-lg">
-              <span class="text-xs font-medium text-center mb-2" x-text="criteria.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())"></span>
-              <div x-html="getMobileStatDisplay(criteria, 'avg')" class="font-bold text-sm"></div>
-              <div x-html="getMobileStatDisplay(criteria, 'std')" class="text-xs text-base-content/60"></div>
+              <span class="text-xs font-medium text-center mb-2" x-text="formatCriteriaName(criteria)"></span>
+              <template x-if="!statistics[criteria] || statistics[criteria].count === 0">
+                <span class="text-base-300">-</span>
+              </template>
+              <template x-if="statistics[criteria] && statistics[criteria].count > 0">
+                <div class="text-center">
+                  <div class="font-bold text-sm">
+                    <span x-text="statistics[criteria].average.toFixed(2)"></span>
+                    <template x-if="showLetterGrades">
+                      <span x-text="' (' + getLetterGrade(statistics[criteria].average).grade + ')'"></span>
+                    </template>
+                  </div>
+                  <div class="text-xs text-base-content/60">
+                    <span x-text="'±' + statistics[criteria].stdDev.toFixed(2)"></span>
+                  </div>
+                </div>
+              </template>
             </div>
           </template>
         </div>
       </div>
     </div>
   </div>
-</div>
 
-<!-- Modal for Detailed Analysis -->
+  <!-- Modal for Detailed Analysis -->
 <div id="analysisModal" class="overlay modal overlay-open:opacity-100 overlay-open:duration-300 hidden" role="dialog" tabindex="-1">
   <div class="modal-dialog overlay-open:opacity-100 overlay-open:duration-300 modal-dialog-xl">
     <div class="modal-content">
@@ -313,7 +494,98 @@ pagination:
       </div>
       <div class="modal-body">
         <div id="modalContentArea" class="space-y-6">
-          <!-- Content will be populated by Alpine.js -->
+
+          <template x-if="currentModalData">
+            <div>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <template x-for="[criteria, info] in Object.entries(currentModalData.criteria)" :key="criteria">
+                  <div class="card bg-base-100">
+                    <div class="card-body">
+                      <h4 class="card-title text-lg" x-text="formatCriteriaName(criteria)"></h4>
+                      <div class="mb-3">
+                        <div class="rating-stars flex items-center justify-center space-x-1">
+                          <template x-for="star in [1,2,3,4,5]" :key="star">
+                            <span :class="getStarIcon(getStarType(info.score, star)) + ' ' + getStarClass(getStarType(info.score, star))" 
+                                  :data-rating="star"></span>
+                          </template>
+                          <div class="ml-2 flex items-center space-x-1">
+                            <span class="text-xs font-semibold" x-text="info.score.toFixed(1)"></span>
+                            <template x-if="showLetterGrades">
+                              <span class="text-xs font-bold bg-base-200 px-1.5 py-0.5 rounded" 
+                                    :class="getLetterGrade(info.score).class" 
+                                    x-text="getLetterGrade(info.score).grade"></span>
+                            </template>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="space-y-3">
+                        <div>
+                          <h5 class="font-semibold text-success mb-2">Strengths:</h5>
+                          <ul class="list-disc list-inside text-sm space-y-1">
+                            <template x-for="strength in info.strengths" :key="strength">
+                              <li x-text="strength"></li>
+                            </template>
+                          </ul>
+                        </div>
+                        <div>
+                          <h5 class="font-semibold text-warning mb-2">Suggestions:</h5>
+                          <ul class="list-disc list-inside text-sm space-y-1">
+                            <template x-for="suggestion in info.suggestions" :key="suggestion">
+                              <li x-text="suggestion"></li>
+                            </template>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </template>
+              </div>
+              
+              <div class="mt-6 p-4 bg-base-100 rounded-lg">
+                <h4 class="font-semibold mb-3">Overall Assessment:</h4>
+                
+                <!-- Overall Rating Display -->
+                <div class="mb-4 flex items-center justify-center">
+                  <div class="badge badge-lg border flex items-center gap-2" 
+                       :class="getOverallBadgeClasses(currentModalData.overall_rating).badgeClass">
+                    <span class="flex items-center gap-1">
+                      <span class="icon-[tabler--star] size-3"></span>
+                      <span x-text="getOverallBadgeClasses(currentModalData.overall_rating).label"></span>
+                    </span>
+                    <span class="badge badge-sm" 
+                          :class="getOverallBadgeClasses(currentModalData.overall_rating).nestedBadgeClass">
+                      <span x-text="currentModalData.overall_rating.toFixed(1)"></span>
+                      <template x-if="showLetterGrades">
+                        <span x-text="' (' + getLetterGrade(currentModalData.overall_rating).grade + ')'"></span>
+                      </template>
+                    </span>
+                  </div>
+                </div>
+                
+                <!-- Star Rating Display -->
+                <div class="mb-4 flex items-center justify-center">
+                  <div class="rating-stars flex items-center space-x-1">
+                    <template x-for="star in [1,2,3,4,5]" :key="star">
+                      <span :class="getStarIcon(getStarType(currentModalData.overall_rating, star)) + ' ' + getStarClass(getStarType(currentModalData.overall_rating, star), 'size-6')" 
+                            :data-rating="star"></span>
+                    </template>
+                    <div class="ml-3 flex items-center space-x-2">
+                      <span class="text-lg font-semibold" x-text="currentModalData.overall_rating.toFixed(1)"></span>
+                      <span class="text-sm text-base-content/60">/ 5.0</span>
+                      <template x-if="showLetterGrades">
+                        <span class="text-sm font-bold bg-base-200 px-2 py-1 rounded" 
+                              :class="getLetterGrade(currentModalData.overall_rating).class" 
+                              x-text="getLetterGrade(currentModalData.overall_rating).grade"></span>
+                      </template>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Assessment Text -->
+                <p class="text-sm" x-text="currentModalData.overall_assessment"></p>
+              </div>
+            </div>
+          </template>
         </div>
       </div>
     </div>
@@ -342,6 +614,7 @@ pagination:
     </div>
   </div>
 </div>
+</div>
 
 <script>
 document.addEventListener('alpine:init', () => {
@@ -351,7 +624,7 @@ document.addEventListener('alpine:init', () => {
     articlesData: [
       {% for post in collections.posts %}
       {
-        slug: '{{ post.data.slug }}',
+        slug: '{{ post.data.slug or post.fileSlug }}',
         title: '{{ post.data.title | jsEscape | safe }}',
         author: {% if post.data.author %}'{{ post.data.author | jsEscape | safe }}'{% else %}null{% endif %},
         date: '{{ post.data.published_date }}',
@@ -370,12 +643,14 @@ document.addEventListener('alpine:init', () => {
     tooltipTitle: '',
     tooltipStrengths: [],
     tooltipSuggestions: [],
+    currentModalData: null,
+    statistics: {},
 
-    // Computed
-    get sortedArticles() {
+    // Methods
+    getSortedArticles() {
       if (!this.currentSort.field) return this.articlesData;
       
-      return [...this.articlesData].sort((a, b) => {
+      const sorted = this.articlesData.slice().sort((a, b) => {
         let valueA, valueB;
         
         switch (this.currentSort.field) {
@@ -388,25 +663,23 @@ document.addEventListener('alpine:init', () => {
             valueB = new Date(b.date);
             break;
           case 'overall':
-            valueA = this.ratingsData[a.slug]?.overall_rating || 0;
-            valueB = this.ratingsData[b.slug]?.overall_rating || 0;
+            valueA = this.ratingsData[a.slug]?.overall_rating ?? 0;
+            valueB = this.ratingsData[b.slug]?.overall_rating ?? 0;
             break;
           default: // rating criteria
-            valueA = this.ratingsData[a.slug]?.criteria[this.currentSort.field]?.score || 0;
-            valueB = this.ratingsData[b.slug]?.criteria[this.currentSort.field]?.score || 0;
+            valueA = this.ratingsData[a.slug]?.criteria[this.currentSort.field]?.score ?? 0;
+            valueB = this.ratingsData[b.slug]?.criteria[this.currentSort.field]?.score ?? 0;
         }
         
         if (valueA < valueB) return this.currentSort.direction === 'asc' ? -1 : 1;
         if (valueA > valueB) return this.currentSort.direction === 'asc' ? 1 : -1;
         return 0;
       });
+      
+      return sorted;
     },
 
-    get hasAnyRatings() {
-      return Object.keys(this.ratingsData).length > 0;
-    },
-
-    get statistics() {
+    updateStatistics() {
       const criteria = ['writing_quality', 'originality', 'engagement', 'depth'];
       const stats = {};
       
@@ -446,32 +719,11 @@ document.addEventListener('alpine:init', () => {
         }
       });
       
-      return stats;
+      this.statistics = stats;
     },
 
-    // Methods
     async init() {
       await this.loadRatings();
-      this.initializeModalEvents();
-    },
-
-    initializeModalEvents() {
-      // Listen for modal close events from FlyonUI
-      const modal = document.getElementById('analysisModal');
-      if (modal) {
-        // Listen for when the modal is hidden
-        const observer = new MutationObserver((mutations) => {
-          mutations.forEach((mutation) => {
-            if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
-              const target = mutation.target;
-              if (target.classList.contains('hidden')) {
-                this.closeModal();
-              }
-            }
-          });
-        });
-        observer.observe(modal, { attributes: true });
-      }
     },
 
     async loadRatings() {
@@ -479,11 +731,14 @@ document.addEventListener('alpine:init', () => {
         const response = await fetch('/api/ratings.json');
         if (response.ok) {
           this.ratingsData = await response.json();
+          this.updateStatistics();
         } else {
           console.log('No ratings data found. Generate ratings first.');
+          this.statistics = {};
         }
       } catch (error) {
         console.error('Error loading ratings:', error);
+        this.statistics = {};
       }
     },
 
@@ -546,18 +801,16 @@ document.addEventListener('alpine:init', () => {
     },
 
     getRating(articleSlug, criteria) {
-      return this.ratingsData[articleSlug]?.criteria[criteria]?.score || 0;
+      return this.ratingsData[articleSlug]?.criteria[criteria]?.score ?? null;
     },
 
     getOverallRating(articleSlug) {
-      return this.ratingsData[articleSlug]?.overall_rating || 0;
+      return this.ratingsData[articleSlug]?.overall_rating ?? null;
     },
 
-         hasRatingData(articleSlug) {
-       const hasData = !!this.ratingsData[articleSlug];
-       console.log(`hasRatingData for ${articleSlug}:`, hasData);
-       return hasData;
-     },
+    hasRatingData(articleSlug) {
+      return !!this.ratingsData[articleSlug];
+    },
 
     getLetterGrade(rating) {
       if (rating >= 4.7) return { grade: 'A+', class: 'text-success' };
@@ -575,245 +828,102 @@ document.addEventListener('alpine:init', () => {
       return { grade: 'F', class: 'text-error' };
     },
 
-    generateStarRating(rating, criteria, articleSlug, isMobile = false) {
-      if (!rating) return '<span class="text-base-300">Not rated</span>';
-      
-      const stars = [];
+    // Helper methods for star ratings (Alpine.js way)
+    getStarType(rating, starIndex) {
       const fullStars = Math.floor(rating);
       const hasHalfStar = rating % 1 >= 0.5;
-      const letterGrade = this.getLetterGrade(rating);
       
-      const starSize = isMobile ? 'size-3' : 'size-4';
-      
-      for (let i = 1; i <= 5; i++) {
-        if (i <= fullStars) {
-          stars.push(`<span class="icon-[tabler--star-filled] ${starSize} text-warning cursor-pointer hover:scale-110 transition-transform" data-rating="${i}"></span>`);
-        } else if (i === fullStars + 1 && hasHalfStar) {
-          stars.push(`<span class="icon-[tabler--star-half-filled] ${starSize} text-warning cursor-pointer hover:scale-110 transition-transform" data-rating="${i}"></span>`);
-        } else {
-          stars.push(`<span class="icon-[tabler--star] ${starSize} text-base-300 cursor-pointer hover:scale-110 transition-transform" data-rating="${i}"></span>`);
-        }
-      }
-      
-      if (isMobile) {
-        if (this.showLetterGrades) {
-          return `
-            <div class="rating-stars flex items-center space-x-0.5" 
-                 @mouseenter="showTooltip($event, '${criteria}', '${articleSlug}')"
-                 @mouseleave="hideTooltip()">
-              <div class="flex space-x-0.5">
-                ${stars.join('')}
-              </div>
-              <span class="text-xs font-bold ${letterGrade.class} bg-base-300 px-1 py-0.5 rounded ml-1">${letterGrade.grade}</span>
-            </div>
-          `;
-        } else {
-          return `
-            <div class="rating-stars flex items-center space-x-0.5" 
-                 @mouseenter="showTooltip($event, '${criteria}', '${articleSlug}')"
-                 @mouseleave="hideTooltip()">
-              <div class="flex space-x-0.5">
-                ${stars.join('')}
-              </div>
-            </div>
-          `;
-        }
+      if (starIndex <= fullStars) {
+        return 'filled';
+      } else if (starIndex === fullStars + 1 && hasHalfStar) {
+        return 'half';
       } else {
-        if (this.showLetterGrades) {
-          return `
-            <div class="rating-stars flex items-center justify-center space-x-1" 
-                 @mouseenter="showTooltip($event, '${criteria}', '${articleSlug}')"
-                 @mouseleave="hideTooltip()">
-              ${stars.join('')}
-              <div class="ml-2 flex items-center space-x-1">
-                <span class="text-xs font-semibold">${rating.toFixed(1)}</span>
-                <span class="text-xs font-bold ${letterGrade.class} bg-base-200 px-1.5 py-0.5 rounded">${letterGrade.grade}</span>
-              </div>
-            </div>
-          `;
-        } else {
-          return `
-            <div class="rating-stars flex items-center justify-center space-x-1" 
-                 @mouseenter="showTooltip($event, '${criteria}', '${articleSlug}')"
-                 @mouseleave="hideTooltip()">
-              ${stars.join('')}
-              <div class="ml-2 flex items-center">
-                <span class="text-xs font-semibold">${rating.toFixed(1)}</span>
-              </div>
-            </div>
-          `;
-        }
+        return 'empty';
       }
     },
 
-         generateRatingGrade(rating) {
-       // For mobile cards, this should return empty since we're moving rating to stars row
-       return '';
-     },
+    getStarIcon(starType) {
+      switch (starType) {
+        case 'filled': return 'icon-[tabler--star-filled]';
+        case 'half': return 'icon-[tabler--star-half-filled]';
+        default: return 'icon-[tabler--star]';
+      }
+    },
 
-         generateStarsOnly(rating, criteria, articleSlug) {
-       if (!rating) return '<span class="text-base-300">No stars</span>';
-       
-       const stars = [];
-       const fullStars = Math.floor(rating);
-       const hasHalfStar = rating % 1 >= 0.5;
-       const letterGrade = this.getLetterGrade(rating);
-       
-       for (let i = 1; i <= 5; i++) {
-         if (i <= fullStars) {
-           stars.push(`<span class="icon-[tabler--star-filled] size-3 text-warning cursor-pointer hover:scale-110 transition-transform" data-rating="${i}"></span>`);
-         } else if (i === fullStars + 1 && hasHalfStar) {
-           stars.push(`<span class="icon-[tabler--star-half-filled] size-3 text-warning cursor-pointer hover:scale-110 transition-transform" data-rating="${i}"></span>`);
-         } else {
-           stars.push(`<span class="icon-[tabler--star] size-3 text-base-300 cursor-pointer hover:scale-110 transition-transform" data-rating="${i}"></span>`);
-         }
-       }
-       
-       if (this.showLetterGrades) {
-         return `
-           <div class="rating-stars flex items-center justify-center space-x-0.5" 
-                @mouseenter="showTooltip($event, '${criteria}', '${articleSlug}')"
-                @mouseleave="hideTooltip()">
-             ${stars.join('')}
-             <span class="text-xs font-semibold ml-2">${rating.toFixed(1)}</span>
-             <span class="text-xs font-bold ${letterGrade.class} bg-base-300 px-1 py-0.5 rounded ml-1">${letterGrade.grade}</span>
-           </div>
-         `;
-       } else {
-         return `
-           <div class="rating-stars flex items-center justify-center space-x-0.5" 
-                @mouseenter="showTooltip($event, '${criteria}', '${articleSlug}')"
-                @mouseleave="hideTooltip()">
-             ${stars.join('')}
-             <span class="text-xs font-semibold ml-2">${rating.toFixed(1)}</span>
-           </div>
-         `;
-       }
-     },
+    getStarClass(starType, size = 'size-4') {
+      const baseClass = `${size} cursor-pointer hover:scale-110 transition-transform`;
+      return starType === 'empty' 
+        ? `${baseClass} text-base-300` 
+        : `${baseClass} text-warning`;
+    },
 
-    generateOverallRating(rating) {
-      if (!rating) return '<span class="text-base-300">Not rated</span>';
-      
-      let badgeClass = '';
-      let nestedBadgeClass = '';
-      let label = '';
-      const letterGrade = this.getLetterGrade(rating);
-      
+    getOverallBadgeClasses(rating) {
       if (rating >= 4.7) {
-        badgeClass = 'text-success bg-success/30 border-success/50';
-        nestedBadgeClass = 'badge-success';
-        label = 'Excellent';
+        return {
+          badgeClass: 'text-success bg-success/30 border-success/50',
+          nestedBadgeClass: 'badge-success',
+          label: 'Excellent'
+        };
       } else if (rating >= 4.3) {
-        badgeClass = 'text-success bg-success/20 border-success/40';
-        nestedBadgeClass = 'badge-success';
-        label = 'Excellent';
+        return {
+          badgeClass: 'text-success bg-success/20 border-success/40',
+          nestedBadgeClass: 'badge-success',
+          label: 'Excellent'
+        };
       } else if (rating >= 4.0) {
-        badgeClass = 'text-success bg-success/15 border-success/30';
-        nestedBadgeClass = 'badge-success';
-        label = 'Very Good';
+        return {
+          badgeClass: 'text-success bg-success/15 border-success/30',
+          nestedBadgeClass: 'badge-success',
+          label: 'Very Good'
+        };
       } else if (rating >= 3.5) {
-        badgeClass = 'text-success/80 bg-success/10 border-success/20';
-        nestedBadgeClass = 'badge-success';
-        label = 'Good';
+        return {
+          badgeClass: 'text-success/80 bg-success/10 border-success/20',
+          nestedBadgeClass: 'badge-success',
+          label: 'Good'
+        };
       } else if (rating >= 3.0) {
-        badgeClass = 'text-warning bg-warning/25 border-warning/40';
-        nestedBadgeClass = 'badge-warning';
-        label = 'Fair';
+        return {
+          badgeClass: 'text-warning bg-warning/25 border-warning/40',
+          nestedBadgeClass: 'badge-warning',
+          label: 'Fair'
+        };
       } else if (rating >= 2.5) {
-        badgeClass = 'text-warning/90 bg-warning/15 border-warning/30';
-        nestedBadgeClass = 'badge-warning';
-        label = 'Below Average';
+        return {
+          badgeClass: 'text-warning/90 bg-warning/15 border-warning/30',
+          nestedBadgeClass: 'badge-warning',
+          label: 'Below Average'
+        };
       } else if (rating >= 2.0) {
-        badgeClass = 'text-error/90 bg-error/15 border-error/30';
-        nestedBadgeClass = 'badge-error';
-        label = 'Poor';
+        return {
+          badgeClass: 'text-error/90 bg-error/15 border-error/30',
+          nestedBadgeClass: 'badge-error',
+          label: 'Poor'
+        };
       } else if (rating >= 1.5) {
-        badgeClass = 'text-error bg-error/20 border-error/40';
-        nestedBadgeClass = 'badge-error';
-        label = 'Poor';
+        return {
+          badgeClass: 'text-error bg-error/20 border-error/40',
+          nestedBadgeClass: 'badge-error',
+          label: 'Poor'
+        };
       } else {
-        badgeClass = 'text-error bg-error/30 border-error/50';
-        nestedBadgeClass = 'badge-error';
-        label = 'Very Poor';
-      }
-      
-      const gradeText = this.showLetterGrades ? ` (${letterGrade.grade})` : '';
-      
-      return `
-        <div class="badge ${badgeClass} badge-lg border flex items-center gap-2">
-          <span class="flex items-center gap-1">
-            <span class="icon-[tabler--star] size-3"></span>
-            ${label}
-          </span>
-          <span class="badge ${nestedBadgeClass} badge-sm">${rating.toFixed(1)}${gradeText}</span>
-        </div>
-      `;
-    },
-
-    getStatDisplay(criterion, type) {
-      const stat = this.statistics[criterion];
-      if (!stat || stat.count === 0) {
-        return '<span class="text-base-300">-</span>';
-      }
-      
-      if (type === 'avg') {
-        const avg = stat.average;
-        const letterGrade = this.getLetterGrade(avg);
-        
-        if (this.showLetterGrades) {
-          return `
-            <div class="flex flex-col items-center">
-              <span class="text-sm font-bold">${avg.toFixed(2)}</span>
-              <span class="text-xs ${letterGrade.class} bg-base-300 px-1 py-0.5 rounded">${letterGrade.grade}</span>
-            </div>
-          `;
-        } else {
-          return `
-            <div class="flex flex-col items-center">
-              <span class="text-sm font-bold">${avg.toFixed(2)}</span>
-            </div>
-          `;
-        }
-      } else {
-        return `
-          <div class="flex flex-col items-center">
-            <span class="text-xs">±${stat.stdDev.toFixed(2)}</span>
-            <span class="text-xs text-base-content/60">(n=${stat.count})</span>
-          </div>
-        `;
+        return {
+          badgeClass: 'text-error bg-error/30 border-error/50',
+          nestedBadgeClass: 'badge-error',
+          label: 'Very Poor'
+        };
       }
     },
 
-    getMobileStatDisplay(criterion, type) {
-      const stat = this.statistics[criterion];
-      if (!stat || stat.count === 0) {
-        return '-';
-      }
-      
-      if (type === 'avg') {
-        const avg = stat.average;
-        const letterGrade = this.getLetterGrade(avg);
-        const gradeText = this.showLetterGrades ? ` (${letterGrade.grade})` : '';
-        
-        if (criterion === 'overall') {
-          return `${avg.toFixed(2)}${gradeText}`;
-        } else {
-          return `${avg.toFixed(2)}${gradeText}`;
-        }
-      } else {
-        if (criterion === 'overall') {
-          return `±${stat.stdDev.toFixed(2)} (n=${stat.count})`;
-        } else {
-          return `±${stat.stdDev.toFixed(2)}`;
-        }
-      }
+    formatCriteriaName(criteria) {
+      return criteria.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
     },
 
     showTooltip(event, criteria, articleSlug) {
       const data = this.ratingsData[articleSlug]?.criteria[criteria];
       if (!data) return;
       
-      this.tooltipTitle = `${criteria.replace('_', ' ').toUpperCase()} - ${data.score}/5`;
+      this.tooltipTitle = `${this.formatCriteriaName(criteria)} - ${data.score}/5`;
       this.tooltipStrengths = data.strengths;
       this.tooltipSuggestions = data.suggestions;
       this.tooltipX = event.pageX + 10;
@@ -825,77 +935,22 @@ document.addEventListener('alpine:init', () => {
       this.tooltipVisible = false;
     },
 
-              openModal(articleSlug) {
-       console.log('Opening modal for:', articleSlug);
-       const data = this.ratingsData[articleSlug];
-       if (!data) {
-         console.log('No data found for article:', articleSlug);
-         this.showNotification('No analysis data available for this article', 'error');
-         return;
-       }
-       
-       // Update modal title
-       const modalTitleElement = document.getElementById('modalTitleText');
-       if (modalTitleElement) {
-         modalTitleElement.textContent = `Analysis: ${data.title}`;
-       }
-       
-       // Generate modal content
-       const modalContent = `
-         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-           ${Object.entries(data.criteria).map(([criteria, info]) => `
-             <div class="card bg-base-100">
-               <div class="card-body">
-                 <h4 class="card-title text-lg">${criteria.replace('_', ' ').toUpperCase()}</h4>
-                 <div class="mb-3">
-                   ${this.generateStarRating(info.score, criteria, articleSlug)}
-                 </div>
-                 <div class="space-y-3">
-                   <div>
-                     <h5 class="font-semibold text-success mb-2">Strengths:</h5>
-                     <ul class="list-disc list-inside text-sm space-y-1">
-                       ${info.strengths.map(s => `<li>${s}</li>`).join('')}
-                     </ul>
-                   </div>
-                   <div>
-                     <h5 class="font-semibold text-warning mb-2">Suggestions:</h5>
-                     <ul class="list-disc list-inside text-sm space-y-1">
-                       ${info.suggestions.map(s => `<li>${s}</li>`).join('')}
-                     </ul>
-                   </div>
-                 </div>
-               </div>
-             </div>
-           `).join('')}
-         </div>
-         
-         <div class="mt-6 p-4 bg-base-100 rounded-lg">
-           <h4 class="font-semibold mb-2">Overall Assessment:</h4>
-           <p class="text-sm">${data.overall_assessment}</p>
-         </div>
-       `;
-       
-       // Update modal content
-       const modalContentElement = document.getElementById('modalContentArea');
-       if (modalContentElement) {
-         modalContentElement.innerHTML = modalContent;
-       }
-       
-       console.log('Modal content populated, FlyonUI will handle opening');
-     },
-
-     closeModal() {
-       console.log('Closing modal');
-       // Clear modal content
-       const modalContentElement = document.getElementById('modalContentArea');
-       if (modalContentElement) {
-         modalContentElement.innerHTML = '';
-       }
-       const modalTitleElement = document.getElementById('modalTitleText');
-       if (modalTitleElement) {
-         modalTitleElement.textContent = 'Detailed Analysis';
-       }
-     },
+    openModal(articleSlug) {
+      const data = this.ratingsData[articleSlug];
+      if (!data) {
+        this.showNotification('No analysis data available for this article', 'error');
+        return;
+      }
+      
+      // Update modal title
+      const modalTitleElement = document.getElementById('modalTitleText');
+      if (modalTitleElement) {
+        modalTitleElement.textContent = `Analysis: ${data.title}`;
+      }
+      
+      // Store the data for the modal to use
+      this.currentModalData = data;
+    },
 
     showNotification(message, type) {
       const notification = document.createElement('div');
