@@ -87,6 +87,18 @@ export default function (eleventyConfig) {
     return prefix + "-" + Math.floor(Math.random() * 1000000);
   });
 
+  // JavaScript string escape filter
+  eleventyConfig.addFilter("jsEscape", function(str) {
+    if (!str) return str;
+    return str
+      .replace(/\\/g, '\\\\')
+      .replace(/'/g, "\\'")
+      .replace(/"/g, '\\"')
+      .replace(/\n/g, '\\n')
+      .replace(/\r/g, '\\r')
+      .replace(/\t/g, '\\t');
+  });
+
   // Date filter
   eleventyConfig.addFilter("date", function(date, format) {
     if (!date) return '';
