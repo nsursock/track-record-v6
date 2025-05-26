@@ -96,8 +96,8 @@ eleventyNavigation:
 <!-- Featured Posts Section -->
 <section class="py-12 sm:py-16 md:py-20 bg-base-200">
   <div class="container mx-auto px-4 sm:px-8 md:px-12 lg:px-20">
-    <h2 class="text-2xl sm:text-3xl font-bold text-center mb-4 sm:mb-6 md:mb-8 text-primary">Latest Philosophical Explorations</h2>
-    <p class="text-center text-base-content/70 mb-8 sm:mb-12 md:mb-16">Discover our latest insights where music meets philosophy. <a href="/posts/" class="link link-primary">View all articles</a> to explore more profound connections.</p>
+    <h2 class="text-2xl sm:text-3xl font-bold text-center mb-4 sm:mb-6 md:mb-8 text-primary">Top-Rated Philosophical Explorations</h2>
+    <p class="text-center text-base-content/70 mb-8 sm:mb-12 md:mb-16">Discover our highest-rated insights where music meets philosophy. <a href="/posts/" class="link link-primary">View all articles</a> to explore more profound connections.</p>
 
     <!-- Mobile Carousel (hidden on md and up) -->
     <div class="block md:hidden">
@@ -113,8 +113,7 @@ eleventyNavigation:
       >
         <div class="carousel overflow-hidden">
           <div class="carousel-body opacity-0">
-            {% for post in collections.posts | reverse %}
-              {% if loop.index <= 5 %}
+            {% for post in collections.posts | topRated(ratings, 5) %}
                 <div class="carousel-slide{% if loop.first %} active{% endif %}" style="width: 100% !important;">
                   <div class="px-6">
                     <div class="card bg-base-100 shadow-xl hover:shadow-2xl transition-all duration-300 border-0 rounded-2xl overflow-hidden">
@@ -149,6 +148,26 @@ eleventyNavigation:
                         <h2 class="card-title text-xl font-bold text-base-content leading-tight line-clamp-2">
                           <a href="{{ post.url }}" class="link link-hover text-primary hover:text-primary/80 transition-colors">{{ post.data.title }}</a>
                         </h2>
+
+                        <!-- Star Rating -->
+                        {% set postSlug = post.data.slug or post.fileSlug %}
+                        {% if ratings[postSlug] %}
+                          <div class="flex items-center justify-center gap-2 mb-3">
+                            <div class="flex items-center gap-1">
+                              {% set rating = ratings[postSlug].overall_rating %}
+                              {% for star in range(1, 6) %}
+                                {% if star <= rating %}
+                                  <span class="icon-[tabler--star-filled] size-4 text-warning"></span>
+                                {% elif star - 0.5 <= rating %}
+                                  <span class="icon-[tabler--star-half-filled] size-4 text-warning"></span>
+                                {% else %}
+                                  <span class="icon-[tabler--star] size-4 text-base-300"></span>
+                                {% endif %}
+                              {% endfor %}
+                            </div>
+                            <span class="text-sm font-semibold text-base-content">{{ rating | round(1) }}/5</span>
+                          </div>
+                        {% endif %}
 
                         <div class="flex flex-wrap items-center gap-4 text-sm text-base-content/60">
                           <div class="flex items-center gap-2">
@@ -186,7 +205,6 @@ eleventyNavigation:
                     </div>
                   </div>
                 </div>
-              {% endif %}
             {% endfor %}
           </div>
         </div>
@@ -229,7 +247,7 @@ eleventyNavigation:
     <div class="hidden md:block">
       <!-- Top Row: 2 Horizontal Cards -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 mb-6 sm:mb-8">
-        {% for post in collections.posts | reverse %}
+        {% for post in collections.posts | topRated(ratings, 5) %}
           {% if loop.index <= 2 %}
             <div class="card card-side bg-base-100 shadow-base-300/20 shadow-sm hover:shadow-base-300/40 transition-shadow duration-200 border border-base-300/20 max-w-none">
               <figure class="relative w-48 sm:w-56 flex-shrink-0">
@@ -262,6 +280,26 @@ eleventyNavigation:
                 <h2 class="card-title text-lg sm:text-xl text-base-content">
                   <a href="{{ post.url }}" class="link link-hover text-primary hover:text-primary/80">{{ post.data.title }}</a>
                 </h2>
+
+                <!-- Star Rating -->
+                {% set postSlug = post.data.slug or post.fileSlug %}
+                {% if ratings[postSlug] %}
+                  <div class="flex items-center gap-2 mt-2">
+                    <div class="flex items-center gap-1">
+                      {% set rating = ratings[postSlug].overall_rating %}
+                      {% for star in range(1, 6) %}
+                        {% if star <= rating %}
+                          <span class="icon-[tabler--star-filled] size-3 text-warning"></span>
+                        {% elif star - 0.5 <= rating %}
+                          <span class="icon-[tabler--star-half-filled] size-3 text-warning"></span>
+                        {% else %}
+                          <span class="icon-[tabler--star] size-3 text-base-300"></span>
+                        {% endif %}
+                      {% endfor %}
+                    </div>
+                    <span class="text-xs font-semibold text-base-content">{{ rating | round(1) }}/5</span>
+                  </div>
+                {% endif %}
 
                 <div class="flex flex-wrap items-center gap-4 text-sm text-base-content/70 mt-2">
                   <div class="flex items-center gap-2">
@@ -298,7 +336,7 @@ eleventyNavigation:
 
       <!-- Bottom Row: 3 Vertical Cards -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-        {% for post in collections.posts | reverse %}
+        {% for post in collections.posts | topRated(ratings, 5) %}
           {% if loop.index > 2 and loop.index <= 5 %}
             <div class="card bg-base-100 shadow-base-300/20 shadow-sm hover:shadow-base-300/40 transition-shadow duration-200 border border-base-300/20 max-w-2xl">
               <figure class="relative h-48 overflow-hidden">
@@ -331,6 +369,26 @@ eleventyNavigation:
                 <h2 class="card-title text-lg sm:text-xl text-base-content">
                   <a href="{{ post.url }}" class="link link-hover text-primary hover:text-primary/80">{{ post.data.title }}</a>
                 </h2>
+
+                <!-- Star Rating -->
+                {% set postSlug = post.data.slug or post.fileSlug %}
+                {% if ratings[postSlug] %}
+                  <div class="flex items-center gap-2 mt-2">
+                    <div class="flex items-center gap-1">
+                      {% set rating = ratings[postSlug].overall_rating %}
+                      {% for star in range(1, 6) %}
+                        {% if star <= rating %}
+                          <span class="icon-[tabler--star-filled] size-3 text-warning"></span>
+                        {% elif star - 0.5 <= rating %}
+                          <span class="icon-[tabler--star-half-filled] size-3 text-warning"></span>
+                        {% else %}
+                          <span class="icon-[tabler--star] size-3 text-base-300"></span>
+                        {% endif %}
+                      {% endfor %}
+                    </div>
+                    <span class="text-xs font-semibold text-base-content">{{ rating | round(1) }}/5</span>
+                  </div>
+                {% endif %}
 
                 <div class="flex flex-wrap items-center gap-4 text-sm text-base-content/70 mt-2">
                   <div class="flex items-center gap-2">

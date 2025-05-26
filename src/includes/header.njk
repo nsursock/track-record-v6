@@ -92,7 +92,15 @@
             <li>
               <a class="dropdown-item" href="/pages/private/ratings/">
                 <span class="icon-[tabler--star]"></span>
-                Article Ratings
+                Ratings
+              </a>
+            </li>
+          </template>
+          <template x-if="user && user.email === 'nicolas.sursock@gmail.com'">
+            <li>
+              <a class="dropdown-item" href="/pages/private/evolution/">
+                <span class="icon-[tabler--chart-line]"></span>
+                Evolution
               </a>
             </li>
           </template>
@@ -174,6 +182,12 @@
             <a href="/pages/private/ratings/" class="btn btn-ghost btn-block justify-center gap-2">
               <span class="icon-[tabler--star]"></span>
               Article Ratings
+            </a>
+          </template>
+          <template x-if="user.email === 'nicolas.sursock@gmail.com'">
+            <a href="/pages/private/evolution/" class="btn btn-ghost btn-block justify-center gap-2">
+              <span class="icon-[tabler--chart-line]"></span>
+              Evolution
             </a>
           </template>
           <button class="btn btn-error btn-ghost btn-block justify-center gap-2" @click="logout">

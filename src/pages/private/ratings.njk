@@ -16,6 +16,28 @@ pagination:
     <p class="text-lg text-center text-secondary">AI-powered content analysis with detailed ratings and feedback</p>
   </div>
 
+    <!-- View Tabs -->
+  <div class="mb-6" x-show="availableRevisions.length > 1">
+    <div class="tabs tabs-boxed justify-center">
+      <template x-for="view in availableRevisions" :key="view">
+        <button 
+          @click="switchView(view)" 
+          :class="currentView === view ? 'tab-active' : ''" 
+          class="tab"
+          x-text="getViewLabel(view)"
+        ></button>
+      </template>
+    </div>
+    
+    <!-- Current View Info -->
+    <div class="text-center mt-2 text-sm text-base-content/70">
+      <span x-text="'Showing: ' + getViewLabel(currentView)"></span>
+      <template x-if="currentView !== 'original'">
+        <span class="ml-2 badge badge-info badge-sm">Revision</span>
+      </template>
+    </div>
+  </div>
+
   <!-- Controls Section -->
   <div class="mb-6 flex flex-col sm:flex-row items-center justify-center gap-4">
     <!-- Generate Ratings Button -->
@@ -137,6 +159,9 @@ pagination:
                   <div class="text-xs text-secondary truncate max-w-xs">
                     <span x-text="article.dateFormatted"></span>
                     <span x-show="article.author" x-text="' • ' + article.author"></span>
+                    <template x-if="!hasDataForCurrentView(article.slug) && currentView !== 'original'">
+                      <span class="ml-2 badge badge-xs badge-warning">No data</span>
+                    </template>
                   </div>
                 </div>
               </div>
@@ -259,19 +284,28 @@ pagination:
             
             <!-- Actions -->
             <td class="text-center">
-              <button 
-                class="btn btn-sm btn-ghost"
-                data-overlay="#analysisModal"
-                @click="openModal(article.slug)"
-                :disabled="!hasRatingData(article.slug)"
-                :title="hasRatingData(article.slug) ? 'View detailed analysis' : 'No analysis available - generate ratings first'"
-                aria-haspopup="dialog" 
-                aria-expanded="false" 
-                aria-controls="analysisModal"
-              >
-                <span class="icon-[tabler--eye] size-4"></span>
-              </button>
-            </td>
+              <div class="flex items-center justify-center gap-2">
+                <button 
+                  class="btn btn-sm btn-ghost"
+                  @click="readArticle(article.slug)"
+                  :title="'Read article: ' + article.title"
+                >
+                  <span class="icon-[tabler--book-2] size-4"></span>
+                </button>
+                <button 
+                  class="btn btn-sm btn-ghost"
+                  data-overlay="#analysisModal"
+                  @click="openModal(article.slug)"
+                  :disabled="!hasRatingData(article.slug)"
+                  :title="hasRatingData(article.slug) ? 'View detailed analysis' : 'No analysis available - generate ratings first'"
+                  aria-haspopup="dialog" 
+                  aria-expanded="false" 
+                  aria-controls="analysisModal"
+                >
+                  <span class="icon-[tabler--eye] size-4"></span>
+                </button>
+              </div>
+                        </td>
           </tr>
         </template>
       </tbody>
@@ -345,20 +379,32 @@ pagination:
               <div class="text-sm text-secondary">
                 <span x-text="article.dateFormatted"></span>
                 <span x-show="article.author" x-text="' • ' + article.author"></span>
+                <template x-if="!hasDataForCurrentView(article.slug) && currentView !== 'original'">
+                  <span class="ml-2 badge badge-xs badge-warning">No data</span>
+                </template>
               </div>
             </div>
-            <button 
-              class="btn btn-sm btn-circle btn-ghost"
-              data-overlay="#analysisModal"
-              @click="openModal(article.slug)"
-              :disabled="!hasRatingData(article.slug)"
-              :title="hasRatingData(article.slug) ? 'View detailed analysis' : 'No analysis available - generate ratings first'"
-              aria-haspopup="dialog" 
-              aria-expanded="false" 
-              aria-controls="analysisModal"
-            >
-              <span class="icon-[tabler--eye] size-4"></span>
-            </button>
+            <div class="flex items-center gap-2">
+              <button 
+                class="btn btn-sm btn-circle btn-ghost"
+                @click="readArticle(article.slug)"
+                :title="'Read article: ' + article.title"
+              >
+                <span class="icon-[tabler--book-2] size-4"></span>
+              </button>
+              <button 
+                class="btn btn-sm btn-circle btn-ghost"
+                data-overlay="#analysisModal"
+                @click="openModal(article.slug)"
+                :disabled="!hasRatingData(article.slug)"
+                :title="hasRatingData(article.slug) ? 'View detailed analysis' : 'No analysis available - generate ratings first'"
+                aria-haspopup="dialog" 
+                aria-expanded="false" 
+                aria-controls="analysisModal"
+              >
+                <span class="icon-[tabler--eye] size-4"></span>
+              </button>
+            </div>
           </div>
 
           <!-- Overall Rating -->
@@ -414,7 +460,7 @@ pagination:
               </div>
             </template>
           </div>
-        </div>
+                </div>
       </div>
     </template>
     
@@ -645,6 +691,8 @@ document.addEventListener('alpine:init', () => {
     tooltipSuggestions: [],
     currentModalData: null,
     statistics: {},
+    currentView: 'original',
+    availableRevisions: [],
 
     // Methods
     getSortedArticles() {
@@ -671,9 +719,14 @@ document.addEventListener('alpine:init', () => {
             valueB = this.ratingsData[b.slug]?.criteria[this.currentSort.field]?.score ?? 0;
         }
         
+        // Primary sort comparison
         if (valueA < valueB) return this.currentSort.direction === 'asc' ? -1 : 1;
         if (valueA > valueB) return this.currentSort.direction === 'asc' ? 1 : -1;
-        return 0;
+        
+        // Secondary sort by date (newest first) when primary values are equal
+        const dateA = new Date(a.date);
+        const dateB = new Date(b.date);
+        return dateB - dateA; // Newest first
       });
       
       return sorted;
@@ -731,6 +784,7 @@ document.addEventListener('alpine:init', () => {
         const response = await fetch('/api/ratings.json');
         if (response.ok) {
           this.ratingsData = await response.json();
+          this.updateAvailableRevisions();
           this.updateStatistics();
         } else {
           console.log('No ratings data found. Generate ratings first.');
@@ -801,15 +855,74 @@ document.addEventListener('alpine:init', () => {
     },
 
     getRating(articleSlug, criteria) {
-      return this.ratingsData[articleSlug]?.criteria[criteria]?.score ?? null;
+      const data = this.getCurrentRatings(articleSlug);
+      return data?.criteria[criteria]?.score ?? null;
     },
 
     getOverallRating(articleSlug) {
-      return this.ratingsData[articleSlug]?.overall_rating ?? null;
+      const data = this.getCurrentRatings(articleSlug);
+      return data?.overall_rating ?? null;
     },
 
     hasRatingData(articleSlug) {
-      return !!this.ratingsData[articleSlug];
+      return this.hasDataForCurrentView(articleSlug);
+    },
+
+    updateAvailableRevisions() {
+      const allRevisions = new Set(['original']);
+      
+      Object.values(this.ratingsData).forEach(articleData => {
+        if (articleData.revisions) {
+          Object.keys(articleData.revisions).forEach(revId => {
+            allRevisions.add(revId);
+          });
+        }
+      });
+      
+      this.availableRevisions = Array.from(allRevisions).sort((a, b) => {
+        if (a === 'original') return -1;
+        if (b === 'original') return 1;
+        return a.localeCompare(b);
+      });
+    },
+
+    getCurrentRatings(articleSlug) {
+      if (this.currentView === 'original') {
+        return this.ratingsData[articleSlug];
+      } else {
+        return this.ratingsData[articleSlug]?.revisions?.[this.currentView];
+      }
+    },
+
+    hasDataForCurrentView(articleSlug) {
+      const data = this.getCurrentRatings(articleSlug);
+      return data && data.criteria;
+    },
+
+    switchView(view) {
+      this.currentView = view;
+    },
+
+    getViewLabel(view) {
+      if (view === 'original') return 'Original Analysis';
+      return view.toUpperCase().replace('REV', 'Revision ');
+    },
+
+    calculatePercentageChange(originalValue, newValue) {
+      if (originalValue === 0) return newValue > 0 ? 100 : 0;
+      return ((newValue - originalValue) / originalValue * 100);
+    },
+
+    getPercentageChangeClass(percentage) {
+      if (percentage > 0) return 'text-success';
+      if (percentage < 0) return 'text-error';
+      return 'text-base-content';
+    },
+
+    getPercentageChangeIcon(percentage) {
+      if (percentage > 0) return 'icon-[tabler--trending-up]';
+      if (percentage < 0) return 'icon-[tabler--trending-down]';
+      return 'icon-[tabler--minus]';
     },
 
     getLetterGrade(rating) {
@@ -920,10 +1033,11 @@ document.addEventListener('alpine:init', () => {
     },
 
     showTooltip(event, criteria, articleSlug) {
-      const data = this.ratingsData[articleSlug]?.criteria[criteria];
+      const data = this.getCurrentRatings(articleSlug)?.criteria[criteria];
       if (!data) return;
       
-      this.tooltipTitle = `${this.formatCriteriaName(criteria)} - ${data.score}/5`;
+      const viewLabel = this.currentView === 'original' ? '' : ` (${this.getViewLabel(this.currentView)})`;
+      this.tooltipTitle = `${this.formatCriteriaName(criteria)} - ${data.score}/5${viewLabel}`;
       this.tooltipStrengths = data.strengths;
       this.tooltipSuggestions = data.suggestions;
       this.tooltipX = event.pageX + 10;
@@ -935,17 +1049,31 @@ document.addEventListener('alpine:init', () => {
       this.tooltipVisible = false;
     },
 
+    readArticle(articleSlug) {
+      // Find the article data
+      const article = this.articlesData.find(a => a.slug === articleSlug);
+      if (article) {
+        // Navigate to the article page
+        window.location.href = `/posts/${articleSlug}/`;
+      } else {
+        this.showNotification('Article not found', 'error');
+      }
+    },
+
     openModal(articleSlug) {
-      const data = this.ratingsData[articleSlug];
+      const data = this.getCurrentRatings(articleSlug);
       if (!data) {
-        this.showNotification('No analysis data available for this article', 'error');
+        this.showNotification('No analysis data available for current view', 'error');
         return;
       }
+      
+      const viewLabel = this.getViewLabel(this.currentView);
+      const titleText = `${viewLabel}: ${data.title}`;
       
       // Update modal title
       const modalTitleElement = document.getElementById('modalTitleText');
       if (modalTitleElement) {
-        modalTitleElement.textContent = `Analysis: ${data.title}`;
+        modalTitleElement.textContent = titleText;
       }
       
       // Store the data for the modal to use
@@ -984,5 +1112,44 @@ document.addEventListener('alpine:init', () => {
 
 .overlay.modal.overlay-open\:opacity-100 {
   background-color: rgba(0, 0, 0, 0.6);
+}
+
+/* Revision row styling */
+.bg-base-50 {
+  background-color: hsl(var(--b1) / 0.5);
+}
+
+/* Smooth transitions for expansion */
+.transition-transform {
+  transition: transform 0.2s ease;
+}
+
+/* Alpine.js transition classes */
+[x-cloak] { display: none !important; }
+
+.x-transition-enter {
+  opacity: 0;
+  transform: scale(0.95);
+}
+
+.x-transition-enter-active {
+  opacity: 1;
+  transform: scale(1);
+  transition: opacity 150ms ease-out, transform 150ms ease-out;
+}
+
+.x-transition-leave-active {
+  opacity: 0;
+  transform: scale(0.95);
+  transition: opacity 150ms ease-in, transform 150ms ease-in;
+}
+
+/* Percentage change styling */
+.text-success {
+  color: hsl(var(--su));
+}
+
+.text-error {
+  color: hsl(var(--er));
 }
 </style> 

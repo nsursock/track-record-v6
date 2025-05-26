@@ -2,25 +2,25 @@
 ai_model: claude-sonnet-3.5
 author: Nicolas Sursock
 comments:
-  - name: "Dr. Sophia Chen"
+  - name: "Sophia Chen"
     avatar: "https://i.pravatar.cc/150?u=sophiachen"
-    published_date: "2024-01-15T10:30:00+00:00"
+    published_date: "2025-05-24T19:30:00+00:00"
     text: "Your synthesis beautifully captures the paradox of stillness within movement. The lake metaphor illuminates how true serenity isn't static but dynamically responsive."
   - name: "Marcus Williams"
     avatar: "https://i.pravatar.cc/150?u=marcuswilliams"
-    published_date: "2024-01-15T11:15:00+00:00"
+    published_date: "2025-05-24T20:15:00+00:00"
     text: "The distinction between passive and active serenity challenges Western misconceptions about inner peace. This reframes meditation as engagement rather than withdrawal."
-  - name: "Prof. Elena Rossi"
+  - name: "Elena Rossi"
     avatar: "https://i.pravatar.cc/150?u=elenarossi"
-    published_date: "2024-01-15T12:00:00+00:00"
+    published_date: "2025-05-24T21:00:00+00:00"
     text: "I question whether the translucent lake metaphor adequately captures human complexity. Can consciousness ever achieve such perfect transparency?"
   - name: "David Kumar"
     avatar: "https://i.pravatar.cc/150?u=davidkumar"
-    published_date: "2024-01-15T13:20:00+00:00"
+    published_date: "2025-05-24T21:20:00+00:00"
     text: "The musical analogies throughout create a compelling bridge between abstract philosophy and lived experience. Serenity as harmony rather than silence."
-  - name: "Dr. Sarah Thompson"
+  - name: "Sarah Thompson"
     avatar: "https://i.pravatar.cc/150?u=sarahthompson"
-    published_date: "2024-01-15T14:45:00+00:00"
+    published_date: "2025-05-24T21:45:00+00:00"
     text: "This has profound implications for modern wellness culture. True serenity requires embracing life's turbulence, not escaping it."
 inspired_by: "'Daria' by 'Cake' on 'Fashion Nugget'"
 layout: post.njk
@@ -30,7 +30,7 @@ meta_description_options:
 - option3: "Can we attain lake-like serenity? Philosophical investigation of stillness, movement, and authentic inner peace."
 - option4: "The paradox of translucent serenity: philosophical analysis of achieving perfect stillness in dynamic existence."
 - option5: "Examining the nature of true serenity through the metaphor of translucent lakes and conscious awareness."
-published_date: "2024-01-15T09:00:00+00:00"
+published_date: "2025-05-24T18:21:10+00:00"
 slug: serenity-translucent-consciousness
 tags:
 - Psychology

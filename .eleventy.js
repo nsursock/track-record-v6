@@ -400,6 +400,60 @@ export default function (eleventyConfig) {
     return [...new Set(arr)];
   });
 
+  // Add filter to sort posts by ratings
+  eleventyConfig.addFilter("sortByRating", function(posts, ratingsData, limit = null) {
+    if (!posts || !ratingsData) return posts;
+    
+    // Create array of posts with their ratings
+    const postsWithRatings = posts.map(post => {
+      const slug = post.data.slug || post.fileSlug;
+      const rating = ratingsData[slug];
+      return {
+        ...post,
+        rating: rating ? rating.overall_rating : 0
+      };
+    });
+    
+    // Sort by rating (highest first), then by date (newest first) for ties
+    const sorted = postsWithRatings.sort((a, b) => {
+      if (b.rating !== a.rating) {
+        return b.rating - a.rating;
+      }
+      // Secondary sort by date (newest first) when ratings are equal
+      return new Date(b.data.published_date) - new Date(a.data.published_date);
+    });
+    
+    // Return limited results if specified
+    return limit ? sorted.slice(0, limit) : sorted;
+  });
+
+  // Add filter to get top rated posts
+  eleventyConfig.addFilter("topRated", function(posts, ratingsData, limit = 5) {
+    if (!posts || !ratingsData) return posts.slice(0, limit);
+    
+    // Filter posts that have ratings
+    const ratedPosts = posts.filter(post => {
+      const slug = post.data.slug || post.fileSlug;
+      return ratingsData[slug] && ratingsData[slug].overall_rating;
+    });
+    
+    // Sort by rating (highest first), then by date (newest first) for ties
+    return ratedPosts
+      .sort((a, b) => {
+        const slugA = a.data.slug || a.fileSlug;
+        const slugB = b.data.slug || b.fileSlug;
+        const ratingA = ratingsData[slugA].overall_rating;
+        const ratingB = ratingsData[slugB].overall_rating;
+        
+        if (ratingB !== ratingA) {
+          return ratingB - ratingA;
+        }
+        // Secondary sort by date (newest first) when ratings are equal
+        return new Date(b.data.published_date) - new Date(a.data.published_date);
+      })
+      .slice(0, limit);
+  });
+
   // If you have other `addPlugin` calls, it's important that UpgradeHelper is added last.
   // eleventyConfig.addPlugin(UpgradeHelper);
 

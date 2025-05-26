@@ -26,7 +26,12 @@ export default function handler(req, res) {
       
       console.log('Found evaluation files:', evalFiles);
       
-      for (const file of evalFiles) {
+      // Separate original files from revision files
+      const originalFiles = evalFiles.filter(file => !file.includes('.rev'));
+      const revisionFiles = evalFiles.filter(file => file.includes('.rev'));
+      
+      // Process original files first
+      for (const file of originalFiles) {
         try {
           const filePath = path.join(evalFolderPath, file);
           const fileContent = fs.readFileSync(filePath, 'utf8');
@@ -45,6 +50,41 @@ export default function handler(req, res) {
           console.log(`Loaded evaluation for: ${slug}`);
         } catch (fileError) {
           console.error(`Error reading evaluation file ${file}:`, fileError);
+        }
+      }
+      
+      // Process revision files and attach them to their originals
+      for (const file of revisionFiles) {
+        try {
+          const filePath = path.join(evalFolderPath, file);
+          const fileContent = fs.readFileSync(filePath, 'utf8');
+          const evaluation = JSON.parse(fileContent);
+          
+          // Extract base slug and revision number from filename
+          // e.g., "waves-another-world.rev1.json" -> slug: "waves-another-world", revision: "rev1"
+          const match = file.match(/^(.+)\.(rev\d+)\.json$/);
+          if (match) {
+            const baseSlug = match[1];
+            const revisionId = match[2];
+            
+            // Add title to evaluation if not present
+            if (!evaluation.title) {
+              evaluation.title = baseSlug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+            }
+            
+            // If the original exists, add this as a revision
+            if (ratingsData[baseSlug]) {
+              if (!ratingsData[baseSlug].revisions) {
+                ratingsData[baseSlug].revisions = {};
+              }
+              ratingsData[baseSlug].revisions[revisionId] = evaluation;
+              console.log(`Loaded revision ${revisionId} for: ${baseSlug}`);
+            } else {
+              console.warn(`Found revision ${revisionId} for ${baseSlug}, but no original file exists`);
+            }
+          }
+        } catch (fileError) {
+          console.error(`Error reading revision file ${file}:`, fileError);
         }
       }
     }

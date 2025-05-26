@@ -1,10 +1,41 @@
 ---
 ai_model: claude-3.5-sonnet
 author: Ziad Tueni
+comments:
+  - name: "Jessica Parker"
+    avatar: "https://i.pravatar.cc/150?u=jessicaparker"
+    published_date: "2025-05-24T19:20:00+00:00"
+    text: "This really helped me understand why I struggle with meditation apps that say 'just be present.' It's more complex than that."
+  - name: "Maria Santos"
+    avatar: "https://i.pravatar.cc/150?u=mariasantos"
+    published_date: "2025-05-24T20:45:00+00:00"
+    text: "Fascinating synthesis of phenomenology and temporal philosophy. The flow concept bridges many theoretical gaps."
+  - name: "Alan Cooper"
+    avatar: "https://i.pravatar.cc/150?u=alancooper"
+    published_date: "2025-05-24T22:15:00+00:00"
+    text: "Temporal intelligence - love this concept! Going to use it in my coaching practice."
+  - name: "Kevin Zhang"
+    avatar: "https://i.pravatar.cc/150?u=kevinzhang"
+    published_date: "2025-05-25T00:30:00+00:00"
+    text: "Dense but rewarding read. The Joe Cocker reference made me listen to the song with new ears."
+  - name: "Rebecca Martinez"
+    avatar: "https://i.pravatar.cc/150?u=rebeccamartinez"
+    published_date: "2025-05-25T02:45:00+00:00"
+    text: "As someone dealing with anxiety about the future, this offers a more balanced approach than 'just live in the moment.'"
+  - name: "Nathan Brooks"
+    avatar: "https://i.pravatar.cc/150?u=nathanbrooks"
+    published_date: "2025-05-25T05:15:00+00:00"
+    text: "Finally! Someone who doesn't dismiss planning and memory as 'not being present.' Thank you for the nuance."
 inspired_by: "'Up Where We Belong' by 'Joe Cocker' on 'An Officer and a Gentleman Soundtrack'"
 layout: post.njk
 meta_description: "Exploring the philosophical paradox of temporal existence: do we truly live only in the present moment, or does consciousness transcend time?"
-published_date: 2024-12-20 14:30:00+00:00
+meta_description_options:
+- option1: "Exploring the philosophical paradox of temporal existence: do we truly live only in the present moment, or does consciousness transcend time?"
+- option2: "A dialectical examination of consciousness and time: investigating whether authentic existence requires present-moment awareness or temporal extension."
+- option3: "The temporal paradox of human consciousness: philosophical analysis of living between immediate presence and meaningful temporal connections."
+- option4: "When are we? Philosophical exploration of consciousness as temporal flow, challenging both presentist and eternalist perspectives on existence."
+- option5: "Consciousness and temporality: synthesizing present-moment awareness with memory, anticipation, and the dynamic flow of temporal becoming."
+published_date: "2025-05-24T18:04:55+00:00"
 slug: here-and-now
 tags:
 - Life
@@ -13,6 +44,12 @@ tags:
 - Science
 - Wellness
 title: "The Temporal Paradox of Consciousness: Living Between Here and Now"
+title_options:
+- option1: "The Temporal Paradox of Consciousness: Living Between Here and Now"
+- option2: "When Are We? The Philosophical Paradox of Present-Moment Existence"
+- option3: "Consciousness as Temporal Flow: Beyond the Here and Now Dialectic"
+- option4: "The Dynamic Present: Synthesizing Immediacy and Temporal Extension in Consciousness"
+- option5: "Temporal Intelligence and Conscious Becoming: The Paradox of Living in Time"
 ---
 
 ## Key Takeaways

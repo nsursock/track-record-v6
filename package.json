@@ -5,11 +5,12 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "NODE_ENV=development npx @11ty/eleventy --serve",
-    "dev": "NODE_ENV=development npx @11ty/eleventy --serve",
-    "serve": "NODE_ENV=development npx @11ty/eleventy --serve",
-    "watch": "NODE_ENV=development npx @11ty/eleventy --watch",
-    "build": "NODE_ENV=production npx @11ty/eleventy",
+    "setup": "node scripts/generate-ratings.js",
+    "start": "npm run setup && NODE_ENV=development npx @11ty/eleventy --serve",
+    "dev": "npm run setup && NODE_ENV=development npx @11ty/eleventy --serve",
+    "serve": "npm run setup && NODE_ENV=development npx @11ty/eleventy --serve",
+    "watch": "npm run setup && NODE_ENV=development npx @11ty/eleventy --watch",
+    "build": "npm run setup && NODE_ENV=production npx @11ty/eleventy",
     "clean": "del-cli _site"
   },
   "keywords": [],
@@ -36,9 +37,11 @@
     "@supabase/supabase-js": "^2.49.4",
     "@tailwindcss/typography": "^0.5.16",
     "alpinejs": "^3.14.9",
+    "apexcharts": "^4.7.0",
     "flatpickr": "^4.6.13",
     "flyonui": "^2.1.0",
     "formidable": "^3.5.4",
+    "lodash": "^4.17.21",
     "luxon": "^3.6.1",
     "notyf": "^3.10.0"
   }

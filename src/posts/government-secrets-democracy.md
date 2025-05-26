@@ -1,10 +1,43 @@
 ---
 ai_model: claude-4-sonnet-thinking
-author: Nicolas Sursock
+author: Ziad Tueni
+comments:
+  - name: "Thomas Anderson"
+    avatar: "https://i.pravatar.cc/150?u=thomasanderson"
+    published_date: "2025-05-23T08:30:00+00:00"
+    text: "This hits different after recent events. The balance between security and transparency is so hard to get right."
+  - name: "Margaret Foster"
+    avatar: "https://i.pravatar.cc/150?u=margaretfoster"
+    published_date: "2025-05-23T10:15:00+00:00"
+    text: "Excellent philosophical framework. The classified democracy concept deserves more academic attention."
+  - name: "Jennifer Walsh"
+    avatar: "https://i.pravatar.cc/150?u=jenniferwalsh"
+    published_date: "2025-05-23T12:45:00+00:00"
+    text: "But how do we know the oversight committees aren't just rubber stamps? Who watches the watchers?"
+  - name: "James Liu"
+    avatar: "https://i.pravatar.cc/150?u=jamesliu"
+    published_date: "2025-05-23T14:20:00+00:00"
+    text: "The temporal transparency idea is intriguing. 20-year declassification cycles might work for most things."
+  - name: "Sarah Mitchell"
+    avatar: "https://i.pravatar.cc/150?u=sarahmitchell"
+    published_date: "2025-05-23T16:30:00+00:00"
+    text: "Sounds good in theory but governments always abuse classification. Look at the Pentagon Papers."
+  - name: "Robert Chen"
+    avatar: "https://i.pravatar.cc/150?u=robertchen"
+    published_date: "2025-05-23T18:45:00+00:00"
+    text: "The proportionality framework needs more detail but it's a solid starting point for reform."
+  - name: "Elena Rodriguez"
+    avatar: "https://i.pravatar.cc/150?u=elenarodriguez"
+    published_date: "2025-05-23T20:15:00+00:00"
+    text: "Finally, someone who doesn't just say 'transparency good, secrecy bad.' Real world is more complex."
+  - name: "Daniel Cooper"
+    avatar: "https://i.pravatar.cc/150?u=danielcooper"
+    published_date: "2025-05-23T22:30:00+00:00"
+    text: "Great read but I still think we need stronger whistleblower protections as a check on the system."
 inspired_by: "'The End Has No End' by 'The Strokes' on 'Room on Fire'"
 layout: post.njk
 meta_description: "Explore why government secrecy threatens democratic transparency. Learn how classified operations can coexist with democratic oversight and accountability."
-published_date: 2024-12-19 10:00:00+00:00
+published_date: "2025-05-23T07:33:33+00:00"
 slug: government-secrets-democracy
 tags:
 - Politics
@@ -14,17 +47,17 @@ tags:
 - Culture
 title: "How Secret Government Operations Threaten Everything Democracy Stands For"
 title_options:
-  - "Why Government Secrets Don't Have to Destroy Democracy (But Often Do)"
-  - "Can Democracy Survive Government Secrets? The Transparency Crisis Explained"
-  - "Government Secrecy vs. Democratic Values: Finding the Dangerous Balance"
-  - "When National Security Meets Democratic Accountability: The Ultimate Paradox"
-  - "How Secret Government Operations Threaten Everything Democracy Stands For"
+- option1: "Why Government Secrets Don't Have to Destroy Democracy (But Often Do)"
+- option2: "Can Democracy Survive Government Secrets? The Transparency Crisis Explained"
+- option3: "Government Secrecy vs. Democratic Values: Finding the Dangerous Balance"
+- option4: "When National Security Meets Democratic Accountability: The Ultimate Paradox"
+- option5: "How Secret Government Operations Threaten Everything Democracy Stands For"
 meta_description_options:
-  - "Discover how government secrecy challenges democratic principles. Explore the tension between national security needs and transparent governance in modern democracy."
-  - "Can democracy survive government secrets? Examine the philosophical paradox between necessary confidentiality and democratic accountability in governance."
-  - "Explore why government secrecy threatens democratic transparency. Learn how classified operations can coexist with democratic oversight and accountability."
-  - "Uncover the tension between government secrets and democracy. Analyze how democratic institutions can maintain accountability within necessary secrecy frameworks."
-  - "Government secrecy vs. democracy: a philosophical examination. Discover how democratic societies balance transparency demands with national security needs."
+- option1: "Discover how government secrecy challenges democratic principles. Explore the tension between national security needs and transparent governance in modern democracy."
+- option2: "Can democracy survive government secrets? Examine the philosophical paradox between necessary confidentiality and democratic accountability in governance."
+- option3: "Explore why government secrecy threatens democratic transparency. Learn how classified operations can coexist with democratic oversight and accountability."
+- option4: "Uncover the tension between government secrets and democracy. Analyze how democratic institutions can maintain accountability within necessary secrecy frameworks."
+- option5: "Government secrecy vs. democracy: a philosophical examination. Discover how democratic societies balance transparency demands with national security needs."
 ---
 
 ## Key Takeaways

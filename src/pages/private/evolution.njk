@@ -1,0 +1,1630 @@
+---
+layout: base.njk
+title: "Content Evolution Dashboard"
+description: "Advanced content analysis dashboard with evolution tracking, visual comparisons, and revision insights"
+pagination:
+  data: collections.posts
+  size: 100
+---
+
+<div class="container mx-auto px-4 py-8 bg-base-100 overflow-visible" x-data="evolutionApp" x-init="init()">
+  <div class="mb-8">
+    <h1 class="text-4xl font-bold mb-4 text-center text-primary">
+      <span class="icon-[tabler--timeline] size-8 inline mr-2"></span>
+      Content Evolution Dashboard
+    </h1>
+    <p class="text-lg text-center text-secondary">Track your content's journey from draft to excellence</p>
+  </div>
+
+  <!-- Dashboard Navigation -->
+  <div class="mb-6">
+    <div class="tabs tabs-boxed justify-center">
+      <button @click="currentView = 'overview'" :class="currentView === 'overview' ? 'tab-active' : ''" class="tab">
+        <span class="icon-[tabler--dashboard] size-4 mr-2"></span>
+        Overview
+      </button>
+      <button @click="currentView = 'timeline'" :class="currentView === 'timeline' ? 'tab-active' : ''" class="tab">
+        <span class="icon-[tabler--timeline] size-4 mr-2"></span>
+        Timeline
+      </button>
+      <button @click="currentView = 'matrix'" :class="currentView === 'matrix' ? 'tab-active' : ''" class="tab">
+        <span class="icon-[tabler--table] size-4 mr-2"></span>
+        Matrix
+      </button>
+      <button @click="currentView = 'analytics'" :class="currentView === 'analytics' ? 'tab-active' : ''" class="tab">
+        <span class="icon-[tabler--chart-line] size-4 mr-2"></span>
+        Analytics
+      </button>
+    </div>
+  </div>
+
+  <!-- Controls Section -->
+  <div class="mb-6 flex flex-col sm:flex-row items-center justify-center gap-4">
+    <button 
+      class="btn btn-primary"
+      @click="generateRatings()"
+      :disabled="isGenerating"
+    >
+      <span class="icon-[tabler--robot] size-5 mr-2"></span>
+      <span x-text="isGenerating ? 'Generating...' : 'Generate AI Ratings'"></span>
+    </button>
+    
+    <div class="flex items-center gap-3">
+      <span class="text-sm font-medium">Show Letter Grades</span>
+      <input type="checkbox" class="switch switch-primary" x-model="showLetterGrades">
+    </div>
+    
+    <div class="flex items-center gap-3">
+      <span class="text-sm font-medium">Show Improvements</span>
+      <input type="checkbox" class="switch switch-success" x-model="showImprovements">
+    </div>
+  </div>
+
+  <!-- Overview View -->
+  <div x-show="currentView === 'overview'" x-transition class="space-y-6">
+    <!-- Summary Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <div class="card bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/20">
+        <div class="card-body">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm text-primary/70">Total Articles</p>
+              <p class="text-2xl font-bold text-primary" x-text="Object.keys(ratingsData).length"></p>
+            </div>
+            <span class="icon-[tabler--article] size-8 text-primary/50"></span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="card bg-gradient-to-br from-success/10 to-success/5 border border-success/20">
+        <div class="card-body">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm text-success/70">With Revisions</p>
+              <p class="text-2xl font-bold text-success" x-text="getArticlesWithRevisions().length"></p>
+            </div>
+            <span class="icon-[tabler--git-branch] size-8 text-success/50"></span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="card bg-gradient-to-br from-warning/10 to-warning/5 border border-warning/20">
+        <div class="card-body">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm text-warning/70">Avg Rating</p>
+              <p class="text-2xl font-bold text-warning" x-text="getOverallAverageRating().toFixed(1)"></p>
+            </div>
+            <span class="icon-[tabler--star] size-8 text-warning/50"></span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="card bg-gradient-to-br from-info/10 to-info/5 border border-info/20">
+        <div class="card-body">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm text-info/70">Total Revisions</p>
+              <p class="text-2xl font-bold text-info" x-text="getTotalRevisions()"></p>
+            </div>
+            <span class="icon-[tabler--versions] size-8 text-info/50"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Articles Grid with Evolution Cards -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 overflow-visible">
+      <template x-for="article in getSortedArticles()" :key="article.slug">
+        <div class="relative" x-data="{ dropdownOpen: false }" @click.away="dropdownOpen = false" :class="{ 'z-50': dropdownOpen, 'z-0': !dropdownOpen }">
+          <div class="card bg-base-100 shadow-lg hover:shadow-xl transition-shadow overflow-visible relative">
+            <div class="card-body">
+              <!-- Article Header -->
+              <div class="flex items-start justify-between mb-4">
+                <div class="flex-1 min-w-0">
+                  <h3 class="font-bold text-lg mb-2 line-clamp-2" x-text="article.title"></h3>
+                  <div class="text-sm text-base-content/60 mb-2">
+                    <span x-text="article.dateFormatted"></span>
+                    <span x-show="article.author" x-text="' • ' + article.author"></span>
+                  </div>
+                </div>
+                <div class="relative">
+                  <button @click="dropdownOpen = !dropdownOpen" class="btn btn-ghost btn-sm btn-circle">
+                    <span class="icon-[tabler--dots-vertical] size-4"></span>
+                  </button>
+                  <ul x-show="dropdownOpen" 
+                      x-transition:enter="transition ease-out duration-100"
+                      x-transition:enter-start="transform opacity-0 scale-95"
+                      x-transition:enter-end="transform opacity-100 scale-100"
+                      x-transition:leave="transition ease-in duration-75"
+                      x-transition:leave-start="transform opacity-100 scale-100"
+                      x-transition:leave-end="transform opacity-0 scale-95"
+                      class="absolute right-0 top-full mt-1 min-w-52 p-2 shadow-lg border border-base-300 bg-base-100 rounded-lg z-50"
+                      style="display: none;">
+                    <li><button @click="readArticle(article.slug); dropdownOpen = false" class="dropdown-item w-full text-left">
+                      <span class="icon-[tabler--eye] size-4 mr-2"></span>
+                      Read Article
+                    </button></li>
+                    <li><button @click="openEvolutionModal(article.slug); dropdownOpen = false" class="dropdown-item w-full text-left">
+                      <span class="icon-[tabler--timeline] size-4 mr-2"></span>
+                      View Evolution
+                    </button></li>
+                    <li><button @click="openComparisonModal(article.slug); dropdownOpen = false" class="dropdown-item w-full text-left">
+                      <span class="icon-[tabler--git-compare] size-4 mr-2"></span>
+                      Compare Versions
+                    </button></li>
+                  </ul>
+                </div>
+              </div>
+
+            <!-- Current Rating -->
+            <div class="mb-4">
+              <template x-if="getLatestRating(article.slug)">
+                <div class="flex items-center justify-between p-3 bg-base-200 rounded-lg">
+                  <span class="font-medium">Current Rating</span>
+                  <div class="badge badge-lg" :class="getOverallBadgeClasses(getLatestRating(article.slug)).badgeClass">
+                    <span class="icon-[tabler--star] size-3 mr-1"></span>
+                    <span x-text="getLatestRating(article.slug).toFixed(1)"></span>
+                  </div>
+                </div>
+              </template>
+              <template x-if="!getLatestRating(article.slug)">
+                <div class="flex items-center justify-center p-3 bg-base-200 rounded-lg text-base-content/50">
+                  <span class="icon-[tabler--star-off] size-4 mr-2"></span>
+                  Not rated yet
+                </div>
+              </template>
+            </div>
+
+            <!-- Evolution Progress -->
+            <template x-if="hasRevisions(article.slug)">
+              <div class="mb-4">
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-sm font-medium">Evolution Progress</span>
+                  <span class="text-xs text-base-content/60" x-text="getRevisionCount(article.slug) + ' revisions'"></span>
+                </div>
+                <div class="w-full bg-base-300 rounded-full h-2">
+                  <div class="bg-gradient-to-r from-primary to-success h-2 rounded-full transition-all duration-500" 
+                       :style="`width: ${getEvolutionProgress(article.slug)}%`"></div>
+                </div>
+                <div class="flex justify-between text-xs text-base-content/60 mt-1">
+                  <span x-text="getOriginalRating(article.slug)?.toFixed(1) || 'N/A'"></span>
+                  <span x-text="getLatestRating(article.slug)?.toFixed(1) || 'N/A'"></span>
+                </div>
+              </div>
+            </template>
+
+            <!-- Quick Stats -->
+            <div class="grid grid-cols-2 gap-2 mb-4">
+              <template x-for="criteria in ['writing_quality', 'originality', 'engagement', 'depth']" :key="criteria">
+                <div class="text-center p-2 bg-base-200 rounded">
+                  <div class="text-xs text-base-content/60 mb-1 flex items-center justify-center">
+                    <span class="icon-[tabler--star] size-3 mr-1"></span>
+                    <span x-text="formatCriteriaName(criteria)"></span>
+                  </div>
+                  <template x-if="getLatestCriteriaRating(article.slug, criteria)">
+                    <div class="flex items-center justify-center">
+                      <span class="text-sm font-bold" x-text="getLatestCriteriaRating(article.slug, criteria).toFixed(1)"></span>
+                      <template x-if="showImprovements && getImprovementIndicator(article.slug, criteria)">
+                        <span :class="getImprovementIndicator(article.slug, criteria).class + ' ml-1'">
+                          <span :class="getImprovementIndicator(article.slug, criteria).icon + ' size-3'"></span>
+                        </span>
+                      </template>
+                    </div>
+                  </template>
+                  <template x-if="!getLatestCriteriaRating(article.slug, criteria)">
+                    <span class="text-xs text-base-content/40">N/A</span>
+                  </template>
+                </div>
+              </template>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex gap-2">
+              <button data-overlay="#evolutionModal"
+                      @click="openEvolutionModal(article.slug)" 
+                      class="btn btn-primary btn-sm flex-1"
+                      :disabled="!hasAnyRating(article.slug)">
+                <span class="icon-[tabler--timeline] size-4 mr-1"></span>
+                Evolution
+              </button>
+              <button data-overlay="#comparisonModal"
+                      @click="openComparisonModal(article.slug)" 
+                      class="btn btn-secondary btn-sm flex-1"
+                      :disabled="!hasRevisions(article.slug)">
+                <span class="icon-[tabler--git-compare] size-4 mr-1"></span>
+                Compare
+              </button>
+            </div>
+          </div>
+        </div>
+        </div>
+      </template>
+    </div>
+  </div>
+
+  <!-- Timeline View -->
+  <div x-show="currentView === 'timeline'" x-transition class="space-y-6">
+    <div class="text-center mb-6">
+      <h2 class="text-2xl font-bold mb-2">Content Evolution Timeline</h2>
+      <p class="text-base-content/60">Track how your articles have evolved over time</p>
+    </div>
+
+    <template x-for="article in getArticlesWithRevisions()" :key="article.slug">
+      <div class="card bg-base-100 shadow-lg">
+        <div class="card-body">
+          <div class="flex items-center justify-between mb-6">
+            <div>
+              <h3 class="text-xl font-bold" x-text="article.title"></h3>
+              <p class="text-base-content/60" x-text="article.dateFormatted + (article.author ? ' • ' + article.author : '')"></p>
+            </div>
+            <div class="badge badge-info">
+              <span x-text="getRevisionCount(article.slug) + ' revisions'"></span>
+            </div>
+          </div>
+
+          <!-- Timeline -->
+          <div class="relative">
+            <!-- Timeline Line -->
+            <div class="absolute left-6 top-0 bottom-0 w-0.5 bg-base-300"></div>
+            
+            <!-- Timeline Items -->
+            <div class="space-y-6">
+              <!-- Original Version -->
+              <div class="relative flex items-start">
+                <div class="flex-shrink-0 w-12 h-12 bg-primary rounded-full flex items-center justify-center text-primary-content font-bold text-sm z-10">
+                  V0
+                </div>
+                <div class="ml-6 flex-1">
+                  <div class="bg-base-200 rounded-lg p-4">
+                    <div class="flex items-center justify-between mb-3">
+                      <h4 class="font-semibold">Original Version</h4>
+                      <template x-if="getOriginalRating(article.slug)">
+                        <div class="badge" :class="getOverallBadgeClasses(getOriginalRating(article.slug)).badgeClass">
+                          <span x-text="getOriginalRating(article.slug).toFixed(1)"></span>
+                        </div>
+                      </template>
+                    </div>
+                    <template x-if="getOriginalData(article.slug)">
+                      <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
+                        <template x-for="criteria in ['writing_quality', 'originality', 'engagement', 'depth']" :key="criteria">
+                          <div class="text-center p-2 bg-base-100 rounded">
+                            <div class="text-xs text-base-content/60" x-text="formatCriteriaName(criteria)"></div>
+                            <div class="font-bold" x-text="getOriginalData(article.slug).criteria[criteria]?.score?.toFixed(1) || 'N/A'"></div>
+                          </div>
+                        </template>
+                      </div>
+                    </template>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Revisions -->
+              <template x-for="(revision, index) in getRevisionHistory(article.slug)" :key="revision.id">
+                <div class="relative flex items-start">
+                  <div class="flex-shrink-0 w-12 h-12 bg-success rounded-full flex items-center justify-center text-success-content font-bold text-sm z-10">
+                    <span x-text="'V' + (index + 1)"></span>
+                  </div>
+                  <div class="ml-6 flex-1">
+                    <div class="bg-base-200 rounded-lg p-4">
+                      <div class="flex items-center justify-between mb-3">
+                        <h4 class="font-semibold" x-text="'Revision ' + (index + 1)"></h4>
+                        <div class="flex items-center gap-2">
+                          <template x-if="revision.data.overall_rating">
+                            <div class="badge" :class="getOverallBadgeClasses(revision.data.overall_rating).badgeClass">
+                              <span x-text="revision.data.overall_rating.toFixed(1)"></span>
+                            </div>
+                          </template>
+                          <template x-if="getImprovementFromPrevious(article.slug, index)">
+                            <div class="badge badge-sm" :class="getImprovementFromPrevious(article.slug, index).class">
+                              <span :class="getImprovementFromPrevious(article.slug, index).icon + ' size-3 mr-1'"></span>
+                              <span x-text="getImprovementFromPrevious(article.slug, index).text"></span>
+                            </div>
+                          </template>
+                        </div>
+                      </div>
+                      
+                      <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-3">
+                        <template x-for="criteria in ['writing_quality', 'originality', 'engagement', 'depth']" :key="criteria">
+                          <div class="text-center p-2 bg-base-100 rounded">
+                            <div class="text-xs text-base-content/60" x-text="formatCriteriaName(criteria)"></div>
+                            <div class="flex items-center justify-center">
+                              <span class="font-bold" x-text="revision.data.criteria[criteria]?.score?.toFixed(1) || 'N/A'"></span>
+                              <template x-if="getCriteriaImprovement(article.slug, criteria, index)">
+                                <span :class="getCriteriaImprovement(article.slug, criteria, index).class + ' ml-1'">
+                                  <span :class="getCriteriaImprovement(article.slug, criteria, index).icon + ' size-3'"></span>
+                                </span>
+                              </template>
+                            </div>
+                          </div>
+                        </template>
+                      </div>
+
+                      <template x-if="revision.data.revision_summary">
+                        <div class="mt-3 p-3 bg-base-100 rounded border-l-4 border-info">
+                          <p class="text-sm" x-text="revision.data.revision_summary"></p>
+                        </div>
+                      </template>
+                    </div>
+                  </div>
+                </div>
+              </template>
+            </div>
+          </div>
+        </div>
+      </div>
+    </template>
+  </div>
+
+  <!-- Matrix View -->
+  <div x-show="currentView === 'matrix'" x-transition class="space-y-6">
+    <div class="text-center mb-6">
+      <h2 class="text-2xl font-bold mb-2">Evolution Matrix</h2>
+      <p class="text-base-content/60">Compare ratings across all versions in a structured format</p>
+    </div>
+
+    <div class="overflow-x-auto">
+      <table class="table table-zebra w-full">
+        <thead>
+          <tr class="bg-base-300">
+            <th class="text-left">Article</th>
+            <th class="text-center">Version</th>
+            <th class="text-center">Writing Quality</th>
+            <th class="text-center">Originality</th>
+            <th class="text-center">Engagement</th>
+            <th class="text-center">Depth</th>
+            <th class="text-center">Overall</th>
+            <th class="text-center">Change</th>
+          </tr>
+        </thead>
+        <tbody>
+          <template x-for="row in getMatrixData()" :key="row.key">
+            <tr :class="row.isRevision ? 'bg-base-50' : ''">
+              <td>
+                <template x-if="!row.isRevision">
+                  <div class="font-semibold" x-text="row.title"></div>
+                </template>
+                <template x-if="row.isRevision">
+                  <div class="ml-4 text-sm text-base-content/60" x-text="'↳ ' + row.title"></div>
+                </template>
+              </td>
+              <td class="text-center">
+                <div class="badge badge-sm" :class="row.isRevision ? 'badge-success' : 'badge-primary'">
+                  <span x-text="row.version"></span>
+                </div>
+              </td>
+              <template x-for="criteria in ['writing_quality', 'originality', 'engagement', 'depth', 'overall']" :key="criteria">
+                <td class="text-center">
+                  <template x-if="row.ratings[criteria]">
+                    <div class="flex items-center justify-center">
+                      <span class="font-semibold" x-text="row.ratings[criteria].toFixed(1)"></span>
+                      <template x-if="row.changes && row.changes[criteria]">
+                        <span :class="row.changes[criteria].class + ' ml-1'">
+                          <span :class="row.changes[criteria].icon + ' size-3'"></span>
+                        </span>
+                      </template>
+                    </div>
+                  </template>
+                  <template x-if="!row.ratings[criteria]">
+                    <span class="text-base-content/40">-</span>
+                  </template>
+                </td>
+              </template>
+              <td class="text-center">
+                <template x-if="row.overallChange">
+                  <div class="badge badge-sm" :class="row.overallChange.class">
+                    <span :class="row.overallChange.icon + ' size-3 mr-1'"></span>
+                    <span x-text="row.overallChange.text"></span>
+                  </div>
+                </template>
+                <template x-if="!row.overallChange">
+                  <span class="text-base-content/40">-</span>
+                </template>
+              </td>
+            </tr>
+          </template>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Analytics View -->
+  <div x-show="currentView === 'analytics'" x-transition class="space-y-6">
+    <div class="text-center mb-6">
+      <h2 class="text-2xl font-bold mb-2">Evolution Analytics</h2>
+      <p class="text-base-content/60">Insights and patterns from your content evolution</p>
+    </div>
+
+    <!-- Analytics Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Improvement Rate -->
+      <div class="card bg-gradient-to-br from-success/10 to-success/5 border border-success/20">
+        <div class="card-body">
+          <h3 class="card-title text-success">
+            <span class="icon-[tabler--trending-up] size-5 mr-2"></span>
+            Improvement Rate
+          </h3>
+          <div class="text-3xl font-bold text-success" x-text="getImprovementRate().toFixed(1) + '%'"></div>
+          <p class="text-sm text-success/70">Articles showing improvement</p>
+        </div>
+      </div>
+
+      <!-- Average Improvement -->
+      <div class="card bg-gradient-to-br from-info/10 to-info/5 border border-info/20">
+        <div class="card-body">
+          <h3 class="card-title text-info">
+            <span class="icon-[tabler--chart-line] size-5 mr-2"></span>
+            Avg Improvement
+          </h3>
+          <div class="text-3xl font-bold text-info" x-text="getAverageImprovement().toFixed(2)"></div>
+          <p class="text-sm text-info/70">Points gained per revision</p>
+        </div>
+      </div>
+
+      <!-- Most Improved Criteria -->
+      <div class="card bg-gradient-to-br from-warning/10 to-warning/5 border border-warning/20">
+        <div class="card-body">
+          <h3 class="card-title text-warning">
+            <span class="icon-[tabler--award] size-5 mr-2"></span>
+            Top Improvement
+          </h3>
+          <div class="text-lg font-bold text-warning" x-text="getMostImprovedCriteria().name"></div>
+          <div class="text-sm text-warning/70">
+            <span x-text="'+' + getMostImprovedCriteria().improvement.toFixed(2) + ' avg'"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Detailed Analytics -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+      <!-- Criteria Performance -->
+      <div class="card bg-base-100 shadow-lg">
+        <div class="card-body">
+          <h3 class="card-title mb-4">
+            <span class="icon-[tabler--chart-bar] size-5 mr-2"></span>
+            Criteria Performance
+          </h3>
+          <div id="criteriaPerformanceChart" class="h-64"></div>
+        </div>
+      </div>
+
+      <!-- Improvement Trends -->
+      <div class="card bg-base-100 shadow-lg">
+        <div class="card-body">
+          <h3 class="card-title mb-4">
+            <span class="icon-[tabler--trending-up] size-5 mr-2"></span>
+            Improvement Trends
+          </h3>
+          <div id="improvementTrendsChart" class="h-64"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Additional Analytics -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <!-- Rating Distribution -->
+      <div class="card bg-base-100 shadow-lg">
+        <div class="card-body">
+          <h3 class="card-title mb-4">
+            <span class="icon-[tabler--chart-pie] size-5 mr-2"></span>
+            Rating Distribution
+          </h3>
+          <div id="ratingDistributionChart" class="h-64"></div>
+        </div>
+      </div>
+
+      <!-- Top Performers -->
+      <div class="card bg-base-100 shadow-lg">
+        <div class="card-body">
+          <h3 class="card-title mb-4">
+            <span class="icon-[tabler--trophy] size-5 mr-2"></span>
+            Top Performers
+          </h3>
+          <div class="space-y-3">
+            <template x-for="(article, index) in getTopPerformers()" :key="article.slug">
+              <div class="flex items-center justify-between p-3 bg-base-200 rounded-lg">
+                <div class="flex items-center">
+                  <div class="badge badge-sm mr-3" :class="index === 0 ? 'badge-warning' : index === 1 ? 'badge-info' : 'badge-success'">
+                    <span x-text="index + 1"></span>
+                  </div>
+                  <div>
+                    <div class="font-medium text-sm line-clamp-1" x-text="article.title"></div>
+                    <div class="text-xs text-base-content/60" x-text="'Rating: ' + article.rating.toFixed(1)"></div>
+                  </div>
+                </div>
+                <template x-if="article.improvement > 0">
+                  <div class="badge badge-success badge-sm">
+                    <span class="icon-[tabler--trending-up] size-3 mr-1"></span>
+                    <span x-text="'+' + article.improvement.toFixed(1)"></span>
+                  </div>
+                </template>
+              </div>
+            </template>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Evolution Modal -->
+  <div id="evolutionModal" class="overlay modal overlay-open:opacity-100 overlay-open:duration-300 hidden" role="dialog" tabindex="-1">
+    <div class="modal-dialog overlay-open:opacity-100 overlay-open:duration-300 modal-dialog-xl">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title">
+            <span class="icon-[tabler--timeline] size-6 mr-2"></span>
+            <span id="evolutionModalTitle">Article Evolution</span>
+          </h3>
+          <button type="button" class="btn btn-text btn-circle btn-sm absolute end-3 top-3" data-overlay="#evolutionModal" aria-label="Close">
+            <span class="icon-[tabler--x] size-4"></span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div id="evolutionModalContent">
+            <template x-if="currentEvolutionData">
+              <div class="space-y-6">
+                <!-- Spider Chart -->
+                <div class="card bg-base-100">
+                  <div class="card-body">
+                    <h4 class="card-title mb-4">Rating Evolution</h4>
+                    <div id="evolutionSpiderChart" class="h-80"></div>
+                  </div>
+                </div>
+
+                <!-- Detailed Comparison -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <template x-for="criteria in ['writing_quality', 'originality', 'engagement', 'depth']" :key="criteria">
+                    <div class="card bg-base-100">
+                      <div class="card-body">
+                        <h5 class="card-title text-sm" x-text="formatCriteriaName(criteria)"></h5>
+                        <div class="space-y-2">
+                          <template x-for="version in currentEvolutionData.versions" :key="version.id">
+                            <div class="flex items-center justify-between">
+                              <span class="text-sm" x-text="version.label"></span>
+                              <div class="flex items-center">
+                                <span class="font-semibold mr-2" x-text="version.ratings[criteria]?.toFixed(1) || 'N/A'"></span>
+                                <template x-if="version.changes && version.changes[criteria]">
+                                  <span :class="version.changes[criteria].class">
+                                    <span :class="version.changes[criteria].icon + ' size-3'"></span>
+                                  </span>
+                                </template>
+                              </div>
+                            </div>
+                          </template>
+                        </div>
+                      </div>
+                    </div>
+                  </template>
+                </div>
+              </div>
+            </template>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Comparison Modal -->
+  <div id="comparisonModal" class="overlay modal overlay-open:opacity-100 overlay-open:duration-300 hidden" role="dialog" tabindex="-1">
+    <div class="modal-dialog overlay-open:opacity-100 overlay-open:duration-300 modal-dialog-xl">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title">
+            <span class="icon-[tabler--git-compare] size-6 mr-2"></span>
+            <span id="comparisonModalTitle">Version Comparison</span>
+          </h3>
+          <button type="button" class="btn btn-text btn-circle btn-sm absolute end-3 top-3" data-overlay="#comparisonModal" aria-label="Close">
+            <span class="icon-[tabler--x] size-4"></span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div id="comparisonModalContent">
+            <template x-if="currentComparisonData">
+              <div class="space-y-6">
+                <!-- Version Selector -->
+                <div class="flex gap-4">
+                  <div class="flex-1">
+                    <label class="label">
+                      <span class="label-text">Compare From</span>
+                    </label>
+                    <select class="select select-bordered w-full" x-model="comparisonFrom">
+                      <template x-for="version in currentComparisonData.versions" :key="version.id">
+                        <option :value="version.id" x-text="version.label"></option>
+                      </template>
+                    </select>
+                  </div>
+                  <div class="flex-1">
+                    <label class="label">
+                      <span class="label-text">Compare To</span>
+                    </label>
+                    <select class="select select-bordered w-full" x-model="comparisonTo">
+                      <template x-for="version in currentComparisonData.versions" :key="version.id">
+                        <option :value="version.id" x-text="version.label"></option>
+                      </template>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Comparison Results -->
+                <template x-if="comparisonFrom && comparisonTo && comparisonFrom !== comparisonTo">
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <template x-for="criteria in ['writing_quality', 'originality', 'engagement', 'depth', 'overall']" :key="criteria">
+                      <div class="card bg-base-100">
+                        <div class="card-body">
+                          <h5 class="card-title text-sm" x-text="criteria === 'overall' ? 'Overall Rating' : formatCriteriaName(criteria)"></h5>
+                          <div class="space-y-3">
+                            <div class="flex items-center justify-between">
+                              <span class="text-sm" x-text="getVersionLabel(comparisonFrom)"></span>
+                              <span class="font-semibold" x-text="getComparisonValue(comparisonFrom, criteria)?.toFixed(1) || 'N/A'"></span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                              <span class="text-sm" x-text="getVersionLabel(comparisonTo)"></span>
+                              <div class="flex items-center">
+                                <span class="font-semibold mr-2" x-text="getComparisonValue(comparisonTo, criteria)?.toFixed(1) || 'N/A'"></span>
+                                <template x-if="getComparisonDifference(comparisonFrom, comparisonTo, criteria)">
+                                  <div class="badge badge-sm" :class="getComparisonDifference(comparisonFrom, comparisonTo, criteria).class">
+                                    <span :class="getComparisonDifference(comparisonFrom, comparisonTo, criteria).icon + ' size-3 mr-1'"></span>
+                                    <span x-text="getComparisonDifference(comparisonFrom, comparisonTo, criteria).text"></span>
+                                  </div>
+                                </template>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </template>
+                  </div>
+                </template>
+              </div>
+            </template>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('alpine:init', () => {
+  Alpine.data('evolutionApp', () => ({
+    // Data
+    ratingsData: {},
+    articlesData: [
+      {% for post in collections.posts %}
+      {
+        slug: '{{ post.data.slug or post.fileSlug }}',
+        title: '{{ post.data.title | jsEscape | safe }}',
+        author: {% if post.data.author %}'{{ post.data.author | jsEscape | safe }}'{% else %}null{% endif %},
+        date: '{{ post.data.published_date }}',
+        dateFormatted: '{{ post.data.published_date | date("MMM dd, yyyy") }}'
+      }{% if not loop.last %},{% endif %}
+      {% endfor %}
+    ],
+    
+    // State
+    currentView: 'overview',
+    currentSort: { field: 'title', direction: 'asc' },
+    showLetterGrades: false,
+    showImprovements: true,
+    isGenerating: false,
+    currentEvolutionData: null,
+    currentComparisonData: null,
+    comparisonFrom: null,
+    comparisonTo: null,
+    charts: {},
+
+    // Initialization
+    async init() {
+      await this.loadRatings();
+      this.initializeCharts();
+    },
+
+    // Chart Methods
+    initializeCharts() {
+      // Initialize charts when view changes to analytics
+      this.$watch('currentView', (newView) => {
+        if (newView === 'analytics') {
+          this.$nextTick(() => {
+            setTimeout(() => {
+              this.createCriteriaPerformanceChart();
+              this.createImprovementTrendsChart();
+              this.createRatingDistributionChart();
+            }, 100);
+          });
+        }
+      });
+    },
+
+    async loadRatings() {
+      try {
+        const response = await fetch('/api/ratings.json');
+        if (response.ok) {
+          this.ratingsData = await response.json();
+          this.updateCharts();
+        } else {
+          console.log('No ratings data found. Generate ratings first.');
+        }
+      } catch (error) {
+        console.error('Error loading ratings:', error);
+      }
+    },
+
+    async generateRatings() {
+      this.isGenerating = true;
+      try {
+        const response = await fetch('/api/generate-ratings', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' }
+        });
+        if (response.ok) {
+          await this.loadRatings();
+          this.showNotification('Ratings generated successfully!', 'success');
+        } else {
+          throw new Error('Failed to generate ratings');
+        }
+      } catch (error) {
+        console.error('Error generating ratings:', error);
+        this.showNotification('Failed to generate ratings', 'error');
+      } finally {
+        this.isGenerating = false;
+      }
+    },
+
+    // Data Processing Methods
+    getSortedArticles() {
+      return this.articlesData.slice().sort((a, b) => {
+        if (this.currentSort.field === 'title') {
+          const comparison = a.title.localeCompare(b.title);
+          return this.currentSort.direction === 'asc' ? comparison : -comparison;
+        }
+        return 0;
+      });
+    },
+
+    getArticlesWithRevisions() {
+      return this.articlesData.filter(article => this.hasRevisions(article.slug));
+    },
+
+    hasRevisions(slug) {
+      return this.ratingsData[slug]?.revisions && Object.keys(this.ratingsData[slug].revisions).length > 0;
+    },
+
+    hasAnyRating(slug) {
+      return this.ratingsData[slug] && (this.ratingsData[slug].overall_rating || this.hasRevisions(slug));
+    },
+
+    getRevisionCount(slug) {
+      return this.hasRevisions(slug) ? Object.keys(this.ratingsData[slug].revisions).length : 0;
+    },
+
+    getOriginalRating(slug) {
+      return this.ratingsData[slug]?.overall_rating;
+    },
+
+    getOriginalData(slug) {
+      return this.ratingsData[slug];
+    },
+
+    getLatestRating(slug) {
+      if (!this.ratingsData[slug]) return null;
+      
+      if (this.hasRevisions(slug)) {
+        const revisions = this.ratingsData[slug].revisions;
+        const latestRevision = Object.keys(revisions).sort().pop();
+        return revisions[latestRevision]?.overall_rating;
+      }
+      
+      return this.ratingsData[slug].overall_rating;
+    },
+
+    getLatestCriteriaRating(slug, criteria) {
+      if (!this.ratingsData[slug]) return null;
+      
+      if (this.hasRevisions(slug)) {
+        const revisions = this.ratingsData[slug].revisions;
+        const latestRevision = Object.keys(revisions).sort().pop();
+        return revisions[latestRevision]?.criteria[criteria]?.score;
+      }
+      
+      return this.ratingsData[slug]?.criteria[criteria]?.score;
+    },
+
+    getEvolutionProgress(slug) {
+      const original = this.getOriginalRating(slug);
+      const latest = this.getLatestRating(slug);
+      
+      if (!original || !latest) return 0;
+      
+      // Calculate progress as percentage improvement towards perfect score (5.0)
+      const maxImprovement = 5.0 - original;
+      const actualImprovement = latest - original;
+      
+      if (maxImprovement <= 0) return 100;
+      return Math.min(100, Math.max(0, (actualImprovement / maxImprovement) * 100));
+    },
+
+    getRevisionHistory(slug) {
+      if (!this.hasRevisions(slug)) return [];
+      
+      const revisions = this.ratingsData[slug].revisions;
+      return Object.entries(revisions)
+        .sort(([a], [b]) => a.localeCompare(b))
+        .map(([id, data]) => ({ id, data }));
+    },
+
+    // Statistics Methods
+    getOverallAverageRating() {
+      const ratings = [];
+      Object.values(this.ratingsData).forEach(article => {
+        if (article.overall_rating) ratings.push(article.overall_rating);
+        if (article.revisions) {
+          Object.values(article.revisions).forEach(revision => {
+            if (revision.overall_rating) ratings.push(revision.overall_rating);
+          });
+        }
+      });
+      return ratings.length > 0 ? ratings.reduce((sum, rating) => sum + rating, 0) / ratings.length : 0;
+    },
+
+    getTotalRevisions() {
+      return Object.values(this.ratingsData).reduce((total, article) => {
+        return total + (article.revisions ? Object.keys(article.revisions).length : 0);
+      }, 0);
+    },
+
+    getImprovementRate() {
+      const articlesWithRevisions = this.getArticlesWithRevisions();
+      if (articlesWithRevisions.length === 0) return 0;
+      
+      const improved = articlesWithRevisions.filter(article => {
+        const original = this.getOriginalRating(article.slug);
+        const latest = this.getLatestRating(article.slug);
+        return latest > original;
+      });
+      
+      return (improved.length / articlesWithRevisions.length) * 100;
+    },
+
+    getAverageImprovement() {
+      const improvements = [];
+      this.getArticlesWithRevisions().forEach(article => {
+        const original = this.getOriginalRating(article.slug);
+        const latest = this.getLatestRating(article.slug);
+        if (original && latest) {
+          improvements.push(latest - original);
+        }
+      });
+      return improvements.length > 0 ? improvements.reduce((sum, imp) => sum + imp, 0) / improvements.length : 0;
+    },
+
+    getMostImprovedCriteria() {
+      const criteriaImprovements = {
+        writing_quality: [],
+        originality: [],
+        engagement: [],
+        depth: []
+      };
+      
+      this.getArticlesWithRevisions().forEach(article => {
+        const original = this.getOriginalData(article.slug);
+        const latest = this.getLatestData(article.slug);
+        
+        if (original && latest) {
+          Object.keys(criteriaImprovements).forEach(criteria => {
+            const originalScore = original.criteria?.[criteria]?.score;
+            const latestScore = latest.criteria?.[criteria]?.score;
+            if (originalScore && latestScore) {
+              criteriaImprovements[criteria].push(latestScore - originalScore);
+            }
+          });
+        }
+      });
+      
+      let bestCriteria = 'writing_quality';
+      let bestImprovement = 0;
+      
+      Object.entries(criteriaImprovements).forEach(([criteria, improvements]) => {
+        if (improvements.length > 0) {
+          const avgImprovement = improvements.reduce((sum, imp) => sum + imp, 0) / improvements.length;
+          if (avgImprovement > bestImprovement) {
+            bestImprovement = avgImprovement;
+            bestCriteria = criteria;
+          }
+        }
+      });
+      
+      return {
+        name: this.formatCriteriaName(bestCriteria),
+        improvement: bestImprovement
+      };
+    },
+
+    getLatestData(slug) {
+      if (!this.ratingsData[slug]) return null;
+      
+      if (this.hasRevisions(slug)) {
+        const revisions = this.ratingsData[slug].revisions;
+        const latestRevision = Object.keys(revisions).sort().pop();
+        return revisions[latestRevision];
+      }
+      
+      return this.ratingsData[slug];
+    },
+
+    getCriteriaStats(criteria) {
+      const scores = [];
+      Object.values(this.ratingsData).forEach(article => {
+        if (article.criteria?.[criteria]?.score) {
+          scores.push(article.criteria[criteria].score);
+        }
+        if (article.revisions) {
+          Object.values(article.revisions).forEach(revision => {
+            if (revision.criteria?.[criteria]?.score) {
+              scores.push(revision.criteria[criteria].score);
+            }
+          });
+        }
+      });
+      
+      if (scores.length === 0) return { average: 0, min: 0, max: 0 };
+      
+      return {
+        average: scores.reduce((sum, score) => sum + score, 0) / scores.length,
+        min: Math.min(...scores),
+        max: Math.max(...scores)
+      };
+    },
+
+    getTopPerformers() {
+      const performers = this.articlesData.map(article => {
+        const latest = this.getLatestRating(article.slug);
+        const original = this.getOriginalRating(article.slug);
+        const improvement = (latest && original) ? latest - original : 0;
+        
+        return {
+          slug: article.slug,
+          title: article.title,
+          rating: latest || 0,
+          improvement: improvement
+        };
+      }).filter(p => p.rating > 0);
+      
+      return performers.sort((a, b) => b.rating - a.rating).slice(0, 5);
+    },
+
+    // Matrix View Methods
+    getMatrixData() {
+      const rows = [];
+      
+      this.articlesData.forEach(article => {
+        const originalData = this.getOriginalData(article.slug);
+        if (!originalData) return;
+        
+        // Original version row
+        rows.push({
+          key: `${article.slug}-original`,
+          title: article.title,
+          version: 'Original',
+          isRevision: false,
+          ratings: {
+            writing_quality: originalData.criteria?.writing_quality?.score,
+            originality: originalData.criteria?.originality?.score,
+            engagement: originalData.criteria?.engagement?.score,
+            depth: originalData.criteria?.depth?.score,
+            overall: originalData.overall_rating
+          }
+        });
+        
+        // Revision rows
+        if (this.hasRevisions(article.slug)) {
+          const revisions = this.getRevisionHistory(article.slug);
+          revisions.forEach((revision, index) => {
+            const prevData = index === 0 ? originalData : revisions[index - 1].data;
+            const changes = this.calculateChanges(prevData, revision.data);
+            
+            rows.push({
+              key: `${article.slug}-${revision.id}`,
+              title: `Revision ${index + 1}`,
+              version: `Rev ${index + 1}`,
+              isRevision: true,
+              ratings: {
+                writing_quality: revision.data.criteria?.writing_quality?.score,
+                originality: revision.data.criteria?.originality?.score,
+                engagement: revision.data.criteria?.engagement?.score,
+                depth: revision.data.criteria?.depth?.score,
+                overall: revision.data.overall_rating
+              },
+              changes: changes,
+              overallChange: this.getChangeIndicator(prevData.overall_rating, revision.data.overall_rating)
+            });
+          });
+        }
+      });
+      
+      return rows;
+    },
+
+    calculateChanges(prevData, currentData) {
+      const changes = {};
+      const criteria = ['writing_quality', 'originality', 'engagement', 'depth'];
+      
+      criteria.forEach(criterion => {
+        const prev = prevData.criteria?.[criterion]?.score;
+        const current = currentData.criteria?.[criterion]?.score;
+        if (prev && current) {
+          changes[criterion] = this.getChangeIndicator(prev, current);
+        }
+      });
+      
+      return changes;
+    },
+
+    // UI Helper Methods
+    getImprovementIndicator(slug, criteria) {
+      if (!this.hasRevisions(slug)) return null;
+      
+      const original = this.getOriginalData(slug)?.criteria[criteria]?.score;
+      const latest = this.getLatestCriteriaRating(slug, criteria);
+      
+      if (!original || !latest) return null;
+      
+      return this.getChangeIndicator(original, latest);
+    },
+
+    getChangeIndicator(oldValue, newValue) {
+      if (!oldValue || !newValue) return null;
+      
+      const diff = newValue - oldValue;
+      if (Math.abs(diff) < 0.1) return null;
+      
+      if (diff > 0) {
+        return {
+          class: 'text-success',
+          icon: 'icon-[tabler--trending-up]',
+          text: `+${diff.toFixed(1)}`
+        };
+      } else {
+        return {
+          class: 'text-error',
+          icon: 'icon-[tabler--trending-down]',
+          text: diff.toFixed(1)
+        };
+      }
+    },
+
+    getImprovementFromPrevious(slug, revisionIndex) {
+      const revisions = this.getRevisionHistory(slug);
+      if (revisionIndex >= revisions.length) return null;
+      
+      const current = revisions[revisionIndex].data.overall_rating;
+      const previous = revisionIndex === 0 
+        ? this.getOriginalRating(slug)
+        : revisions[revisionIndex - 1].data.overall_rating;
+      
+      return this.getChangeIndicator(previous, current);
+    },
+
+    getCriteriaImprovement(slug, criteria, revisionIndex) {
+      const revisions = this.getRevisionHistory(slug);
+      if (revisionIndex >= revisions.length) return null;
+      
+      const current = revisions[revisionIndex].data.criteria?.[criteria]?.score;
+      const previous = revisionIndex === 0 
+        ? this.getOriginalData(slug)?.criteria[criteria]?.score
+        : revisions[revisionIndex - 1].data.criteria?.[criteria]?.score;
+      
+      return this.getChangeIndicator(previous, current);
+    },
+
+    getOverallBadgeClasses(rating) {
+      if (rating >= 4.5) return { badgeClass: 'badge-success' };
+      if (rating >= 4.0) return { badgeClass: 'badge-info' };
+      if (rating >= 3.5) return { badgeClass: 'badge-warning' };
+      if (rating >= 3.0) return { badgeClass: 'badge-secondary' };
+      return { badgeClass: 'badge-error' };
+    },
+
+    formatCriteriaName(criteria) {
+      return criteria.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
+    },
+
+    // Modal Methods
+    openEvolutionModal(slug) {
+      const article = this.articlesData.find(a => a.slug === slug);
+      if (!article || !this.hasAnyRating(slug)) return;
+      
+      const versions = [{ 
+        id: 'original', 
+        label: 'Original',
+        ratings: this.getVersionRatings(slug, 'original')
+      }];
+      
+      if (this.hasRevisions(slug)) {
+        const revisions = this.getRevisionHistory(slug);
+        revisions.forEach((revision, index) => {
+          versions.push({
+            id: revision.id,
+            label: `Revision ${index + 1}`,
+            ratings: this.getVersionRatings(slug, revision.id)
+          });
+        });
+      }
+      
+      this.currentEvolutionData = {
+        title: article.title,
+        versions: versions
+      };
+      
+      document.getElementById('evolutionModalTitle').textContent = `Evolution: ${article.title}`;
+      
+      // Create spider chart after modal opens
+      this.$nextTick(() => {
+        setTimeout(() => {
+          this.createEvolutionSpiderChart(this.currentEvolutionData);
+        }, 100);
+      });
+    },
+
+    openComparisonModal(slug) {
+      const article = this.articlesData.find(a => a.slug === slug);
+      if (!article || !this.hasRevisions(slug)) return;
+      
+      const versions = [{ 
+        id: 'original', 
+        label: 'Original',
+        data: this.getOriginalData(slug)
+      }];
+      
+      const revisions = this.getRevisionHistory(slug);
+      revisions.forEach((revision, index) => {
+        versions.push({
+          id: revision.id,
+          label: `Revision ${index + 1}`,
+          data: revision.data
+        });
+      });
+      
+      this.currentComparisonData = {
+        title: article.title,
+        versions: versions
+      };
+      
+      this.comparisonFrom = 'original';
+      this.comparisonTo = versions[versions.length - 1].id;
+      
+      document.getElementById('comparisonModalTitle').textContent = `Compare: ${article.title}`;
+    },
+
+    getVersionRatings(slug, versionId) {
+      const data = versionId === 'original' 
+        ? this.getOriginalData(slug)
+        : this.ratingsData[slug]?.revisions[versionId];
+      
+      if (!data) return {};
+      
+      return {
+        writing_quality: data.criteria?.writing_quality?.score,
+        originality: data.criteria?.originality?.score,
+        engagement: data.criteria?.engagement?.score,
+        depth: data.criteria?.depth?.score,
+        overall: data.overall_rating
+      };
+    },
+
+    getVersionLabel(versionId) {
+      if (!this.currentComparisonData) return '';
+      const version = this.currentComparisonData.versions.find(v => v.id === versionId);
+      return version ? version.label : '';
+    },
+
+    getComparisonValue(versionId, criteria) {
+      if (!this.currentComparisonData) return null;
+      const version = this.currentComparisonData.versions.find(v => v.id === versionId);
+      if (!version) return null;
+      
+      if (criteria === 'overall') {
+        return version.data.overall_rating;
+      }
+      return version.data.criteria?.[criteria]?.score;
+    },
+
+    getComparisonDifference(fromId, toId, criteria) {
+      const fromValue = this.getComparisonValue(fromId, criteria);
+      const toValue = this.getComparisonValue(toId, criteria);
+      
+      if (!fromValue || !toValue) return null;
+      
+      return this.getChangeIndicator(fromValue, toValue);
+    },
+
+    // Chart Methods
+    initializeCharts() {
+      // Initialize charts when view changes to analytics
+      this.$watch('currentView', (newView) => {
+        if (newView === 'analytics') {
+          this.$nextTick(() => {
+            this.createCriteriaPerformanceChart();
+            this.createImprovementTrendsChart();
+            this.createRatingDistributionChart();
+          });
+        }
+      });
+    },
+
+    updateCharts() {
+      if (this.currentView === 'analytics') {
+        this.$nextTick(() => {
+          this.createCriteriaPerformanceChart();
+          this.createImprovementTrendsChart();
+          this.createRatingDistributionChart();
+        });
+      }
+    },
+
+    createCriteriaPerformanceChart() {
+      const criteria = ['writing_quality', 'originality', 'engagement', 'depth'];
+      const data = criteria.map(criterion => {
+        const stats = this.getCriteriaStats(criterion);
+        return {
+          name: this.formatCriteriaName(criterion),
+          average: stats.average,
+          min: stats.min,
+          max: stats.max
+        };
+      });
+
+      if (this.charts.criteriaPerformance) {
+        this.charts.criteriaPerformance.destroy();
+      }
+
+      this.charts.criteriaPerformance = buildChart('#criteriaPerformanceChart', mode => ({
+        chart: {
+          type: 'bar',
+          height: 250,
+          toolbar: { show: false },
+          fontFamily: 'inherit'
+        },
+        series: [
+          {
+            name: 'Average',
+            data: data.map(d => parseFloat(d.average.toFixed(2)))
+          },
+          {
+            name: 'Min',
+            data: data.map(d => parseFloat(d.min.toFixed(2)))
+          },
+          {
+            name: 'Max',
+            data: data.map(d => parseFloat(d.max.toFixed(2)))
+          }
+        ],
+        colors: [
+          'var(--color-primary)',
+          'var(--color-error)',
+          'var(--color-success)'
+        ],
+        xaxis: {
+          categories: data.map(d => d.name),
+          labels: {
+            style: {
+              colors: 'color-mix(in oklab, var(--color-base-content) 50%, transparent)'
+            }
+          }
+        },
+        yaxis: {
+          min: 0,
+          max: 5,
+          labels: {
+            style: {
+              colors: 'color-mix(in oklab, var(--color-base-content) 50%, transparent)'
+            }
+          }
+        },
+        legend: {
+          position: 'top',
+          labels: {
+            colors: 'color-mix(in oklab, var(--color-base-content) 50%, transparent)'
+          }
+        },
+        dataLabels: {
+          enabled: false
+        }
+      }));
+    },
+
+    createImprovementTrendsChart() {
+      const articlesWithRevisions = this.getArticlesWithRevisions();
+      const data = articlesWithRevisions.map(article => {
+        const original = this.getOriginalRating(article.slug);
+        const latest = this.getLatestRating(article.slug);
+        return {
+          name: article.title.length > 20 ? article.title.substring(0, 20) + '...' : article.title,
+          improvement: parseFloat((latest - original).toFixed(2))
+        };
+      }).sort((a, b) => b.improvement - a.improvement);
+
+      if (this.charts.improvementTrends) {
+        this.charts.improvementTrends.destroy();
+      }
+
+      this.charts.improvementTrends = buildChart('#improvementTrendsChart', mode => ({
+        chart: {
+          type: 'bar',
+          height: 250,
+          toolbar: { show: false },
+          fontFamily: 'inherit'
+        },
+        series: [{
+          name: 'Improvement',
+          data: data.map(d => d.improvement)
+        }],
+        colors: ['var(--color-success)'],
+        xaxis: {
+          categories: data.map(d => d.name),
+          labels: {
+            rotate: -45,
+            style: {
+              colors: 'color-mix(in oklab, var(--color-base-content) 50%, transparent)'
+            }
+          }
+        },
+        yaxis: {
+          title: {
+            text: 'Rating Improvement',
+            style: {
+              color: 'color-mix(in oklab, var(--color-base-content) 50%, transparent)'
+            }
+          },
+          labels: {
+            style: {
+              colors: 'color-mix(in oklab, var(--color-base-content) 50%, transparent)'
+            }
+          }
+        },
+        dataLabels: {
+          enabled: false
+        },
+        plotOptions: {
+          bar: {
+            colors: {
+              ranges: [{
+                from: -5,
+                to: 0,
+                color: 'var(--color-error)'
+              }, {
+                from: 0,
+                to: 5,
+                color: 'var(--color-success)'
+              }]
+            }
+          }
+        }
+      }));
+    },
+
+    createRatingDistributionChart() {
+      const ratings = [];
+      Object.values(this.ratingsData).forEach(article => {
+        if (article.overall_rating) ratings.push(article.overall_rating);
+        if (article.revisions) {
+          Object.values(article.revisions).forEach(revision => {
+            if (revision.overall_rating) ratings.push(revision.overall_rating);
+          });
+        }
+      });
+
+      const distribution = {
+        'Excellent (4.5+)': ratings.filter(r => r >= 4.5).length,
+        'Very Good (4.0-4.4)': ratings.filter(r => r >= 4.0 && r < 4.5).length,
+        'Good (3.5-3.9)': ratings.filter(r => r >= 3.5 && r < 4.0).length,
+        'Fair (3.0-3.4)': ratings.filter(r => r >= 3.0 && r < 3.5).length,
+        'Poor (<3.0)': ratings.filter(r => r < 3.0).length
+      };
+
+      if (this.charts.ratingDistribution) {
+        this.charts.ratingDistribution.destroy();
+      }
+
+      this.charts.ratingDistribution = buildChart('#ratingDistributionChart', mode => ({
+        chart: {
+          type: 'donut',
+          height: 250,
+          fontFamily: 'inherit'
+        },
+        series: Object.values(distribution),
+        labels: Object.keys(distribution),
+        colors: [
+          'var(--color-success)',
+          'var(--color-info)',
+          'var(--color-warning)',
+          'var(--color-secondary)',
+          'var(--color-error)'
+        ],
+        legend: {
+          position: 'bottom',
+          labels: {
+            colors: 'color-mix(in oklab, var(--color-base-content) 50%, transparent)'
+          }
+        },
+        dataLabels: {
+          enabled: true,
+          formatter: function (val) {
+            return Math.round(val) + '%';
+          },
+          style: {
+            colors: ['#fff']
+          }
+        },
+        responsive: [{
+          breakpoint: 480,
+          options: {
+            chart: {
+              width: 200
+            },
+            legend: {
+              position: 'bottom'
+            }
+          }
+        }]
+      }));
+    },
+
+    createEvolutionSpiderChart(data) {
+      const criteria = ['writing_quality', 'originality', 'engagement', 'depth'];
+      const series = data.versions.map(version => ({
+        name: version.label,
+        data: criteria.map(criterion => version.ratings[criterion] || 0)
+      }));
+
+      if (this.charts.evolutionSpider) {
+        this.charts.evolutionSpider.destroy();
+      }
+
+      this.charts.evolutionSpider = buildChart('#evolutionSpiderChart', mode => ({
+        chart: {
+          type: 'radar',
+          height: 320,
+          fontFamily: 'inherit'
+        },
+        series: series,
+        xaxis: {
+          categories: criteria.map(c => this.formatCriteriaName(c)),
+          labels: {
+            style: {
+              colors: 'color-mix(in oklab, var(--color-base-content) 50%, transparent)'
+            }
+          }
+        },
+        yaxis: {
+          min: 0,
+          max: 5,
+          labels: {
+            style: {
+              colors: 'color-mix(in oklab, var(--color-base-content) 50%, transparent)'
+            }
+          }
+        },
+        colors: [
+          'var(--color-primary)',
+          'var(--color-success)',
+          'var(--color-info)',
+          'var(--color-warning)'
+        ],
+        legend: {
+          position: 'top',
+          labels: {
+            colors: 'color-mix(in oklab, var(--color-base-content) 50%, transparent)'
+          }
+        },
+        markers: {
+          size: 4
+        },
+        stroke: {
+          width: 2
+        },
+        fill: {
+          opacity: 0.1
+        }
+      }));
+    },
+
+    // Utility Methods
+    readArticle(slug) {
+      window.location.href = `/posts/${slug}/`;
+    },
+
+    showNotification(message, type) {
+      const notification = document.createElement('div');
+      notification.className = `alert alert-${type} fixed top-4 right-4 z-50 w-auto`;
+      notification.innerHTML = `
+        <span class="icon-[tabler--${type === 'success' ? 'check' : 'x'}] size-5"></span>
+        <span>${message}</span>
+      `;
+      document.body.appendChild(notification);
+      setTimeout(() => notification.remove(), 3000);
+    }
+  }));
+});
+</script>
+
+<style>
+/* Custom styles for the evolution dashboard */
+.line-clamp-1 {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.bg-base-50 {
+  background-color: hsl(var(--b1) / 0.5);
+}
+
+/* Timeline styles */
+.timeline-line {
+  background: linear-gradient(to bottom, hsl(var(--p)), hsl(var(--s)));
+}
+
+/* Smooth transitions */
+[x-cloak] { display: none !important; }
+
+.x-transition-enter {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.x-transition-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 300ms ease-out, transform 300ms ease-out;
+}
+
+.x-transition-leave-active {
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 300ms ease-in, transform 300ms ease-in;
+}
+
+/* Card hover effects */
+.card:hover {
+  transform: translateY(-2px);
+  transition: transform 200ms ease-out;
+}
+
+/* Progress bar animations */
+.progress-bar {
+  transition: width 1s ease-out;
+}
+
+/* Badge animations */
+.badge {
+  transition: all 200ms ease-out;
+}
+
+.badge:hover {
+  transform: scale(1.05);
+}
+
+/* Dropdown fixes */
+.dropdown-item {
+  @apply block w-full px-4 py-2 text-sm text-left hover:bg-base-200 rounded transition-colors duration-150;
+}
+
+/* Ensure dropdowns are always on top */
+.z-50 {
+  z-index: 50 !important;
+}
+
+/* Prevent overflow issues in grid */
+.grid {
+  overflow: visible !important;
+}
+</style> 

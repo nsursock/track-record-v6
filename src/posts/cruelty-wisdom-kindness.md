@@ -4,7 +4,7 @@ author: Paul Barakat
 inspired_by: "'Alfie' by 'Joss Stone' on 'The Soul Sessions'"
 layout: post.njk
 meta_description: "Uncover the surprising truth about kindness, cruelty, and wisdom. Learn why real wisdom requires both heart and strength."
-published_date: "2024-12-28T10:30:00+00:00"
+published_date: "2025-05-23T03:19:00+00:00"
 slug: cruelty-wisdom-kindness
 tags:
 - Psychology
@@ -14,38 +14,38 @@ tags:
 - Love
 title: "Firm Compassion: The Secret to Wisdom in a Harsh World"
 title_options:
-  - "Cruelty vs. Kindness: Which Leads to True Wisdom?"
-  - "The Surprising Truth About Kindness, Cruelty, and Wisdom"
-  - "Why True Wisdom Balances Kindness and Toughness"
-  - "Kindness or Cruelty? The Real Path to Wisdom Revealed"
-  - "Firm Compassion: The Secret to Wisdom in a Harsh World"
+- option1: "Cruelty vs. Kindness: Which Leads to True Wisdom?"
+- option2: "The Surprising Truth About Kindness, Cruelty, and Wisdom"
+- option3: "Why True Wisdom Balances Kindness and Toughness"
+- option4: "Kindness or Cruelty? The Real Path to Wisdom Revealed"
+- option5: "Firm Compassion: The Secret to Wisdom in a Harsh World"
 meta_description_options:
-  - "Explore the paradox of cruelty and kindness. Discover which path leads to true wisdom and how to balance strength with compassion."
-  - "Uncover the surprising truth about kindness, cruelty, and wisdom. Learn why real wisdom requires both heart and strength."
-  - "Find out why true wisdom is more than just kindness or cruelty—it's about balance, context, and ethical action."
-  - "Is it better to be kind or tough? Dive into the real path to wisdom and the power of firm compassion."
-  - "Discover the secret to wisdom in a harsh world: how to integrate kindness and toughness for ethical living."
+- option1: "Explore the paradox of cruelty and kindness. Discover which path leads to true wisdom and how to balance strength with compassion."
+- option2: "Uncover the surprising truth about kindness, cruelty, and wisdom. Learn why real wisdom requires both heart and strength."
+- option3: "Find out why true wisdom is more than just kindness or cruelty—it's about balance, context, and ethical action."
+- option4: "Is it better to be kind or tough? Dive into the real path to wisdom and the power of firm compassion."
+- option5: "Discover the secret to wisdom in a harsh world: how to integrate kindness and toughness for ethical living."
 
 comments:
   - name: "Sarah Johnson"
     avatar: "https://i.pravatar.cc/150?u=sarah"
-    published_date: "2024-12-29T09:00:00+00:00"
+    published_date: "2025-05-23T04:00:00+00:00"
     text: "A masterful exploration of the tension between kindness and cruelty. The dialectical approach is both rigorous and compassionate."
   - name: "Michael Chen"
     avatar: "https://i.pravatar.cc/150?u=michael"
-    published_date: "2024-12-29T10:30:00+00:00"
+    published_date: "2025-05-23T04:30:00+00:00"
     text: "The synthesis of firm compassion is a concept I will carry into my own leadership practice. Brilliantly argued."
   - name: "Emma Rodriguez"
     avatar: "https://i.pravatar.cc/150?u=emma"
-    published_date: "2024-12-29T12:15:00+00:00"
+    published_date: "2025-05-23T05:15:00+00:00"
     text: "The musical references added depth and accessibility to the philosophical arguments. Thank you for this insightful piece."
   - name: "David Kim"
     avatar: "https://i.pravatar.cc/150?u=david"
-    published_date: "2024-12-29T13:45:00+00:00"
+    published_date: "2025-05-23T05:45:00+00:00"
     text: "As a psychologist, I found the discussion of emotional intelligence and moral wisdom especially relevant."
   - name: "Lisa Patel"
     avatar: "https://i.pravatar.cc/150?u=lisa"
-    published_date: "2024-12-29T15:00:00+00:00"
+    published_date: "2025-05-23T06:00:00+00:00"
     text: "This essay challenges simplistic views of morality. The integration of context and compassion is much needed in today's world." 
 ---
 

@@ -1,14 +1,23 @@
 import '../css/index.css';
 
 import Alpine from 'alpinejs'
+import ApexCharts from 'apexcharts'
 import "./signup.js"
 import "./login.js"
 import notifications from "./stores/notifications.js"
 import auth from "./stores/auth.js"
 
 window.Alpine = Alpine
+window.ApexCharts = ApexCharts  // Make ApexCharts globally accessible
 window.auth = auth  // Make auth store globally accessible
 window.notifications = notifications  // Make notifications store globally accessible
+
+// Define buildChart function globally (like v1)
+window.buildChart = (selector, options) => {
+  const chart = new ApexCharts(document.querySelector(selector), options('light'));
+  chart.render();
+  return chart;
+};
 
 
 // Add Alpine extensions here

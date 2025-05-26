@@ -22,6 +22,7 @@
 @import "flyonui/variants.css";
 @import "flyonui/src/vendor/flatpickr.css";
 @import "flyonui/src/vendor/notyf.css";
+@import "flyonui/src/vendor/apexcharts.css";
 
 
 /* Below are DaisyUI themes with custom fonts since none were provided by DaisyUI */

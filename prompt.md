@@ -137,3 +137,4 @@ title_options:
 
 # Prompt
 {{Insert prompt here}}
+Are high stakes secret operations hard to digest? (M: Le roi des ombres)
