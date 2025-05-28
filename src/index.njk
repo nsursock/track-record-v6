@@ -284,16 +284,16 @@ eleventyNavigation:
                 <!-- Star Rating -->
                 {% set postSlug = post.data.slug or post.fileSlug %}
                 {% if ratings[postSlug] %}
-                  <div class="flex items-center gap-2 mt-2">
+                  <div class="flex items-center justify-center gap-2 mt-2">
                     <div class="flex items-center gap-1">
                       {% set rating = ratings[postSlug].overall_rating %}
                       {% for star in range(1, 6) %}
                         {% if star <= rating %}
-                          <span class="icon-[tabler--star-filled] size-3 text-warning"></span>
+                          <span class="icon-[tabler--star-filled] size-4 text-warning"></span>
                         {% elif star - 0.5 <= rating %}
-                          <span class="icon-[tabler--star-half-filled] size-3 text-warning"></span>
+                          <span class="icon-[tabler--star-half-filled] size-4 text-warning"></span>
                         {% else %}
-                          <span class="icon-[tabler--star] size-3 text-base-300"></span>
+                          <span class="icon-[tabler--star] size-4 text-base-300"></span>
                         {% endif %}
                       {% endfor %}
                     </div>
@@ -301,7 +301,7 @@ eleventyNavigation:
                   </div>
                 {% endif %}
 
-                <div class="flex flex-wrap items-center gap-4 text-sm text-base-content/70 mt-2">
+                <div class="flex flex-wrap items-center justify-center gap-4 text-sm text-base-content/70 mt-2">
                   <div class="flex items-center gap-2">
                     <span class="icon-[tabler--user] size-4 text-primary"></span>
                     <a href="/posts/?author={{ post.data.author | slug }}" class="hover:text-primary transition-colors">{{ post.data.author }}</a>
@@ -373,16 +373,16 @@ eleventyNavigation:
                 <!-- Star Rating -->
                 {% set postSlug = post.data.slug or post.fileSlug %}
                 {% if ratings[postSlug] %}
-                  <div class="flex items-center gap-2 mt-2">
+                  <div class="flex items-center justify-center gap-2 mt-2">
                     <div class="flex items-center gap-1">
                       {% set rating = ratings[postSlug].overall_rating %}
                       {% for star in range(1, 6) %}
                         {% if star <= rating %}
-                          <span class="icon-[tabler--star-filled] size-3 text-warning"></span>
+                          <span class="icon-[tabler--star-filled] size-4 text-warning"></span>
                         {% elif star - 0.5 <= rating %}
-                          <span class="icon-[tabler--star-half-filled] size-3 text-warning"></span>
+                          <span class="icon-[tabler--star-half-filled] size-4 text-warning"></span>
                         {% else %}
-                          <span class="icon-[tabler--star] size-3 text-base-300"></span>
+                          <span class="icon-[tabler--star] size-4 text-base-300"></span>
                         {% endif %}
                       {% endfor %}
                     </div>
@@ -390,7 +390,7 @@ eleventyNavigation:
                   </div>
                 {% endif %}
 
-                <div class="flex flex-wrap items-center gap-4 text-sm text-base-content/70 mt-2">
+                <div class="flex flex-wrap items-center justify-center gap-4 text-sm text-base-content/70 mt-2">
                   <div class="flex items-center gap-2">
                     <span class="icon-[tabler--user] size-4 text-primary"></span>
                     <a href="/posts/?author={{ post.data.author | slug }}" class="hover:text-primary transition-colors">{{ post.data.author }}</a>

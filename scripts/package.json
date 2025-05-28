@@ -1,0 +1,27 @@
+{
+  "name": "apple-music-affiliate-links",
+  "version": "1.0.0",
+  "description": "Generate Apple Music affiliate links for song mentions in markdown files",
+  "main": "create_affiliate_links.js",
+  "scripts": {
+    "start": "node create_affiliate_links_free.js",
+    "free": "node create_affiliate_links_free.js",
+    "short": "node create_affiliate_links_with_shortener.js",
+    "demo": "node create_affiliate_links_demo.js",
+    "full": "node create_affiliate_links.js",
+    "test": "node create_affiliate_links_free.js ../plan_test.md"
+  },
+  "keywords": [
+    "apple-music",
+    "affiliate",
+    "markdown",
+    "music",
+    "links"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {},
+  "engines": {
+    "node": ">=14.0.0"
+  }
+} 
