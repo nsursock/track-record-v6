@@ -4,6 +4,8 @@ import Alpine from 'alpinejs'
 import ApexCharts from 'apexcharts'
 import "./signup.js"
 import "./login.js"
+import charts from "./charts.js"
+import dateFilter from "./components/date-filter.js"
 import notifications from "./stores/notifications.js"
 import auth from "./stores/auth.js"
 
@@ -18,6 +20,9 @@ window.buildChart = (selector, options) => {
   chart.render();
   return chart;
 };
+
+Alpine.data('charts', charts);
+Alpine.data('dateFilter', dateFilter);
 
 
 // Add Alpine extensions here
