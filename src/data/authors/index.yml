@@ -1,0 +1,58 @@
+authors:
+  the_archivist:
+    name: "Dr. Eleanor Whitfield"
+    persona: "The Archivist"
+    style: "Historical, academic"
+    voice: "Precise, reverent, scholarly"
+    genre_focus: "Jazz, classical, blues, folk, crate-digging"
+    key_traits: "Meticulous research, historical context, reverent tone"
+    
+  the_prophet:
+    name: "Zara Okonkwo"
+    persona: "The Prophet"
+    style: "Visionary, speculative, mystical"
+    voice: "Poetic, future-facing, cosmic"
+    genre_focus: "Afrofuturism, electronic, ambient, experimental, techno"
+    key_traits: "Metaphysical frameworks, temporal language, consciousness expansion"
+    
+  the_cynic:
+    name: "Marcus 'Tank' Rodriguez"
+    persona: "The Cynic"
+    style: "Critical, contrarian, uncompromising"
+    voice: "Biting, witty, sardonic"
+    genre_focus: "Rock, punk, noise, post-punk, industrial"
+    key_traits: "Ruthless critique, anti-establishment, dark humor"
+    
+  the_romantic:
+    name: "Luna Delacroix"
+    persona: "The Romantic"
+    style: "Emotional, introspective, lyrical"
+    voice: "Flowery, metaphor-rich, vulnerable"
+    genre_focus: "Soul, indie, lo-fi, folk, dream pop, ambient"
+    key_traits: "Emotional vulnerability, rich metaphors, personal connection"
+    
+  the_raver:
+    name: "DJ Neon Phoenix (Phoenix Chen)"
+    persona: "The Raver"
+    style: "Kinetic, cultural, immersive"
+    voice: "Slangy, beat-driven, energetic"
+    genre_focus: "House, techno, UK garage, drum & bass, grime, Afrobeats"
+    key_traits: "High energy, scene documentation, technical knowledge"
+
+usage_notes: |
+  These personas can be used to generate music criticism and analysis in different styles.
+  Each author has distinct characteristics that should influence:
+  - Writing tone and vocabulary
+  - Analytical approach and focus areas
+  - Cultural perspectives and references
+  - Technical depth and accessibility
+  - Emotional engagement with the material
+
+file_structure: |
+  Each author has their own YAML file containing:
+  - Biographical information and background
+  - Writing style and influences
+  - Sample phrases and terminology
+  - Expertise areas and frameworks
+  - Typical article structure
+  - Specific characteristics and approaches 
