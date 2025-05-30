@@ -14,7 +14,6 @@ export default function () {
       // Set up the watcher only once
       if (!this._watcherSet && this.$watch) {
         this.$watch('demoMode', () => {
-          console.log('[DemoMode Switch] Toggled. New value:', this.demoMode);
           // Always pass a valid range
           const range = this.data && this.data.range ? this.data.range : 'last24';
           this.reloadData(range);
@@ -25,7 +24,6 @@ export default function () {
     },
 
     async reloadData(range = 'last24') {
-      console.log('[ReloadData] Source:', this.demoMode ? 'DEMO' : 'REAL', 'Range:', range);
       this.isLoading = true;
       // Clear previous data and charts to prevent flash
       this.data = null;
@@ -58,8 +56,6 @@ export default function () {
     },
 
     async exportData() {
-      console.log('Exporting data...');
-      console.log('Current pageviews:', this.pageviews);
       if (this.pageviews) {
         try {
           await exportToCSV(this.pageviews);
@@ -257,27 +253,12 @@ export default function () {
         };
       };
 
-      // Debug logs for backend data
-      console.log('viewsOverTime from backend:', this.data.viewsOverTime);
-      if (this.data.viewsOverTime) {
-        console.log('dates:', this.data.viewsOverTime.dates);
-        console.log('views:', this.data.viewsOverTime.views, 'types:', this.data.viewsOverTime.views.map(v => typeof v));
-        console.log('visitors:', this.data.viewsOverTime.visitors, 'types:', this.data.viewsOverTime.visitors.map(v => typeof v));
+      if (!this.data.viewsOverTime) {
+        console.error('Invalid viewsOverTime data:', this.data.viewsOverTime);
+        return;
       }
 
-      let aggregatedData;
-      if (this.demoMode) {
-        aggregatedData = aggregateData(this.pageviews, this.data.range);
-      } else {
-        aggregatedData = {
-          dates: this.data.viewsOverTime.dates.map(d => new Date(d)),
-          visitors: this.data.viewsOverTime.visitors,
-          views: this.data.viewsOverTime.views
-        };
-      }
-
-      // Debug log for chart series data
-      console.log('aggregatedData for chart:', aggregatedData);
+      const aggregatedData = aggregateData(this.pageviews, this.data.range);
 
       if (aggregatedData.dates.length === 0) {
         return;

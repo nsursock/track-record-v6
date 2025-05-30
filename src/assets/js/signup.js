@@ -250,26 +250,21 @@ document.addEventListener('alpine:init', () => {
                     citySelectInstance.addOption([]);
                 }
             });
-
-            // Listen for changes on the city select
-            const citySelect = document.getElementById('city-select');
-            citySelect.addEventListener('change', (e) => {
-                const citySelectInstance = window.HSSelect.getInstance(citySelect);
-                citySelectInstance.setValue(e.target.value);
-            });
         },
         fetchCities(countryCode) {
+            if (!countryCode) return;
+
             this.isLoading = true;
 
-            // Clear existing cities first
+            // Get the city select element and its instance
             const citySelect = document.getElementById('city-select');
             const citySelectInstance = window.HSSelect.getInstance(citySelect);
 
-            // Clear the current value
+            // Clear existing cities first
             citySelectInstance.setValue('');
 
             // Get all current options and remove them
-            const currentOptions = Array.from(citySelect.querySelectorAll('option'))
+            const currentOptions = Array.from(citySelectInstance.el.querySelectorAll('option'))
                 .filter(opt => opt.value !== '') // Keep the placeholder
                 .map(opt => opt.value);
 
@@ -277,30 +272,28 @@ document.addEventListener('alpine:init', () => {
                 citySelectInstance.removeOption(currentOptions);
             }
 
-            const countrySelect = document.getElementById('country-select');
-            const selectedOption = countrySelect.querySelector(`option[value='${countryCode}']`);
-            const countryName = selectedOption ? selectedOption.textContent : '';
-
-            if (!countryName) {
-                console.error('Country name not found for code:', countryCode);
-                this.isLoading = false;
-                return;
-            }
-
-            fetch('https://countriesnow.space/api/v0.1/countries/cities', {
+            fetch(`https://countriesnow.space/api/v0.1/countries/cities`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({
-                    country: countryName
-                })
+                body: JSON.stringify({ country: countryCode })
             })
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
                 .then(data => {
                     if (data.error) {
                         throw new Error(data.msg || 'Failed to fetch cities');
                     }
+
+                    if (!data.data || !Array.isArray(data.data)) {
+                        throw new Error('Invalid data format received from API');
+                    }
+
                     // Process cities to remove duplicates and clean up formatting
                     const processedCities = data.data
                         .filter((city, index, self) => self.indexOf(city) === index) // Remove duplicates

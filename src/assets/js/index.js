@@ -165,7 +165,6 @@ document.addEventListener('alpine:init', () => {
         
         // If token is expired or will expire soon, try to refresh it
         if (!tokenExp || tokenExp < now + 60) { // 1 minute buffer
-          console.log('Token expired or expiring soon, attempting refresh...');
           try {
             const refreshResponse = await fetch('/api/credentials?action=refresh', {
               method: 'POST',
@@ -182,7 +181,6 @@ document.addEventListener('alpine:init', () => {
               if (refreshData.session) {
                 localStorage.setItem('session', JSON.stringify(refreshData.session));
                 accessToken = refreshData.session.access_token;
-                console.log('Token refreshed successfully');
               }
             } else {
               console.error('Token refresh failed, clearing session');
@@ -207,7 +205,6 @@ document.addEventListener('alpine:init', () => {
           const data = await response.json();
           this.user = data.user;
         } else if (response.status === 401 || response.status === 403) {
-          console.log('Profile request failed with auth error, clearing session');
           localStorage.removeItem('session');
         }
       } catch (error) {
@@ -215,14 +212,6 @@ document.addEventListener('alpine:init', () => {
         localStorage.removeItem('session');
       }
     },
-
-    // toggleDropdown() {
-    //   this.isDropdownOpen = !this.isDropdownOpen;
-    // },
-
-    // closeDropdown() {
-    //   this.isDropdownOpen = false;
-    // },
 
     async logout() {
       try {
@@ -554,24 +543,20 @@ document.addEventListener('alpine:init', () => {
     async init() {
       // Prevent double initialization
       if (this.isInitialized) {
-        console.log('TTS: Already initialized, skipping');
         return;
       }
 
       // Only initialize on pages with article content
       if (!document.querySelector(this.contentSelector)) {
-        console.log('TTS: Not on a blog post page, skipping initialization');
         return;
       }
 
       // Check if browser supports speech synthesis
       if (!('speechSynthesis' in window)) {
-        console.warn('Text-to-speech not supported in this browser');
         notifications.error('Text-to-speech is not supported in your browser');
         return;
       }
 
-      console.log('TTS: Initializing on blog post page');
       this.isInitialized = true;
 
       // Load voices
@@ -586,7 +571,6 @@ document.addEventListener('alpine:init', () => {
       // Check for auto-start (but don't auto-play due to browser restrictions)
       const urlParams = new URLSearchParams(window.location.search);
       if (urlParams.get('listen') === 'true') {
-        console.log('TTS: Auto-showing player due to ?listen=true');
         this.show();
         // Give Alpine a moment to update the DOM
         setTimeout(() => {
@@ -607,14 +591,10 @@ document.addEventListener('alpine:init', () => {
       return new Promise((resolve) => {
         const loadVoicesInternal = () => {
           this.voices = speechSynthesis.getVoices();
-          console.log('TTS: Raw voices loaded:', this.voices.length);
-          console.log('TTS: First few voices:', this.voices.slice(0, 5).map(v => ({ name: v.name, lang: v.lang, localService: v.localService })));
           
           if (this.voices.length > 0) {
             // Simplified voice selection - prefer English voices but don't exclude specific ones
             const englishVoices = this.voices.filter(voice => voice.lang.startsWith('en-'));
-            console.log('TTS: English voices found:', englishVoices.length);
-            console.log('TTS: English voices:', englishVoices.slice(0, 3).map(v => ({ name: v.name, lang: v.lang })));
             
             // Simple selection: prefer enhanced/premium voices, but allow any English voice
             const preferredVoice = englishVoices.find(voice => 
@@ -623,15 +603,7 @@ document.addEventListener('alpine:init', () => {
               voice.name.includes('Natural')
             ) || englishVoices[0] || this.voices[0];
             
-            console.log('TTS: Preferred voice selected:', { 
-              name: preferredVoice.name, 
-              lang: preferredVoice.lang, 
-              localService: preferredVoice.localService,
-              default: preferredVoice.default
-            });
-            
             this.selectedVoiceIndex = this.voices.indexOf(preferredVoice);
-            console.log('TTS: Selected voice index:', this.selectedVoiceIndex);
             resolve();
           }
         };
@@ -646,7 +618,6 @@ document.addEventListener('alpine:init', () => {
     extractContent() {
       const contentElement = document.querySelector(this.contentSelector);
       if (!contentElement) {
-        console.warn('Content element not found:', this.contentSelector);
         notifications.error('Could not find article content to read');
         return;
       }
@@ -657,11 +628,8 @@ document.addEventListener('alpine:init', () => {
       // First, add the title and meta description
       const titleElement = document.querySelector('h1');
       
-      console.log('TTS: Title element found:', titleElement);
-      
       if (titleElement && titleElement.textContent.trim()) {
         const titleText = `Article title: ${titleElement.textContent.trim()}`;
-        console.log('TTS: Adding title segment:', titleText);
         this.textSegments.push({
           text: titleText,
           element: titleElement,
@@ -679,7 +647,6 @@ document.addEventListener('alpine:init', () => {
       if (heroDescElement && heroDescElement.textContent.trim()) {
         metaDescription = heroDescElement.textContent.trim();
         descriptionElement = heroDescElement;
-        console.log('TTS: Using hero section description:', metaDescription);
       }
       
       // Second try: OpenGraph description (more likely to be article-specific)
@@ -688,7 +655,6 @@ document.addEventListener('alpine:init', () => {
         if (ogDescElement && ogDescElement.content) {
           metaDescription = ogDescElement.content;
           descriptionElement = ogDescElement;
-          console.log('TTS: Using OpenGraph description:', metaDescription);
         }
       }
       
@@ -698,7 +664,6 @@ document.addEventListener('alpine:init', () => {
         if (excerptElement && excerptElement.textContent.trim()) {
           metaDescription = excerptElement.textContent.trim();
           descriptionElement = excerptElement;
-          console.log('TTS: Using content excerpt:', metaDescription);
         }
       }
       
@@ -708,15 +673,11 @@ document.addEventListener('alpine:init', () => {
         if (mainMetaDesc && mainMetaDesc.content) {
           metaDescription = mainMetaDesc.content;
           descriptionElement = mainMetaDesc;
-          console.log('TTS: Using main meta description (generic):', metaDescription);
         }
       }
       
-      console.log('TTS: Final meta description found:', metaDescription);
-      
       if (metaDescription) {
         const descText = `Article description: ${metaDescription}`;
-        console.log('TTS: Adding description segment:', descText);
         this.textSegments.push({
           text: descText,
           element: descriptionElement || titleElement || document.body,
@@ -747,8 +708,6 @@ document.addEventListener('alpine:init', () => {
           return;
         }
         
-        console.log(`TTS: Found semantic element ${index}:`, element.tagName, text.substring(0, 50) + '...');
-        
         this.textSegments.push({
           text,
           element,
@@ -760,17 +719,11 @@ document.addEventListener('alpine:init', () => {
         });
       });
 
-      console.log('TTS: All text segments:', this.textSegments.map((s, i) => `${i}: ${s.text.substring(0, 50)}...`));
-      
       this.createUtterances();
       this.updateTotalTime();
-      console.log(`TTS: Extracted ${this.textSegments.length} text segments (including title and description)`);
     },
 
     createUtterances() {
-      console.log('TTS: Creating utterances from', this.textSegments.length, 'segments');
-      
-      // Calculate segment durations for better time estimation
       this.calculateSegmentDurations();
       
       this.utterances = this.textSegments.map((segment, index) => {
@@ -781,28 +734,8 @@ document.addEventListener('alpine:init', () => {
         utterance.rate = this.playbackRate;
         utterance.pitch = this.pitch;
         utterance.volume = 1.0;
-        // Don't explicitly set lang - let the voice handle it
-        
-        console.log(`TTS: Created utterance ${index}:`, segment.text.substring(0, 50) + '...');
-        console.log(`TTS: Utterance ${index} voice:`, utterance.voice ? utterance.voice.name : 'null');
-        
-        // Debug: Check if voice is still valid
-        if (utterance.voice && !speechSynthesis.getVoices().includes(utterance.voice)) {
-          console.warn(`TTS: Voice for utterance ${index} is no longer available`);
-        }
         
         utterance.onstart = () => {
-          console.log(`🎤 TTS: Started speaking segment ${index}:`, segment.text.substring(0, 30) + '...');
-          console.log(`🔍 TTS: Segment structure:`, {
-            text: segment.text.substring(0, 50) + '...',
-            element: segment.element,
-            elementTagName: segment.element?.tagName,
-            elementClassName: segment.element?.className,
-            isIntro: segment.isIntro,
-            isHeading: segment.isHeading,
-            isParagraph: segment.isParagraph
-          });
-          
           this.currentSegmentIndex = index;
           
           // Update timer for new segment
@@ -812,53 +745,39 @@ document.addEventListener('alpine:init', () => {
           }
           this.segmentStartTime = Date.now();
           
-          console.log(`🎯 TTS: About to call highlightSegment for segment ${index}`);
           this.highlightSegment(segment);
-          console.log(`✅ TTS: highlightSegment call completed for segment ${index}`);
-          
           this.updateProgress();
         };
         
         utterance.onend = () => {
-          console.log(`TTS: Finished speaking segment ${index}`);
           this.removeHighlight();
           // Automatically continue to next segment if playing
           if (this.isPlaying && index < this.textSegments.length - 1) {
             this.currentSegmentIndex++;
-            console.log(`TTS: Auto-continuing to segment ${this.currentSegmentIndex}`);
-            // Play next utterance
             if (this.currentSegmentIndex < this.utterances.length) {
               speechSynthesis.speak(this.utterances[this.currentSegmentIndex]);
             }
           } else if (index === this.textSegments.length - 1) {
-            // Reached the end
-            console.log('TTS: Reached end of article');
             this.stop();
             notifications.success('Finished reading the article');
           }
         };
         
         utterance.onboundary = (event) => {
-          console.log(`TTS: Boundary event for segment ${index}:`, event.name, 'at char', event.charIndex);
         };
         
         utterance.onpause = () => {
-          console.log(`TTS: Paused segment ${index}`);
         };
         
         utterance.onresume = () => {
-          console.log(`TTS: Resumed segment ${index}`);
         };
         
         utterance.onerror = (event) => {
-          console.error(`TTS: Error for segment ${index}:`, event.error, event);
-          
           // Handle specific error types
           switch(event.error) {
             case 'canceled':
               // Don't show error if this is part of the intentional fallback mechanism
               if (this.isFallbackMode && index === 0) {
-                console.log('TTS: Canceled as part of fallback mechanism - this is expected');
                 return; // Don't show error notification
               }
               notifications.error('Speech synthesis was canceled');
@@ -886,11 +805,6 @@ document.addEventListener('alpine:init', () => {
         
         return utterance;
       });
-      
-      console.log('TTS: Created', this.utterances.length, 'utterances');
-      console.log('TTS: Selected voice:', this.voices[this.selectedVoiceIndex]);
-      console.log('TTS: Speech synthesis supported:', 'speechSynthesis' in window);
-      console.log('TTS: Available voices:', this.voices.length);
     },
 
     show() {
@@ -899,7 +813,6 @@ document.addEventListener('alpine:init', () => {
         return;
       }
       
-      console.log('TTS: Showing player, isPlayerVisible will be set to true');
       this.isPlayerVisible = true;
       
       // Initialize FlyonUI components after Alpine is ready
@@ -914,8 +827,6 @@ document.addEventListener('alpine:init', () => {
     },
     
     initializeFlyonUIComponents() {
-      console.log('TTS: Initializing FlyonUI components');
-      
       // Initialize modal if not already initialized
       const modal = document.querySelector('#tts-settings-modal');
       if (modal && window.HSOverlay) {
@@ -923,10 +834,8 @@ document.addEventListener('alpine:init', () => {
           const existingModal = window.HSOverlay.getInstance(modal);
           if (!existingModal) {
             new window.HSOverlay(modal);
-            console.log('TTS: Initialized settings modal');
           }
         } catch (error) {
-          console.error('TTS: Error initializing modal:', error);
         }
       }
       
@@ -945,17 +854,13 @@ document.addEventListener('alpine:init', () => {
             const existingInstance = window.HSSelect.getInstance(select);
             if (!existingInstance) {
               const selectInstance = new window.HSSelect(select);
-              console.log('TTS: Initialized advanced select:', select);
               
               // Listen for changes
               select.addEventListener('change', (e) => {
-                console.log('TTS: Advanced select changed:', e.target.value);
                 this.updateSettings();
               });
             }
           } catch (error) {
-            console.error('TTS: Error initializing advanced select:', error);
-            // Fallback to regular select if advanced select fails
             select.classList.remove('hidden');
             select.removeAttribute('data-select');
           }
@@ -981,8 +886,6 @@ document.addEventListener('alpine:init', () => {
     play() {
       if (!this.isInitialized) return;
       
-      console.log('TTS: Play method called');
-      
       // Stop and reset any existing speech
       speechSynthesis.cancel();
       
@@ -1005,17 +908,8 @@ document.addEventListener('alpine:init', () => {
     },
     
     playAfterReset() {
-      console.log('TTS: Play method called');
-      console.log('TTS: Current segment index:', this.currentSegmentIndex);
-      console.log('TTS: Total utterances:', this.utterances.length);
-      console.log('TTS: isPaused:', this.isPaused);
-      console.log('TTS: speechSynthesis.speaking:', speechSynthesis.speaking);
-      console.log('TTS: speechSynthesis.pending:', speechSynthesis.pending);
-      console.log('TTS: speechSynthesis.paused:', speechSynthesis.paused);
-      
       try {
         if (this.isPaused) {
-          console.log('TTS: Resuming speech synthesis');
           speechSynthesis.resume();
           this.isPaused = false;
           this.isPlaying = true;
@@ -1024,14 +918,12 @@ document.addEventListener('alpine:init', () => {
           this.segmentStartTime = Date.now();
           this.startTimer();
         } else {
-          console.log(`TTS: Starting speech synthesis at segment ${this.currentSegmentIndex}`);
           this.isPlaying = true;
           if (this.currentSegmentIndex < this.utterances.length) {
             speechSynthesis.speak(this.utterances[this.currentSegmentIndex]);
           }
         }
       } catch (error) {
-        console.error('TTS: Error in playAfterReset:', error);
         notifications.error('Failed to start speech synthesis');
       }
     },
@@ -1070,7 +962,6 @@ document.addEventListener('alpine:init', () => {
       if (!this.isInitialized) return;
       
       if (this.currentSegmentIndex > 0) {
-        console.log(`TTS: Going to previous segment ${this.currentSegmentIndex - 1}`);
         speechSynthesis.cancel();
         
         // Update timer for segment change
@@ -1092,7 +983,6 @@ document.addEventListener('alpine:init', () => {
       if (!this.isInitialized) return;
       
       if (this.currentSegmentIndex < this.utterances.length - 1) {
-        console.log(`TTS: Going to next segment ${this.currentSegmentIndex + 1}`);
         speechSynthesis.cancel();
         
         // Update timer for segment change
@@ -1201,16 +1091,7 @@ document.addEventListener('alpine:init', () => {
     },
 
     highlightSegment(segment) {
-      console.log('🔍 TTS: highlightSegment called with:', {
-        highlightText: this.highlightText,
-        isIntro: segment.isIntro,
-        element: segment.element,
-        elementTagName: segment.element?.tagName,
-        elementText: segment.element?.textContent?.substring(0, 50) + '...'
-      });
-      
       if (!this.highlightText) {
-        console.log('❌ TTS: Highlighting disabled in settings');
         return;
       }
       
@@ -1218,21 +1099,15 @@ document.addEventListener('alpine:init', () => {
       
       // Don't highlight intro segments (title, description, etc.)
       if (segment.isIntro) {
-        console.log('❌ TTS: Skipping intro segment');
         return;
       }
       
       const element = segment.element;
       
       if (!element) {
-        console.error('❌ TTS: No element found for segment');
         return;
       }
       
-      console.log('✅ TTS: Adding highlight to element:', element);
-      
-      // Apply very obvious inline styles with !important to override theme CSS
-      // Simple yellow highlighting for all themes
       element.style.setProperty('background-color', 'rgba(255, 255, 0, 0.6)', 'important'); // yellow background
       element.style.setProperty('border', '5px solid #ca8a04', 'important'); // darker yellow border
       element.style.setProperty('box-shadow', '0 0 30px #ca8a04, 0 0 0 3px rgba(202, 138, 4, 0.3)', 'important');
@@ -1249,34 +1124,10 @@ document.addEventListener('alpine:init', () => {
       element.style.setProperty('color', '#000000', 'important');
       
       this.currentHighlight = element;
-      
-      // Verify highlighting is visible
-      const finalStyles = window.getComputedStyle(element);
-      console.log('🔍 TTS: Final background color:', finalStyles.backgroundColor);
-      console.log('🔍 TTS: Final border:', finalStyles.border);
-      console.log('🔍 TTS: Final transform:', finalStyles.transform);
-      
-      // Auto-scroll to current element if enabled
-      if (this.autoScroll) {
-        console.log('📜 TTS: Auto-scrolling to element');
-        element.scrollIntoView({
-          behavior: 'smooth',
-          block: 'center',
-          inline: 'nearest'
-        });
-      }
-      
-      console.log('✅ TTS: Successfully highlighted element:', element.tagName, element.textContent.substring(0, 30) + '...');
     },
 
     removeHighlight() {
-      console.log('🧹 TTS: removeHighlight called, currentHighlight:', this.currentHighlight);
-      
       if (this.currentHighlight) {
-        console.log('🧹 TTS: Removing highlight from:', this.currentHighlight.tagName);
-        console.log('🔍 TTS: Element classes before removal:', this.currentHighlight.className);
-        
-        // Remove the highlight class
         this.currentHighlight.classList.remove('tts-highlight');
         
         // Clear all inline styles we applied with !important
@@ -1291,43 +1142,11 @@ document.addEventListener('alpine:init', () => {
         this.currentHighlight.style.removeProperty('z-index');
         this.currentHighlight.style.removeProperty('color');
         
-        // Restore original styles if they were stored
-        if (this.currentHighlight.dataset.originalStyles) {
-          try {
-            const originalStyles = JSON.parse(this.currentHighlight.dataset.originalStyles);
-            this.currentHighlight.style.backgroundColor = originalStyles.backgroundColor;
-            this.currentHighlight.style.border = originalStyles.border;
-            this.currentHighlight.style.borderRadius = originalStyles.borderRadius;
-            this.currentHighlight.style.boxShadow = originalStyles.boxShadow;
-            this.currentHighlight.style.transform = originalStyles.transform;
-            this.currentHighlight.style.transition = originalStyles.transition;
-            this.currentHighlight.style.padding = originalStyles.padding;
-            this.currentHighlight.style.position = originalStyles.position;
-            this.currentHighlight.style.zIndex = originalStyles.zIndex;
-            
-            // Clean up stored data
-            delete this.currentHighlight.dataset.originalStyles;
-            console.log('✅ TTS: Original styles restored');
-          } catch (error) {
-            console.warn('TTS: Error restoring original styles:', error);
-          }
-        }
-        
-        console.log('🔍 TTS: Element classes after removal:', this.currentHighlight.className);
-        
         this.currentHighlight = null;
-        console.log('✅ TTS: Highlight removed successfully');
-      } else {
-        console.log('ℹ️ TTS: No current highlight to remove');
       }
     },
 
     updateSettings() {
-      if (!this.isInitialized) return;
-      
-      console.log('TTS: Updating settings - rate:', this.playbackRate, 'pitch:', this.pitch, 'voice:', this.selectedVoiceIndex);
-      console.log('TTS: Highlight text:', this.highlightText, 'Auto scroll:', this.autoScroll);
-      
       const wasPlaying = this.isPlaying;
       const currentIndex = this.currentSegmentIndex;
       
@@ -1354,19 +1173,6 @@ document.addEventListener('alpine:init', () => {
           this.play();
         }, 200);
       }
-      
-      // Save settings to localStorage for persistence
-      try {
-        localStorage.setItem('tts-settings', JSON.stringify({
-          playbackRate: this.playbackRate,
-          pitch: this.pitch,
-          selectedVoiceIndex: this.selectedVoiceIndex,
-          highlightText: this.highlightText,
-          autoScroll: this.autoScroll
-        }));
-      } catch (e) {
-        console.warn('TTS: Could not save settings to localStorage:', e);
-      }
     },
 
     // Load settings from localStorage
@@ -1384,11 +1190,8 @@ document.addEventListener('alpine:init', () => {
           if (settings.selectedVoiceIndex >= 0 && settings.selectedVoiceIndex < this.voices.length) {
             this.selectedVoiceIndex = settings.selectedVoiceIndex;
           }
-          
-          console.log('TTS: Loaded settings from localStorage:', settings);
         }
       } catch (e) {
-        console.warn('TTS: Could not load settings from localStorage:', e);
       }
     },
 
@@ -1406,7 +1209,6 @@ document.addEventListener('alpine:init', () => {
         let hasStarted = false;
         const timeoutId = setTimeout(() => {
           if (!hasStarted) {
-            console.log(`❌ Voice ${voice.name} failed to start within 2 seconds`);
             notifications.error(`Voice "${voice.name}" is not working. Try selecting a different voice.`);
             speechSynthesis.cancel();
           }
@@ -1415,13 +1217,11 @@ document.addEventListener('alpine:init', () => {
         testUtterance.onstart = () => {
           hasStarted = true;
           clearTimeout(timeoutId);
-          console.log(`✅ Voice ${voice.name} is working`);
           notifications.success(`Voice "${voice.name}" is working properly!`);
         };
         
         testUtterance.onerror = (event) => {
           clearTimeout(timeoutId);
-          console.log(`❌ Voice ${voice.name} failed:`, event.error);
           notifications.error(`Voice "${voice.name}" failed: ${event.error}. Try selecting a different voice.`);
         };
         
@@ -1437,55 +1237,35 @@ document.addEventListener('alpine:init', () => {
 
     // Test method to check highlighting functionality
     testHighlighting() {
-      console.log('🧪 TTS: Testing highlighting functionality');
-      
       // Check if CSS is loaded
       const testElement = document.createElement('div');
       testElement.classList.add('tts-highlight');
       document.body.appendChild(testElement);
       
       const computedStyles = window.getComputedStyle(testElement);
-      console.log('🎨 TTS: CSS test - background color:', computedStyles.backgroundColor);
-      console.log('🎨 TTS: CSS test - border:', computedStyles.border);
-      console.log('🎨 TTS: CSS test - transform:', computedStyles.transform);
       
       const cssWorking = computedStyles.backgroundColor !== 'rgba(0, 0, 0, 0)' && 
                         computedStyles.backgroundColor !== 'transparent';
-      console.log('🎨 TTS: CSS highlighting working:', cssWorking);
       
       document.body.removeChild(testElement);
       
       // Test highlighting on the first paragraph
       const firstParagraph = document.querySelector('#scrollspy p');
       if (firstParagraph) {
-        console.log('🧪 TTS: Testing highlight on first paragraph:', firstParagraph.textContent.substring(0, 50) + '...');
+        this.highlightSegment(firstParagraph);
         
-        // Simulate a segment
-        const testSegment = {
-          text: firstParagraph.textContent,
-          element: firstParagraph,
-          isIntro: false
-        };
-        
-        this.highlightSegment(testSegment);
-        
-        // Remove highlight after 3 seconds
         setTimeout(() => {
           this.removeHighlight();
-          console.log('🧪 TTS: Test highlighting completed');
         }, 3000);
         
         notifications.info('Testing highlighting for 3 seconds...');
       } else {
-        console.error('❌ TTS: No paragraphs found for testing');
-        notifications.error('No content found to test highlighting');
+        notifications.error('No paragraphs found for testing');
       }
     },
 
     // Force highlight using inline styles for debugging
     forceHighlight() {
-      console.log('💪 TTS: Force highlighting first paragraph with inline styles');
-      
       const firstParagraph = document.querySelector('#scrollspy p');
       if (firstParagraph) {
         // Apply very obvious highlighting
@@ -1576,9 +1356,6 @@ document.addEventListener('alpine:init', () => {
         utterance.rate = this.playbackRate;
         utterance.pitch = this.pitch;
         utterance.volume = 1.0;
-        
-        console.log('TTS: Fallback utterance created for:', segment.text.substring(0, 50) + '...');
-        console.log('TTS: Fallback utterance voice:', utterance.voice);
         
         utterance.onstart = () => {
           console.log('TTS: Fallback utterance started successfully');

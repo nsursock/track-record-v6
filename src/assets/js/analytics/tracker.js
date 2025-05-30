@@ -48,8 +48,6 @@ class AnalyticsTracker {
       
       // Start session timeout check
       this.startSessionTimeoutCheck();
-      
-      console.log('Analytics tracker initialized');
     } catch (error) {
       console.error('Failed to initialize analytics tracker:', error);
     }
@@ -124,7 +122,6 @@ class AnalyticsTracker {
   // Send data to serverless function
   async sendAnalytics(type, data) {
     try {
-      console.log('Sending analytics:', { type, data });
       const response = await fetch('/api/analytics', {
         method: 'POST',
         headers: {
@@ -138,9 +135,7 @@ class AnalyticsTracker {
         throw new Error(`HTTP error! status: ${response.status}${errorData.error ? ` - ${errorData.error}` : ''}`);
       }
 
-      const result = await response.json();
-      console.log('Analytics response:', result);
-      return result;
+      return await response.json();
     } catch (error) {
       console.error('Failed to send analytics:', error);
       throw error;
@@ -165,7 +160,17 @@ class AnalyticsTracker {
       // Get location data
       let locationData = null;
       try {
-        const response = await fetch('https://ipapi.co/json/');
+        const isDev = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+        const url = isDev 
+          ? 'https://cors-anywhere.herokuapp.com/https://ipapi.co/json/'
+          : 'https://ipapi.co/json/';
+        
+        const response = await fetch(url, {
+          headers: isDev ? {
+            'Origin': window.location.origin
+          } : {}
+        });
+        
         if (response.ok) {
           locationData = await response.json();
         }
@@ -175,7 +180,6 @@ class AnalyticsTracker {
 
       // Get device info
       const deviceInfo = this.getDeviceInfo();
-      console.log('Device Info:', deviceInfo);
       
       const sessionData = {
         session_id: this.sessionId,
@@ -215,15 +219,11 @@ class AnalyticsTracker {
         longitude: locationData?.longitude
       };
 
-      console.log('Session Data:', sessionData);
-
       const response = await this.sendAnalytics('session', sessionData);
 
       if (!response.success) {
         throw new Error('Failed to initialize session: ' + (response.error || 'Unknown error'));
       }
-
-      console.log('Session initialized:', this.sessionId);
     } catch (error) {
       console.error('Failed to initialize session:', error);
       throw error;

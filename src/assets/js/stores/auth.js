@@ -83,23 +83,14 @@ export default {
             const tokenExp = this.session.expires_at;
             const now = Math.floor(Date.now() / 1000);
             
-            console.log('Session validation check:', {
-                tokenExp,
-                now,
-                timeUntilExpiry: tokenExp ? (tokenExp - now) : 'unknown',
-                timeUntilExpiryMinutes: tokenExp ? Math.round((tokenExp - now) / 60) : 'unknown'
-            });
-            
             // If token is expired or will expire in the next 5 minutes, try to refresh it
             if (!tokenExp || tokenExp < now + 300) {
-                console.log('Token is expiring soon, attempting refresh...');
                 const refreshed = await this.refreshToken();
                 if (!refreshed) {
                     console.error('Token refresh failed, logging out...');
                     this.logout();
                     return false;
                 }
-                console.log('Token refreshed successfully');
                 return true; // Return early since we've already refreshed
             }
 
@@ -116,7 +107,6 @@ export default {
 
             if (!response.ok) {
                 if (response.status === 401 || response.status === 403) {
-                    console.log('Session validation failed, attempting token refresh...');
                     // Try to refresh token on auth errors
                     const refreshed = await this.refreshToken();
                     if (!refreshed) {
@@ -124,7 +114,6 @@ export default {
                         this.logout();
                         return false;
                     }
-                    console.log('Token refreshed after validation error');
                     // Don't retry validation immediately, just return success since we refreshed
                     return true;
                 }
@@ -135,7 +124,6 @@ export default {
 
             // Update session if refreshed
             if (data.session) {
-                console.log('Session updated with new data');
                 this.session = data.session;
                 localStorage.setItem('session', JSON.stringify(data.session));
             }
@@ -155,7 +143,6 @@ export default {
         }
 
         try {
-            console.log('Attempting to refresh token...');
             const response = await fetch('/api/credentials?action=refresh', {
                 method: 'POST',
                 headers: {
@@ -177,14 +164,12 @@ export default {
                 
                 // If refresh token is invalid or expired, force logout
                 if (response.status === 401 || response.status === 403) {
-                    console.log('Refresh token is invalid or expired, logging out...');
                     this.logout();
                 }
                 throw new Error(data.error || 'Token refresh failed');
             }
 
             if (data.session) {
-                console.log('Token refresh successful, updating session...');
                 this.session = data.session;
                 localStorage.setItem('session', JSON.stringify(data.session));
                 return true;

@@ -1,8 +1,3 @@
-// Debug logging
-console.log('Loading analytics data...')
-console.log('ANALYTICS_ENABLED:', process.env.ANALYTICS_ENABLED)
-console.log('ANALYTICS_DEBUG:', process.env.ANALYTICS_DEBUG)
-
 // Force boolean values to ensure proper template evaluation
 const analyticsData = {
   enabled: String(process.env.ANALYTICS_ENABLED).toLowerCase() === 'true',
@@ -16,7 +11,5 @@ const analyticsData = {
     heartbeatInterval: 15 * 1000 // 15 seconds
   }
 };
-
-console.log('Analytics data:', analyticsData)
 
 export default analyticsData; 

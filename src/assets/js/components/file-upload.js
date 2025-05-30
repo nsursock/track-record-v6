@@ -36,7 +36,6 @@ export const fileUpload = (formData) => ({
 
       // Store the URL in the form data
       this.formData.profilePictureUrl = data.url;
-      console.log('Profile picture URL set to:', this.formData.profilePictureUrl);
     } catch (error) {
       console.error('Upload error:', error);
       alert('Failed to upload profile picture: ' + error.message);
