@@ -27,6 +27,11 @@ layout: base.njk
           </template>
         </ul>
       </div>
+      <!-- Demo Mode Switch -->
+      <div class="flex items-center gap-2 ml-2">
+        <span class="text-sm font-medium">Demo Mode</span>
+        <input type="checkbox" class="switch switch-primary" x-model="demoMode" aria-label="Toggle Demo Mode">
+      </div>
       <button @click="exportData()" class="btn btn-soft btn-secondary" aria-label="Export to CSV">
         <span class="icon-[tabler--file-export] size-5 mr-2"></span>
         Export

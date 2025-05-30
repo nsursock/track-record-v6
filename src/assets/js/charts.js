@@ -1,52 +1,52 @@
 import { fetchAnalyticsData, exportToCSV } from './analytics/data.js';
+import { fetchRealAnalyticsData } from './analytics/data.js';
 
 export default function () {
   return {
-    initialized: false,
     data: null,
     isLoading: true,
     chartInstances: {},
     pageviews: null,
+    demoMode: false,
+    _watcherSet: false,
 
-    async init() {
-      if (!this.initialized) {
-        this.initialized = true;
-        this.isLoading = true;
-        try {
-          const result = await fetchAnalyticsData('last24');
-          this.data = result;
-          this.pageviews = result.pageviews;
-          this.data.range = 'last24';
-          this.buildCharts();
-        } catch (error) {
-          console.error('Error initializing charts:', error);
-        } finally {
-          this.isLoading = false;
+    init() {
+      // Set up the watcher only once
+      if (!this._watcherSet && this.$watch) {
+        this.$watch('demoMode', () => {
+          console.log('[DemoMode Switch] Toggled. New value:', this.demoMode);
+          // Always pass a valid range
+          const range = this.data && this.data.range ? this.data.range : 'last24';
+          this.reloadData(range);
+        });
+        this._watcherSet = true;
+      }
+      this.reloadData('last24');
+    },
+
+    async reloadData(range = 'last24') {
+      console.log('[ReloadData] Source:', this.demoMode ? 'DEMO' : 'REAL', 'Range:', range);
+      this.isLoading = true;
+      try {
+        let result;
+        if (this.demoMode) {
+          result = await fetchAnalyticsData(range);
+        } else {
+          result = await fetchRealAnalyticsData(range);
         }
+        this.data = result;
+        this.pageviews = result.pageviews;
+        this.data.range = range;
+        this.buildCharts();
+      } catch (error) {
+        console.error('Error loading charts:', error);
+      } finally {
+        this.isLoading = false;
       }
     },
 
     async updateCharts(event) {
-      this.isLoading = true;
-      try {
-        const result = await fetchAnalyticsData(event.detail.range);
-        this.data = result;
-        this.pageviews = result.pageviews;
-        this.data.range = event.detail.range;
-        
-        // Destroy existing charts
-        Object.values(this.chartInstances).forEach(chart => {
-          if (chart) {
-            chart.destroy();
-          }
-        });
-        this.chartInstances = {};
-        this.buildCharts();
-      } catch (error) {
-        console.error('Error updating charts:', error);
-      } finally {
-        this.isLoading = false;
-      }
+      await this.reloadData(event.detail.range);
     },
 
     async exportData() {
@@ -321,12 +321,32 @@ export default function () {
         }
       };
 
-      const aggregatedData = aggregateData(
-        this.data.viewsOverTime.dates,
-        this.data.viewsOverTime.visitors,
-        this.data.viewsOverTime.views,
-        this.data.range
-      );
+      // Debug logs for backend data
+      console.log('viewsOverTime from backend:', this.data.viewsOverTime);
+      if (this.data.viewsOverTime) {
+        console.log('dates:', this.data.viewsOverTime.dates);
+        console.log('views:', this.data.viewsOverTime.views, 'types:', this.data.viewsOverTime.views.map(v => typeof v));
+        console.log('visitors:', this.data.viewsOverTime.visitors, 'types:', this.data.viewsOverTime.visitors.map(v => typeof v));
+      }
+
+      let aggregatedData;
+      if (["last24", "today"].includes(this.data.range)) {
+        aggregatedData = aggregateData(
+          this.data.viewsOverTime.dates,
+          this.data.viewsOverTime.visitors,
+          this.data.viewsOverTime.views,
+          this.data.range
+        );
+      } else {
+        aggregatedData = {
+          dates: this.data.viewsOverTime.dates.map(d => new Date(d)),
+          visitors: this.data.viewsOverTime.visitors,
+          views: this.data.viewsOverTime.views
+        };
+      }
+
+      // Debug log for chart series data
+      console.log('aggregatedData for chart:', aggregatedData);
 
       if (aggregatedData.dates.length === 0) {
         return;

@@ -1,0 +1,103 @@
+{% if analytics.enabled and site.env != 'development' %}
+<!-- Analytics Tracking Script -->
+<script>
+  console.log('Analytics script included - enabled:', {{ analytics.enabled | dump | safe }});
+  console.log('Analytics script included - debug:', {{ analytics.debug | dump | safe }});
+  console.log('Analytics script included - options:', {{ analytics.options | dump | safe }});
+  console.log('Analytics script included - raw analytics object:', {{ analytics | dump | safe }});
+  
+  // Analytics configuration
+  window.ANALYTICS_CONFIG = {
+    options: {{ analytics.options | dump | safe }}
+  };
+  console.log('Analytics config:', window.ANALYTICS_CONFIG);
+</script>
+
+<!-- Load the analytics tracker -->
+<script type="module" src="/assets/js/analytics/tracker.js"></script>
+
+<!-- Optional: Track custom events -->
+<script>
+  // Wait for analytics to be ready
+  document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM Content Loaded - Analytics ready:', !!window.analytics);
+    console.log('DOM Content Loaded - Analytics config:', window.ANALYTICS_CONFIG);
+    
+    // Track form submissions
+    document.addEventListener('submit', function(e) {
+      if (window.analytics && e.target.tagName === 'FORM') {
+        const formName = e.target.name || e.target.id || 'unknown_form';
+        window.analytics.trackEvent('form_submit', 'conversion', 'submit', formName);
+      }
+    });
+
+    // Track button clicks
+    document.addEventListener('click', function(e) {
+      if (window.analytics && e.target.tagName === 'BUTTON') {
+        const buttonText = e.target.textContent.trim() || 'unknown_button';
+        window.analytics.trackEvent('button_click', 'engagement', 'click', buttonText);
+      }
+    });
+
+    // Track file downloads
+    document.addEventListener('click', function(e) {
+      const link = e.target.closest('a');
+      if (window.analytics && link && link.href) {
+        const href = link.href.toLowerCase();
+        const downloadExtensions = ['.pdf', '.doc', '.docx', '.xls', '.xlsx', '.ppt', '.pptx', '.zip', '.rar', '.mp3', '.mp4', '.avi'];
+        
+        if (downloadExtensions.some(ext => href.includes(ext))) {
+          const fileName = link.href.split('/').pop() || 'unknown_file';
+          window.analytics.trackEvent('file_download', 'engagement', 'download', fileName);
+        }
+      }
+    });
+
+    // Track video interactions (if you have videos)
+    document.querySelectorAll('video').forEach(video => {
+      video.addEventListener('play', function() {
+        if (window.analytics) {
+          window.analytics.trackEvent('video_play', 'engagement', 'play', video.src || 'unknown_video');
+        }
+      });
+
+      video.addEventListener('ended', function() {
+        if (window.analytics) {
+          window.analytics.trackEvent('video_complete', 'engagement', 'complete', video.src || 'unknown_video');
+        }
+      });
+    });
+  });
+
+  {% if analytics.debug %}
+  // Debug mode - log analytics events to console
+  if (window.analytics) {
+    const originalTrackEvent = window.analytics.trackEvent;
+    window.analytics.trackEvent = function(...args) {
+      console.log('Analytics Event:', args);
+      return originalTrackEvent.apply(this, args);
+    };
+    
+    const originalSendAnalytics = window.analytics.sendAnalytics;
+    window.analytics.sendAnalytics = async function(type, data) {
+      console.log('Sending analytics:', { type, data });
+      try {
+        const result = await originalSendAnalytics.call(this, type, data);
+        console.log('Analytics sent successfully:', result);
+        return result;
+      } catch (error) {
+        console.error('Failed to send analytics:', error);
+        throw error;
+      }
+    };
+  }
+  {% endif %}
+</script>
+{% else %}
+<script>
+  console.log('Analytics is disabled or in development mode - analytics object:', {{ analytics | dump | safe }});
+  console.log('Analytics is disabled - enabled value:', {{ analytics.enabled | dump | safe }});
+  console.log('Analytics is disabled - debug value:', {{ analytics.debug | dump | safe }});
+  console.log('Analytics is disabled - env value:', {{ site.env | dump | safe }});
+</script>
+{% endif %} 

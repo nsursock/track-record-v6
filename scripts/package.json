@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Generate Apple Music affiliate links for song mentions in markdown files",
   "main": "create_affiliate_links.js",
+  "type": "module",
   "scripts": {
     "start": "node create_affiliate_links_free.js",
     "free": "node create_affiliate_links_free.js",

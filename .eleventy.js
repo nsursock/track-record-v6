@@ -10,7 +10,12 @@ import markdownIt from "markdown-it"
 import markdownItAnchor from "markdown-it-anchor"
 // import UpgradeHelper from "@11ty/eleventy-upgrade-help"
 
-dotenv.config()
+// Load environment variables from .env.local
+dotenv.config({ path: '.env.local' })
+
+// Log environment variables for debugging
+console.log('Analytics enabled:', process.env.ANALYTICS_ENABLED)
+console.log('Analytics debug:', process.env.ANALYTICS_DEBUG)
 
 const baseUrl = process.env.BASE_URL || "http://localhost:8080"
 console.log('baseUrl is set to ...', baseUrl)
@@ -21,13 +26,28 @@ const globalSiteData = {
   locale: 'en',
   baseUrl: baseUrl,
   env: process.env.NODE_ENV || (baseUrl.includes('localhost') ? 'development' : 'production'),
-}
+  // analytics: {
+  //   enabled: String(process.env.ANALYTICS_ENABLED).toLowerCase() === 'true',
+  //   debug: String(process.env.ANALYTICS_DEBUG).toLowerCase() === 'true',
+  //   options: {
+  //     trackPageViews: true,
+  //     trackEvents: true,
+  //     trackScrollDepth: true,
+  //     trackOutboundLinks: true,
+  //     sessionTimeout: 30 * 60 * 1000, // 30 minutes
+  //     heartbeatInterval: 15 * 1000 // 15 seconds
+  //   }
+  // }
+};
+
+console.log('Global site data:', globalSiteData)
 
 export default function (eleventyConfig) {
 
   /* --- GLOBAL DATA --- */
 
   eleventyConfig.addGlobalData("site", globalSiteData);
+  eleventyConfig.addGlobalData("analytics", globalSiteData.analytics);
 
   /* --- YAML SUPPORT --- */
 
