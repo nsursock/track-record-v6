@@ -27,6 +27,14 @@ export default function () {
     async reloadData(range = 'last24') {
       console.log('[ReloadData] Source:', this.demoMode ? 'DEMO' : 'REAL', 'Range:', range);
       this.isLoading = true;
+      // Clear previous data and charts to prevent flash
+      this.data = null;
+      this.pageviews = null;
+      // Destroy existing charts if any
+      Object.values(this.chartInstances).forEach(chart => {
+        if (chart && typeof chart.destroy === 'function') chart.destroy();
+      });
+      this.chartInstances = {};
       try {
         let result;
         if (this.demoMode) {
@@ -100,225 +108,153 @@ export default function () {
         }
       };
 
-      const aggregateData = (dates, visitors, views, range) => {
-        // Sort data by date
-        const sortedData = {
-          dates: [...dates].map(d => new Date(d)),
-          visitors: [...visitors],
-          views: [...views]
-        };
-
-        // Sort by date
-        const indices = sortedData.dates.map((_, i) => i);
-        indices.sort((a, b) => sortedData.dates[a] - sortedData.dates[b]);
-        
-        sortedData.dates = indices.map(i => sortedData.dates[i]);
-        sortedData.visitors = indices.map(i => sortedData.visitors[i]);
-        sortedData.views = indices.map(i => sortedData.views[i]);
-
-        // For aggregation, we need to track unique visitors properly
-        // We'll need to get the original pageviews data to do this correctly
-        const originalPageviews = this.data.pageviews || [];
-
-        switch (range) {
-          case 'last24':
-          case 'today':
-          case 'default':
-            // Hourly data - no aggregation needed
-            return sortedData;
-
-          case 'thisWeek':
-          case 'last7':
-          case 'thisMonth':
-          case 'last30':
-            // Aggregate by day
-            const dailyData = {};
-            const now = new Date();
-            const startDate = new Date(now);
-            
-            if (range === 'thisWeek') {
-              // Set to start of current week (Monday)
-              const day = startDate.getDay();
-              const diff = startDate.getDate() - day + (day === 0 ? -6 : 1); // Adjust when day is Sunday
-              startDate.setDate(diff);
-            } else if (range === 'thisMonth') {
-              // Set to start of current month
-              startDate.setDate(1);
-            } else {
-              const daysBack = range === 'last7' ? 6 : 29;
-              startDate.setDate(startDate.getDate() - daysBack);
+      // Refactored aggregateData for demo mode: accepts (pageviews, range)
+      const aggregateData = (pageviews, range) => {
+        const now = new Date();
+        let slots = [];
+        let slotMap = new Map();
+        if (["last24", "today"].includes(range)) {
+          // Hourly slots (local time)
+          let start;
+          if (range === "today") {
+            start = new Date(now);
+            start.setHours(0, 0, 0, 0);
+            const endHour = now.getHours();
+            for (let i = 0; i <= endHour; i++) {
+              const slot = new Date(start);
+              slot.setHours(i, 0, 0, 0);
+              const key = slot.toISOString();
+              slots.push(key);
+              slotMap.set(key, { views: 0, visitors: new Set() });
             }
-            startDate.setHours(0, 0, 0, 0);
-            
-            // Initialize daily data with zeros and visitor sets
-            const daysDiff = Math.ceil((now - startDate) / (1000 * 60 * 60 * 24));
-            for (let i = 0; i <= daysDiff; i++) {
-              const dayDate = new Date(startDate);
-              dayDate.setDate(startDate.getDate() + i);
-              const dayKey = dayDate.toISOString().split('T')[0];
-              dailyData[dayKey] = {
-                date: dayDate,
-                visitors: new Set(),
-                views: 0
-              };
+          } else {
+            // last24
+            for (let i = 23; i >= 0; i--) {
+              const slot = new Date(now.getTime() - i * 60 * 60 * 1000);
+              slot.setMinutes(0, 0, 0, 0);
+              const key = slot.toISOString();
+              slots.push(key);
+              slotMap.set(key, { views: 0, visitors: new Set() });
             }
-
-            // Fill in actual data from pageviews
-            originalPageviews.forEach(pageview => {
-              const pageviewDate = new Date(pageview.timestamp);
-              if (pageviewDate >= startDate && pageviewDate <= now) {
-                const dayKey = pageviewDate.toISOString().split('T')[0];
-                if (dailyData[dayKey]) {
-                  dailyData[dayKey].visitors.add(pageview.visitorId);
-                  dailyData[dayKey].views++;
-                }
-              }
-            });
-
-            // Filter out any dates beyond today
-            const filteredDailyData = {};
-            Object.entries(dailyData).forEach(([key, value]) => {
-              if (value.date <= now) {
-                filteredDailyData[key] = value;
-              }
-            });
-
-            const dailyArray = Object.values(filteredDailyData).sort((a, b) => a.date - b.date);
-            return {
-              dates: dailyArray.map(d => d.date),
-              visitors: dailyArray.map(d => d.visitors.size),
-              views: dailyArray.map(d => d.views)
-            };
-
-          case 'last90':
-            // Aggregate by week
-            const weeklyData = {};
-            const weekStart = new Date();
-            weekStart.setDate(weekStart.getDate() - 89);
-            weekStart.setHours(0, 0, 0, 0);
-
-            // Initialize all weeks with zeros and visitor sets
-            for (let i = 0; i < 13; i++) {
-              const weekDate = new Date(weekStart);
-              weekDate.setDate(weekStart.getDate() + (i * 7));
-              const weekNumber = getWeekNumber(weekDate);
-              weeklyData[`Week ${weekNumber}`] = {
-                date: weekDate,
-                visitors: new Set(),
-                views: 0
-              };
+          }
+          // Assign pageviews to slots
+          pageviews.forEach(pv => {
+            const d = new Date(pv.timestamp || pv.viewed_at);
+            d.setMinutes(0, 0, 0, 0);
+            const key = d.toISOString();
+            if (slotMap.has(key)) {
+              slotMap.get(key).views += 1;
+              slotMap.get(key).visitors.add(pv.visitorId || pv.visitor_id);
             }
-
-            // Fill in actual data from pageviews
-            originalPageviews.forEach(pageview => {
-              const pageviewDate = new Date(pageview.timestamp);
-              if (pageviewDate >= weekStart) {
-                const weekNumber = getWeekNumber(pageviewDate);
-                const weekKey = `Week ${weekNumber}`;
-                if (weeklyData[weekKey]) {
-                  weeklyData[weekKey].visitors.add(pageview.visitorId);
-                  weeklyData[weekKey].views++;
-                }
-              }
-            });
-
-            const weeklyArray = Object.values(weeklyData).sort((a, b) => a.date - b.date);
-            return {
-              dates: weeklyArray.map(d => d.date),
-              visitors: weeklyArray.map(d => d.visitors.size),
-              views: weeklyArray.map(d => d.views)
-            };
-
-          case 'thisYear':
-          case 'last6Months':
-          case 'last12Months':
-            // Aggregate by month
-            const monthlyData = {};
-            const monthStart = new Date();
-            const currentDate = new Date();
-            
-            if (range === 'thisYear') {
-              // Set to start of current year
-              monthStart.setFullYear(currentDate.getFullYear(), 0, 1);
-              monthStart.setHours(0, 0, 0, 0);
-            } else {
-              const monthsBack = range === 'last6Months' ? 5 : 11;
-              monthStart.setMonth(monthStart.getMonth() - monthsBack);
-              monthStart.setDate(1);
-              monthStart.setHours(0, 0, 0, 0);
+          });
+        } else if (["thisWeek", "last7", "thisMonth", "last30"].includes(range)) {
+          // Daily slots (UTC)
+          let start;
+          if (range === "thisWeek") {
+            start = new Date(now);
+            const day = start.getUTCDay();
+            const diff = start.getUTCDate() - day + (day === 0 ? -6 : 1);
+            start.setUTCDate(diff);
+            start.setUTCHours(0, 0, 0, 0);
+          } else if (range === "thisMonth") {
+            start = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1));
+            start.setUTCHours(0, 0, 0, 0);
+          } else {
+            // last7 or last30
+            const daysBack = range === "last7" ? 6 : 29;
+            start = new Date(now.getTime() - daysBack * 24 * 60 * 60 * 1000);
+            start.setUTCHours(0, 0, 0, 0);
+          }
+          let slot = new Date(start);
+          while (slot <= now) {
+            const key = slot.toISOString();
+            slots.push(key);
+            slotMap.set(key, { views: 0, visitors: new Set() });
+            slot = new Date(slot.getTime() + 24 * 60 * 60 * 1000);
+          }
+          // Assign pageviews to slots
+          pageviews.forEach(pv => {
+            const d = new Date(pv.timestamp || pv.viewed_at);
+            d.setUTCHours(0, 0, 0, 0);
+            const key = d.toISOString();
+            if (slotMap.has(key)) {
+              slotMap.get(key).views += 1;
+              slotMap.get(key).visitors.add(pv.visitorId || pv.visitor_id);
             }
-
-            // Initialize all months with zeros and visitor sets
-            const currentMonth = currentDate.getMonth();
-            const monthsDiff = range === 'thisYear' ? currentMonth : (range === 'last6Months' ? 5 : 11);
-            
-            for (let i = 0; i <= monthsDiff; i++) {
-              const monthDate = new Date(monthStart);
-              monthDate.setMonth(monthStart.getMonth() + i);
-              const monthKey = monthDate.toLocaleDateString('en-US', { month: 'short', year: '2-digit' });
-              monthlyData[monthKey] = {
-                date: monthDate,
-                visitors: new Set(),
-                views: 0
-              };
+          });
+        } else if (range === "last90") {
+          // Weekly slots (UTC, 13 weeks ending this week)
+          const end = new Date(now);
+          end.setUTCHours(0, 0, 0, 0);
+          end.setUTCDate(end.getUTCDate() - ((end.getUTCDay() + 6) % 7));
+          let slot = new Date(end.getTime() - 12 * 7 * 24 * 60 * 60 * 1000);
+          slot.setUTCHours(0, 0, 0, 0);
+          slot.setUTCDate(slot.getUTCDate() - ((slot.getUTCDay() + 6) % 7));
+          while (slot <= end) {
+            const key = slot.toISOString();
+            slots.push(key);
+            slotMap.set(key, { views: 0, visitors: new Set() });
+            slot = new Date(slot.getTime() + 7 * 24 * 60 * 60 * 1000);
+          }
+          // Assign pageviews to slots
+          pageviews.forEach(pv => {
+            const d = new Date(pv.timestamp || pv.viewed_at);
+            d.setUTCHours(0, 0, 0, 0);
+            d.setUTCDate(d.getUTCDate() - ((d.getUTCDay() + 6) % 7));
+            const key = d.toISOString();
+            if (slotMap.has(key)) {
+              slotMap.get(key).views += 1;
+              slotMap.get(key).visitors.add(pv.visitorId || pv.visitor_id);
             }
-
-            // Fill in actual data from pageviews
-            originalPageviews.forEach(pageview => {
-              const pageviewDate = new Date(pageview.timestamp);
-              if (pageviewDate >= monthStart && pageviewDate <= currentDate) {
-                const monthKey = pageviewDate.toLocaleDateString('en-US', { month: 'short', year: '2-digit' });
-                if (monthlyData[monthKey]) {
-                  monthlyData[monthKey].visitors.add(pageview.visitorId);
-                  monthlyData[monthKey].views++;
-                }
-              }
-            });
-
-            // Filter out any dates beyond today
-            const filteredMonthlyData = {};
-            Object.entries(monthlyData).forEach(([key, value]) => {
-              if (value.date <= currentDate) {
-                filteredMonthlyData[key] = value;
-              }
-            });
-
-            const monthlyArray = Object.values(filteredMonthlyData).sort((a, b) => a.date - b.date);
-            return {
-              dates: monthlyArray.map(d => d.date),
-              visitors: monthlyArray.map(d => d.visitors.size),
-              views: monthlyArray.map(d => d.views)
-            };
-
-          case 'allTime':
-            // Aggregate by year
-            const yearlyData = {};
-            
-            // Initialize years with visitor sets and view counts
-            originalPageviews.forEach(pageview => {
-              const year = new Date(pageview.timestamp).getFullYear();
-              if (!yearlyData[year]) {
-                const yearDate = new Date(year, 0, 1);
-                yearlyData[year] = {
-                  date: yearDate,
-                  visitors: new Set(),
-                  views: 0
-                };
-              }
-              yearlyData[year].visitors.add(pageview.visitorId);
-              yearlyData[year].views++;
-            });
-
-            const yearlyArray = Object.values(yearlyData).sort((a, b) => a.date - b.date);
-            return {
-              dates: yearlyArray.map(d => d.date),
-              visitors: yearlyArray.map(d => d.visitors.size),
-              views: yearlyArray.map(d => d.views)
-            };
-
-          default:
-            return sortedData;
+          });
+        } else if (["thisYear", "last6Months", "last12Months"].includes(range)) {
+          // Monthly slots (UTC)
+          let monthsBack = 11;
+          if (range === "last6Months") monthsBack = 5;
+          if (range === "thisYear") monthsBack = now.getUTCMonth();
+          let slot = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - monthsBack, 1));
+          while (slot <= now) {
+            const key = slot.toISOString();
+            slots.push(key);
+            slotMap.set(key, { views: 0, visitors: new Set() });
+            slot = new Date(Date.UTC(slot.getUTCFullYear(), slot.getUTCMonth() + 1, 1));
+          }
+          // Assign pageviews to slots
+          pageviews.forEach(pv => {
+            const d = new Date(pv.timestamp || pv.viewed_at);
+            const slotDate = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), 1));
+            const key = slotDate.toISOString();
+            if (slotMap.has(key)) {
+              slotMap.get(key).views += 1;
+              slotMap.get(key).visitors.add(pv.visitorId || pv.visitor_id);
+            }
+          });
+        } else if (range === "allTime") {
+          // Yearly slots (UTC)
+          let firstYear = pageviews.length ? new Date(pageviews[0].timestamp || pageviews[0].viewed_at).getUTCFullYear() : now.getUTCFullYear();
+          let lastYear = now.getUTCFullYear();
+          for (let y = firstYear; y <= lastYear; y++) {
+            const slot = new Date(Date.UTC(y, 0, 1));
+            const key = slot.toISOString();
+            slots.push(key);
+            slotMap.set(key, { views: 0, visitors: new Set() });
+          }
+          // Assign pageviews to slots
+          pageviews.forEach(pv => {
+            const d = new Date(pv.timestamp || pv.viewed_at);
+            const slotDate = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+            const key = slotDate.toISOString();
+            if (slotMap.has(key)) {
+              slotMap.get(key).views += 1;
+              slotMap.get(key).visitors.add(pv.visitorId || pv.visitor_id);
+            }
+          });
         }
+        return {
+          dates: slots.map(d => new Date(d)),
+          visitors: slots.map(key => slotMap.get(key).visitors.size),
+          views: slots.map(key => slotMap.get(key).views)
+        };
       };
 
       // Debug logs for backend data
@@ -330,13 +266,8 @@ export default function () {
       }
 
       let aggregatedData;
-      if (["last24", "today"].includes(this.data.range)) {
-        aggregatedData = aggregateData(
-          this.data.viewsOverTime.dates,
-          this.data.viewsOverTime.visitors,
-          this.data.viewsOverTime.views,
-          this.data.range
-        );
+      if (this.demoMode) {
+        aggregatedData = aggregateData(this.pageviews, this.data.range);
       } else {
         aggregatedData = {
           dates: this.data.viewsOverTime.dates.map(d => new Date(d)),
