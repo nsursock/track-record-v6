@@ -10,7 +10,7 @@
     "dev": "npm run setup && NODE_ENV=development npx @11ty/eleventy --serve",
     "serve": "npm run setup && NODE_ENV=development npx @11ty/eleventy --serve",
     "watch": "npm run setup && NODE_ENV=development npx @11ty/eleventy --watch",
-    "build": "npm run setup && NODE_ENV=production npx @11ty/eleventy",
+    "build": "npm run setup && ANALYTICS_ENABLED=true NODE_ENV=production npx @11ty/eleventy",
     "clean": "del-cli _site"
   },
   "keywords": [],
