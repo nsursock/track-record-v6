@@ -1,90 +1,130 @@
 {% if analytics.enabled and site.env != 'development' or analytics.debug %}
-<!-- Analytics Tracking Script -->
-<script>
-  // Analytics configuration
-  window.ANALYTICS_CONFIG = {
-    options: {{ analytics.options | dump | safe }}
-  };
-</script>
+  <!-- Analytics Tracking Script -->
+  <script>
+    // Analytics configuration
+    window.ANALYTICS_CONFIG = {
+      options: {{ analytics.options | dump | safe }}
+    };
+  </script>
 
-<!-- Load the analytics tracker -->
-<script type="module" src="/assets/js/analytics/tracker.js"></script>
+  <!-- Load the analytics tracker -->
+  <script type="module" src="/assets/js/analytics/tracker.js"></script>
 
-<!-- Optional: Track custom events -->
-<script>
-  // Wait for analytics to be ready
-  document.addEventListener('DOMContentLoaded', function() {
-    // Track form submissions
-    document.addEventListener('submit', function(e) {
-      if (window.analytics && e.target.tagName === 'FORM') {
-        const formName = e.target.name || e.target.id || 'unknown_form';
-        window.analytics.trackEvent('form_submit', 'conversion', 'submit', formName);
-      }
-    });
-
-    // Track button clicks
-    document.addEventListener('click', function(e) {
-      if (window.analytics && e.target.tagName === 'BUTTON') {
-        const buttonText = e.target.textContent.trim() || 'unknown_button';
-        window.analytics.trackEvent('button_click', 'engagement', 'click', buttonText);
-      }
-    });
-
-    // Track file downloads
-    document.addEventListener('click', function(e) {
-      const link = e.target.closest('a');
-      if (window.analytics && link && link.href) {
-        const href = link.href.toLowerCase();
-        const downloadExtensions = ['.pdf', '.doc', '.docx', '.xls', '.xlsx', '.ppt', '.pptx', '.zip', '.rar', '.mp3', '.mp4', '.avi'];
-        
-        if (downloadExtensions.some(ext => href.includes(ext))) {
-          const fileName = link.href.split('/').pop() || 'unknown_file';
-          window.analytics.trackEvent('file_download', 'engagement', 'download', fileName);
-        }
-      }
-    });
-
-    // Track video interactions (if you have videos)
-    document.querySelectorAll('video').forEach(video => {
-      video.addEventListener('play', function() {
-        if (window.analytics) {
-          window.analytics.trackEvent('video_play', 'engagement', 'play', video.src || 'unknown_video');
+  <!-- Optional: Track custom events -->
+  <script>
+    // Wait for analytics to be ready
+    document.addEventListener('DOMContentLoaded', function () {
+      // Track form submissions
+      document.addEventListener('submit', function (e) {
+        if (window.analytics && e.target.tagName === 'FORM') {
+          const formName = e.target.name || e.target.id || 'unknown_form';
+          window
+            .analytics
+            .trackEvent('form_submit', 'conversion', 'submit', formName);
         }
       });
 
-      video.addEventListener('ended', function() {
-        if (window.analytics) {
-          window.analytics.trackEvent('video_complete', 'engagement', 'complete', video.src || 'unknown_video');
+      // Track button clicks
+      document.addEventListener('click', function (e) {
+        if (window.analytics && e.target.tagName === 'BUTTON') {
+          const buttonText = e
+            .target
+            .textContent
+            .trim() || 'unknown_button';
+          window
+            .analytics
+            .trackEvent('button_click', 'engagement', 'click', buttonText);
         }
       });
-    });
-  });
 
-  {% if analytics.debug %}
-  // Debug mode - log analytics events to console
-  if (window.analytics) {
-    const originalTrackEvent = window.analytics.trackEvent;
-    window.analytics.trackEvent = function(...args) {
-      return originalTrackEvent.apply(this, args);
-    };
-    
-    const originalSendAnalytics = window.analytics.sendAnalytics;
-    window.analytics.sendAnalytics = async function(type, data) {
-      try {
-        return await originalSendAnalytics.call(this, type, data);
-      } catch (error) {
-        console.error('Failed to send analytics:', error);
-        throw error;
+      // Track file downloads
+      document.addEventListener('click', function (e) {
+        const link = e
+          .target
+          .closest('a');
+        if (window.analytics && link && link.href) {
+          const href = link
+            .href
+            .toLowerCase();
+          const downloadExtensions = [
+            '.pdf',
+            '.doc',
+            '.docx',
+            '.xls',
+            '.xlsx',
+            '.ppt',
+            '.pptx',
+            '.zip',
+            '.rar',
+            '.mp3',
+            '.mp4',
+            '.avi'
+          ];
+
+          if (downloadExtensions.some(ext => href.includes(ext))) {
+            const fileName = link
+              .href
+              .split('/')
+              .pop() || 'unknown_file';
+            window
+              .analytics
+              .trackEvent('file_download', 'engagement', 'download', fileName);
+          }
+        }
+      });
+
+      // Track video interactions (if you have videos)
+      document
+        .querySelectorAll('video')
+        .forEach(video => {
+          video.addEventListener('play', function () {
+            if (window.analytics) {
+              window
+                .analytics
+                .trackEvent('video_play', 'engagement', 'play', video.src || 'unknown_video');
+            }
+          });
+
+          video.addEventListener('ended', function () {
+            if (window.analytics) {
+              window
+                .analytics
+                .trackEvent('video_complete', 'engagement', 'complete', video.src || 'unknown_video');
+            }
+          });
+        });
+    });
+
+    {% if analytics.debug %}
+      // Debug mode - log analytics events to console
+      if (window.analytics) {
+        const originalTrackEvent = window.analytics.trackEvent;
+        window.analytics.trackEvent = function (...args) {
+          return originalTrackEvent.apply(this, args);
+        };
+
+        const originalSendAnalytics = window.analytics.sendAnalytics;
+        window.analytics.sendAnalytics = async function (type, data) {
+          try {
+            return await originalSendAnalytics.call(this, type, data);
+          } catch (error) {
+            console.error('Failed to send analytics:', error);
+            throw error;
+          }
+        };
       }
-    };
-  }
-  {% endif %}
-</script>
+    {% endif %}
+  </script>
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.0.0/css/flag-icons.min.css"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.3/d3.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/1.6.9/topojson.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/datamaps@0.5.9/dist/datamaps.all.min.js"></script>
 {% else %}
-<script>
-  console.log('Analytics is disabled or in development mode - analytics object:', {{ analytics | dump | safe }});
-  console.log('Analytics is disabled - enabled value:', {{ analytics.enabled | dump | safe }});
-  console.log('Analytics is disabled - debug value:', {{ analytics.debug | dump | safe }});
-  console.log('Analytics is disabled - env value:', {{ site.env | dump | safe }});
-</script>
-{% endif %} 
+  <script>
+    console.log('Analytics is disabled or in development mode - analytics object:', {{ analytics | dump | safe }});
+    console.log('Analytics is disabled - enabled value:', {{ analytics.enabled | dump | safe }});
+    console.log('Analytics is disabled - debug value:', {{ analytics.debug | dump | safe }});
+    console.log('Analytics is disabled - env value:', {{ site.env | dump | safe }});
+  </script>
+{% endif %}

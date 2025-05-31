@@ -148,5 +148,22 @@ layout: base.njk
         <div id="devices-chart" class="w-full"></div>
       </div>
     </div>
+
+    <!-- Map Section -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
+      <!-- World Map -->
+      <div class="bg-base-100 p-4 sm:p-6 rounded-lg shadow lg:col-span-2">
+        <h3 class="text-lg font-semibold mb-4">Visitor Locations</h3>
+        <div id="world-map" class="w-full h-[400px]"></div>
+      </div>
+
+      <!-- Countries List -->
+      <div class="bg-base-100 p-4 sm:p-6 rounded-lg shadow">
+        <h3 class="text-lg font-semibold mb-4">Top Countries</h3>
+        <div id="countries-list" class="space-y-2">
+          <!-- Countries will be populated by JavaScript -->
+        </div>
+      </div>
+    </div>
   </div>
 </div>

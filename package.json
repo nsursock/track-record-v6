@@ -39,6 +39,7 @@
     "alpinejs": "^3.14.9",
     "apexcharts": "^4.7.0",
     "bowser": "^2.11.0",
+    "datamaps": "^0.5.9",
     "flatpickr": "^4.6.13",
     "flyonui": "^2.1.0",
     "formidable": "^3.5.4",
