@@ -210,13 +210,31 @@ export default function () {
           let monthsBack = 11;
           if (range === "last6Months") monthsBack = 5;
           if (range === "thisYear") monthsBack = now.getUTCMonth();
-          let slot = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - monthsBack, 1));
+          
+          // Calculate start date ensuring we include the full month
+          let slot = new Date(now);
+          slot.setUTCMonth(slot.getUTCMonth() - monthsBack);
+          slot.setUTCDate(1);
+          slot.setUTCHours(0, 0, 0, 0);
+          
+          console.log('Monthly Range Debug:', {
+            range,
+            monthsBack,
+            startDate: slot.toISOString(),
+            currentDate: now.toISOString(),
+            totalPageviews: pageviews.length
+          });
+          
+          // Create slots for each month
           while (slot <= now) {
             const key = slot.toISOString();
             slots.push(key);
             slotMap.set(key, { views: 0, visitors: new Set() });
             slot = new Date(Date.UTC(slot.getUTCFullYear(), slot.getUTCMonth() + 1, 1));
           }
+          
+          console.log('Created slots:', slots.map(s => new Date(s).toISOString()));
+          
           // Assign pageviews to slots
           pageviews.forEach(pv => {
             const d = new Date(pv.timestamp || pv.viewed_at);
@@ -227,6 +245,13 @@ export default function () {
               slotMap.get(key).visitors.add(pv.visitorId || pv.visitor_id);
             }
           });
+          
+          // Log the aggregated data
+          console.log('Aggregated data:', Array.from(slotMap.entries()).map(([key, value]) => ({
+            date: new Date(key).toISOString(),
+            views: value.views,
+            visitors: value.visitors.size
+          })));
         } else if (range === "allTime") {
           // Yearly slots (UTC)
           let firstYear = pageviews.length ? new Date(pageviews[0].timestamp || pageviews[0].viewed_at).getUTCFullYear() : now.getUTCFullYear();
