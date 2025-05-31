@@ -154,7 +154,12 @@ layout: base.njk
       <!-- World Map -->
       <div class="bg-base-100 p-4 sm:p-6 rounded-lg shadow lg:col-span-2">
         <h3 class="text-lg font-semibold mb-4">Visitor Locations</h3>
-        <div id="world-map" class="w-full h-[400px]"></div>
+        <div id="world-map" class="w-full h-[400px]" x-init="$nextTick(() => {
+          if (!isLoading && data && !_mapInitialized) {
+            _mapInitialized = true;
+            buildWorldMap();
+          }
+        })"></div>
       </div>
 
       <!-- Countries List -->

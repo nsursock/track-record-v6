@@ -10,17 +10,11 @@ export default function () {
     demoMode: true,
     _watcherSet: false,
     _mapInitializing: false,
+    _dataVersion: 0,
+    _mapInitialized: false,
+    _resizeHandler: null,
 
     init() {
-      // Set up the watcher only once
-      if (!this._watcherSet && this.$watch) {
-        this.$watch('demoMode', () => {
-          // Always pass a valid range
-          const range = this.data && this.data.range ? this.data.range : 'last24';
-          this.reloadData(range);
-        });
-        this._watcherSet = true;
-      }
       this.reloadData('last24');
     },
 
@@ -29,6 +23,7 @@ export default function () {
       // Clear previous data and charts to prevent flash
       this.data = null;
       this.pageviews = null;
+      this._mapInitialized = false;
       // Destroy existing charts if any
       Object.values(this.chartInstances).forEach(chart => {
         if (chart && typeof chart.destroy === 'function') chart.destroy();
@@ -44,6 +39,7 @@ export default function () {
         this.data = result;
         this.pageviews = result.pageviews;
         this.data.range = range;
+        await this.$nextTick();
         this.buildCharts();
       } catch (error) {
         console.error('Error loading charts:', error);
@@ -210,13 +206,13 @@ export default function () {
           let monthsBack = 11;
           if (range === "last6Months") monthsBack = 5;
           if (range === "thisYear") monthsBack = now.getUTCMonth();
-          
+
           // Calculate start date ensuring we include the full month
           let slot = new Date(now);
           slot.setUTCMonth(slot.getUTCMonth() - monthsBack);
           slot.setUTCDate(1);
           slot.setUTCHours(0, 0, 0, 0);
-          
+
           console.log('Monthly Range Debug:', {
             range,
             monthsBack,
@@ -224,7 +220,7 @@ export default function () {
             currentDate: now.toISOString(),
             totalPageviews: pageviews.length
           });
-          
+
           // Create slots for each month
           while (slot <= now) {
             const key = slot.toISOString();
@@ -232,9 +228,9 @@ export default function () {
             slotMap.set(key, { views: 0, visitors: new Set() });
             slot = new Date(Date.UTC(slot.getUTCFullYear(), slot.getUTCMonth() + 1, 1));
           }
-          
+
           console.log('Created slots:', slots.map(s => new Date(s).toISOString()));
-          
+
           // Assign pageviews to slots
           pageviews.forEach(pv => {
             const d = new Date(pv.timestamp || pv.viewed_at);
@@ -245,7 +241,7 @@ export default function () {
               slotMap.get(key).visitors.add(pv.visitorId || pv.visitor_id);
             }
           });
-          
+
           // Log the aggregated data
           console.log('Aggregated data:', Array.from(slotMap.entries()).map(([key, value]) => ({
             date: new Date(key).toISOString(),
@@ -388,7 +384,7 @@ export default function () {
         },
         tooltip: {
           theme: 'dark',
-          style: { 
+          style: {
             fontFamily: 'inherit',
             backgroundColor: 'var(--color-base-200)',
             color: 'var(--color-base-content)',
@@ -454,7 +450,7 @@ export default function () {
     buildReferrersChart() {
       // Debug logging with full content and detailed mapping
       const categories = JSON.parse(JSON.stringify(this.data.referrerCategories));
-      
+
       // Ensure we have valid data
       if (!this.data.referrerCategories || !Array.isArray(this.data.referrerCategories)) {
         console.error('Invalid referrerCategories data:', this.data.referrerCategories);
@@ -521,14 +517,14 @@ export default function () {
         'direct_traffic': 'Direct Traffic',
         'none': 'Direct Traffic',
         '': 'Direct Traffic',
-        
+
         // Organic search
         'organic': 'Organic Search',
         'search_organic': 'Organic Search',
         'search': 'Organic Search',
         'google': 'Organic Search',
         'bing': 'Organic Search',
-        
+
         // Social media
         'social': 'Social Media',
         'social_media': 'Social Media',
@@ -537,24 +533,24 @@ export default function () {
         'twitter': 'Social Media',
         'instagram': 'Social Media',
         'linkedin': 'Social Media',
-        
+
         // Internal navigation
         'internal': 'Internal Navigation',
-        
+
         // Technical
         'technical': 'Technical Sites',
-        
+
         // Content
         'content': 'Content Sites',
-        
+
         // Product
         'product': 'Product Sites',
-        
+
         // Other
         'other': 'Other',
         'unknown': 'Other'
       };
-      
+
       return sourceMap[source] || source || 'Other';
     },
 
@@ -719,42 +715,33 @@ export default function () {
     },
 
     buildWorldMap() {
-      // Prevent double initialization
-      if (this._mapInitializing) {
-        console.log('Map initialization already in progress, skipping...');
+      if (!this.pageviews || !this.data || this._mapInitializing) {
         return;
       }
-      this._mapInitializing = true;
 
-      if (!this.pageviews || !this.data) {
-        console.log('Waiting for data to be available...', {
-          hasPageviews: !!this.pageviews,
-          hasData: !!this.data,
-          dataKeys: this.data ? Object.keys(this.data) : []
-        });
-        this._mapInitializing = false;
-        return;
-      }
+      this._mapInitializing = true;
 
       // Clean up existing map if it exists
       if (this.chartInstances.worldMap) {
-        console.log('Cleaning up existing map...');
-        this.chartInstances.worldMap.destroy();
-        this.chartInstances.worldMap = null;
+        try {
+          // Remove resize listener first
+          if (this._resizeHandler) {
+            window.removeEventListener('resize', this._resizeHandler);
+            this._resizeHandler = null;
+          }
+          // Clear the container
+          const mapContainer = document.getElementById('world-map');
+          if (mapContainer) {
+            mapContainer.innerHTML = '';
+          }
+          // Remove the instance
+          this.chartInstances.worldMap = null;
+        } catch (error) {
+          console.error('Error cleaning up map:', error);
+        }
       }
 
-      // Debug logging for data sources
-      console.log('=== Map Data Debug ===');
-      console.log('1. Initial Data Check:', JSON.stringify({
-        hasData: !!this.data,
-        hasPageviews: !!this.pageviews,
-        dataKeys: this.data ? Object.keys(this.data) : [],
-        pageviewsLength: this.pageviews.length,
-        dataStats: this.data?.stats || null,
-        currentRange: this.data.range || 'last24'
-      }, null, 2));
-
-      // Ensure the map container exists and has dimensions
+      // Ensure the map container exists
       const mapContainer = document.getElementById('world-map');
       if (!mapContainer) {
         console.error('Map container not found');
@@ -762,349 +749,363 @@ export default function () {
         return;
       }
 
-      // Clear the container
-      mapContainer.innerHTML = '';
-      
-      // Set initial dimensions
-      mapContainer.style.width = '100%';
-      mapContainer.style.height = '400px';
-
       // Process pageviews to get country data
       const dataSet = {};
-      const visitorMap = new Map(); // Track unique visitors per country
-      const previousVisitorMap = new Map(); // Track previous period visitors
-      const previousViewMap = new Map(); // Track previous period views
-      
+      const visitorMap = new Map();
+      const previousVisitorMap = new Map();
+      const previousViewMap = new Map();
+
       // Get the current period's timestamp range
       const now = new Date();
       let startTime, endTime, previousStartTime, previousEndTime;
-      
+
       // Ensure we have a valid range
       const currentRange = this.data.range || 'last24';
-      console.log('Using range:', currentRange);
-      
-      // Use the same data source as the stats
-      const pageviews = this.data.pageviews || this.pageviews;
-      console.log('Using pageviews source:', {
-        fromData: !!this.data.pageviews,
-        fromThis: !!this.pageviews,
-        length: pageviews.length
-      });
 
-      try {
-        switch (currentRange) {
-          case 'last24':
-            endTime = now;
-            startTime = new Date(now.getTime() - 24 * 60 * 60 * 1000);
-            previousEndTime = startTime;
-            previousStartTime = new Date(startTime.getTime() - 24 * 60 * 60 * 1000);
-            break;
-          case 'today':
-            endTime = now;
-            startTime = new Date(now);
-            startTime.setHours(0, 0, 0, 0);
-            previousEndTime = startTime;
-            previousStartTime = new Date(startTime.getTime() - 24 * 60 * 60 * 1000);
-            break;
-          case 'last7':
-            endTime = now;
-            startTime = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-            previousEndTime = startTime;
-            previousStartTime = new Date(startTime.getTime() - 7 * 24 * 60 * 60 * 1000);
-            break;
-          case 'last30':
-            endTime = now;
-            startTime = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-            previousEndTime = startTime;
-            previousStartTime = new Date(startTime.getTime() - 30 * 24 * 60 * 60 * 1000);
-            break;
-          case 'last90':
-            endTime = now;
-            startTime = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
-            previousEndTime = startTime;
-            previousStartTime = new Date(startTime.getTime() - 90 * 24 * 60 * 60 * 1000);
-            break;
-          case 'thisWeek':
-            endTime = now;
-            startTime = new Date(now);
-            startTime.setDate(startTime.getDate() - startTime.getDay());
-            startTime.setHours(0, 0, 0, 0);
-            previousEndTime = startTime;
-            previousStartTime = new Date(startTime.getTime() - 7 * 24 * 60 * 60 * 1000);
-            break;
-          case 'thisMonth':
-            endTime = now;
-            startTime = new Date(now.getFullYear(), now.getMonth(), 1);
-            previousEndTime = startTime;
-            previousStartTime = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-            break;
-          case 'last6Months':
-            endTime = now;
-            startTime = new Date(now.getFullYear(), now.getMonth() - 6, 1);
-            previousEndTime = startTime;
-            previousStartTime = new Date(now.getFullYear(), now.getMonth() - 12, 1);
-            break;
-          case 'last12Months':
-            endTime = now;
-            startTime = new Date(now.getFullYear(), now.getMonth() - 12, 1);
-            previousEndTime = startTime;
-            previousStartTime = new Date(now.getFullYear(), now.getMonth() - 24, 1);
-            break;
-          case 'thisYear':
-            endTime = now;
-            startTime = new Date(now.getFullYear(), 0, 1);
-            previousEndTime = startTime;
-            previousStartTime = new Date(now.getFullYear() - 1, 0, 1);
-            break;
-          case 'allTime':
-            // For all time, we'll use the entire dataset and compare with the first half
-            endTime = now;
-            startTime = new Date(0); // Beginning of time
-            const midPoint = new Date((endTime.getTime() - startTime.getTime()) / 2);
-            previousEndTime = midPoint;
-            previousStartTime = startTime;
-            break;
-          default:
-            endTime = now;
-            startTime = new Date(now.getTime() - 24 * 60 * 60 * 1000);
-            previousEndTime = startTime;
-            previousStartTime = new Date(startTime.getTime() - 24 * 60 * 60 * 1000);
-        }
+      // Calculate time ranges based on the current range
+      switch (currentRange) {
+        case 'last24':
+          endTime = now;
+          startTime = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+          previousEndTime = startTime;
+          previousStartTime = new Date(startTime.getTime() - 24 * 60 * 60 * 1000);
+          break;
+        case 'today':
+          endTime = now;
+          startTime = new Date(now);
+          startTime.setHours(0, 0, 0, 0);
+          previousEndTime = startTime;
+          previousStartTime = new Date(startTime.getTime() - 24 * 60 * 60 * 1000);
+          break;
+        case 'last7':
+          endTime = now;
+          startTime = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+          previousEndTime = startTime;
+          previousStartTime = new Date(startTime.getTime() - 7 * 24 * 60 * 60 * 1000);
+          break;
+        case 'last30':
+          endTime = now;
+          startTime = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+          previousEndTime = startTime;
+          previousStartTime = new Date(startTime.getTime() - 30 * 24 * 60 * 60 * 1000);
+          break;
+        case 'last90':
+          endTime = now;
+          startTime = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
+          previousEndTime = startTime;
+          previousStartTime = new Date(startTime.getTime() - 90 * 24 * 60 * 60 * 1000);
+          break;
+        case 'thisWeek':
+          endTime = now;
+          startTime = new Date(now);
+          startTime.setDate(startTime.getDate() - startTime.getDay());
+          startTime.setHours(0, 0, 0, 0);
+          previousEndTime = startTime;
+          previousStartTime = new Date(startTime.getTime() - 7 * 24 * 60 * 60 * 1000);
+          break;
+        case 'thisMonth':
+          endTime = now;
+          startTime = new Date(now.getFullYear(), now.getMonth(), 1);
+          previousEndTime = startTime;
+          previousStartTime = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+          break;
+        case 'last6Months':
+          endTime = now;
+          startTime = new Date(now.getFullYear(), now.getMonth() - 6, 1);
+          previousEndTime = startTime;
+          previousStartTime = new Date(now.getFullYear(), now.getMonth() - 12, 1);
+          break;
+        case 'last12Months':
+          endTime = now;
+          startTime = new Date(now.getFullYear(), now.getMonth() - 12, 1);
+          previousEndTime = startTime;
+          previousStartTime = new Date(now.getFullYear(), now.getMonth() - 24, 1);
+          break;
+        case 'thisYear':
+          endTime = now;
+          startTime = new Date(now.getFullYear(), 0, 1);
+          previousEndTime = startTime;
+          previousStartTime = new Date(now.getFullYear() - 1, 0, 1);
+          break;
+        case 'allTime':
+          endTime = now;
+          startTime = new Date(0);
+          const midPoint = new Date((endTime.getTime() - startTime.getTime()) / 2);
+          previousEndTime = midPoint;
+          previousStartTime = startTime;
+          break;
+        default:
+          endTime = now;
+          startTime = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+          previousEndTime = startTime;
+          previousStartTime = new Date(startTime.getTime() - 24 * 60 * 60 * 1000);
+      }
 
-        // Debug logging for time ranges
-        console.log('Time Ranges:', {
-          range: currentRange,
-          currentPeriod: {
-            start: startTime.toISOString(),
-            end: endTime.toISOString()
-          },
-          previousPeriod: {
-            start: previousStartTime.toISOString(),
-            end: previousEndTime.toISOString()
-          }
-        });
+      // Process pageviews for current period
+      this.pageviews.forEach(pv => {
+        const timestamp = new Date(pv.timestamp || pv.viewed_at);
+        if (timestamp >= startTime && timestamp <= endTime) {
+          const countryCode = pv.location?.countryCode || 'Unknown';
+          const countryName = pv.location?.country || 'Unknown';
+          const visitorId = pv.visitorId || pv.visitor_id;
 
-        // First pass: collect unique visitors and views for both current and previous periods
-        let currentPeriodCount = 0;
-        let previousPeriodCount = 0;
+          // Extract the 3-letter code for the map and 2-letter code for the flag
+          const [mapCode, flagCode] = countryCode.split('-');
+          const dataKey = mapCode || countryCode;
 
-        pageviews.forEach(pageview => {
-          const timestamp = new Date(pageview.visitedAt || pageview.timestamp);
-          const countryCode = pageview.location?.countryCode || 'Unknown';
-          const [countryCode3, countryCode2] = countryCode.split('-');
-          const code3 = countryCode3 || 'UNKNOWN';
-          const visitorId = pageview.visitorId || pageview.visitor_id;
-          
-          // Process current period
-          if (timestamp >= startTime && timestamp <= endTime) {
-            currentPeriodCount++;
-            if (!visitorMap.has(code3)) {
-              visitorMap.set(code3, new Set());
-            }
-            visitorMap.get(code3).add(visitorId);
-          }
-          
-          // Process previous period
-          if (timestamp >= previousStartTime && timestamp < previousEndTime) {
-            previousPeriodCount++;
-            if (!previousVisitorMap.has(code3)) {
-              previousVisitorMap.set(code3, new Set());
-              previousViewMap.set(code3, 0);
-            }
-            previousVisitorMap.get(code3).add(visitorId);
-            previousViewMap.set(code3, previousViewMap.get(code3) + 1);
-          }
-        });
-
-        console.log('Period counts:', {
-          currentPeriod: currentPeriodCount,
-          previousPeriod: previousPeriodCount,
-          totalPageviews: pageviews.length
-        });
-
-        // Second pass: process pageviews and use visitor counts
-        pageviews.forEach(pageview => {
-          const timestamp = new Date(pageview.visitedAt || pageview.timestamp);
-          if (timestamp < startTime || timestamp > endTime) return;
-
-          const countryCode = pageview.location?.countryCode || 'Unknown';
-          const [countryCode3, countryCode2] = countryCode.split('-');
-          const code3 = countryCode3 || 'UNKNOWN';
-          
-          if (!dataSet[code3]) {
-            const previousVisitors = previousVisitorMap.get(code3)?.size || 0;
-            const previousViews = previousViewMap.get(code3) || 0;
-            const currentVisitors = visitorMap.get(code3)?.size || 0;
-            
-            dataSet[code3] = {
-              visitors: {
-                value: '0',
-                percent: '0',
-                isGrown: previousVisitors === 0 ? true : currentVisitors > previousVisitors
-              },
-              views: {
-                value: '0',
-                percent: '0',
-                isGrown: previousViews === 0 ? true : 0 > previousViews
-              },
-              fillKey: 'MAJOR',
-              short: countryCode2?.toLowerCase() || 'unknown',
-              customName: pageview.location?.country || 'Unknown',
-              _rawVisitors: currentVisitors,
+          if (!dataSet[dataKey]) {
+            dataSet[dataKey] = {
+              _rawVisitors: 0,
               _rawViews: 0,
-              _previousVisitors: previousVisitors,
-              _previousViews: previousViews
+              _rawPreviousVisitors: 0,
+              _rawPreviousViews: 0,
+              visitors: { value: 0, percent: 0, isGrown: false },
+              views: { value: 0, percent: 0, isGrown: false },
+              short: flagCode?.toLowerCase() || countryCode.toLowerCase(),
+              customName: countryName,
+              fillKey: 'MAJOR' // Add this to highlight the country on the map
             };
           }
 
-          // Increment view count
-          dataSet[code3]._rawViews++;
-        });
+          dataSet[dataKey]._rawViews++;
+          if (!visitorMap.has(visitorId)) {
+            visitorMap.set(visitorId, true);
+            dataSet[dataKey]._rawVisitors++;
+          }
+        }
+      });
 
-        // Calculate percentages based on total stats
-        const totalVisitors = this.data.stats.visitors;
-        const totalViews = this.data.stats.views;
+      // Process pageviews for previous period
+      this.pageviews.forEach(pv => {
+        const timestamp = new Date(pv.timestamp || pv.viewed_at);
+        if (timestamp >= previousStartTime && timestamp < previousEndTime) {
+          const countryCode = pv.location?.countryCode || 'Unknown';
+          const countryName = pv.location?.country || 'Unknown';
+          const visitorId = pv.visitorId || pv.visitor_id;
 
-        // Log the totals we're using for percentages
-        console.log('2. Total Stats:', {
-          totalVisitors,
-          totalViews,
-          stats: this.data.stats,
-          calculatedTotalVisitors: Array.from(visitorMap.values()).reduce((sum, set) => sum + set.size, 0),
-          calculatedTotalViews: Object.values(dataSet).reduce((sum, data) => sum + data._rawViews, 0)
-        });
+          // Extract the 3-letter code for the map and 2-letter code for the flag
+          const [mapCode, flagCode] = countryCode.split('-');
+          const dataKey = mapCode || countryCode;
 
-        // Format values and calculate percentages
-        Object.values(dataSet).forEach(data => {
-          data.visitors.value = data._rawVisitors.toLocaleString();
-          data.views.value = data._rawViews.toLocaleString();
-          
-          // Calculate percentages
-          const visitorPercent = totalVisitors ? Math.round((data._rawVisitors / totalVisitors) * 100) : 0;
-          const viewPercent = totalViews ? Math.round((data._rawViews / totalViews) * 100) : 0;
-          
-          data.visitors.percent = visitorPercent.toString();
-          data.views.percent = viewPercent.toString();
+          if (!dataSet[dataKey]) {
+            dataSet[dataKey] = {
+              _rawVisitors: 0,
+              _rawViews: 0,
+              _rawPreviousVisitors: 0,
+              _rawPreviousViews: 0,
+              visitors: { value: 0, percent: 0, isGrown: false },
+              views: { value: 0, percent: 0, isGrown: false },
+              short: flagCode?.toLowerCase() || countryCode.toLowerCase(),
+              customName: countryName,
+              fillKey: 'MAJOR' // Add this to highlight the country on the map
+            };
+          }
 
-          // Calculate growth indicators
-          data.visitors.isGrown = data._previousVisitors === 0 ? true : data._rawVisitors > data._previousVisitors;
-          data.views.isGrown = data._previousViews === 0 ? true : data._rawViews > data._previousViews;
-        });
+          dataSet[dataKey]._rawPreviousViews++;
+          if (!previousVisitorMap.has(visitorId)) {
+            previousVisitorMap.set(visitorId, true);
+            dataSet[dataKey]._rawPreviousVisitors++;
+          }
+        }
+      });
 
-        // Debug logging for processed data
-        console.log('3. Final Processed Data:', JSON.stringify(Object.entries(dataSet).slice(0, 3).map(([code, data]) => ({
-          code,
-          visitors: data._rawVisitors,
-          views: data._rawViews,
-          previousVisitors: data._previousVisitors,
-          previousViews: data._previousViews,
-          name: data.customName,
-          formattedVisitors: data.visitors.value,
-          formattedViews: data.views.value,
-          visitorPercent: data.visitors.percent,
-          viewPercent: data.views.percent,
-          visitorsIsGrown: data.visitors.isGrown,
-          viewsIsGrown: data.views.isGrown
-        })), null, 2));
+      // Calculate growth percentages
+      Object.values(dataSet).forEach(data => {
+        // Calculate visitor growth
+        const visitorGrowth = data._rawPreviousVisitors === 0 ? 100 :
+          ((data._rawVisitors - data._rawPreviousVisitors) / data._rawPreviousVisitors) * 100;
+        data.visitors = {
+          value: data._rawVisitors,
+          percent: Math.abs(Math.round(visitorGrowth)),
+          isGrown: visitorGrowth >= 0
+        };
 
-        // Initialize the map with a slight delay to ensure container is ready
-        setTimeout(() => {
-          try {
-            const map = new Datamap({
-              element: mapContainer,
-              projection: 'mercator',
-              responsive: true,
-              fills: {
-                defaultFill: `color-mix(in oklab, var(--color-base-200) 60%, transparent)`,
-                MAJOR: `color-mix(in oklab, var(--color-neutral) 30%, transparent)`
-              },
-              data: dataSet,
-              geographyConfig: {
-                borderColor: `color-mix(in oklab, var(--color-base-content) 50%, transparent)`,
-                highlightFillColor: `color-mix(in oklab, var(--color-primary) 20%, transparent)`,
-                highlightBorderColor: `var(--color-primary)`,
-                popupTemplate: function(geo, data) {
-                  if (!data) return '';
-                  const growUp = `<span class="icon-[tabler--trending-up] text-success size-4"></span>`;
-                  const growDown = `<span class="icon-[tabler--trending-down] text-error size-4"></span>`;
-                  return `
-                    <div class="bg-base-100 rounded-lg overflow-hidden shadow-base-300/20 shadow-sm min-w-48 me-2">
-                      <div class="flex items-center gap-2 bg-base-200 p-2">
-                        <div class="flex items-center">
-                          <span class="fi fi-${data.short} h-4 w-5 rounded-sm"></span>
-                        </div>
-                        <span class="text-sm font-medium text-base-content">${data.customName || geo.properties.name}</span>
-                      </div>
-                      <div class="p-2 space-y-1">
-                        <div class="flex items-center justify-between text-xs gap-2">
-                          <div class="text-base-content/80 text-nowrap">Visitors: <span class="font-medium">${data.visitors.value}</span></div>
-                          <span class="flex items-center gap-0.5 ${data.visitors.isGrown ? 'text-success' : 'text-error'}">${data.visitors.percent}%${data.visitors.isGrown ? growUp : growDown}</span>
-                        </div>
-                        <div class="flex items-center justify-between text-xs gap-2">
-                          <div class="text-base-content/80 text-nowrap">Views: <span class="font-medium">${data.views.value}</span></div>
-                          <span class="flex items-center gap-0.5 ${data.views.isGrown ? 'text-success' : 'text-error'}">${data.views.percent}%${data.views.isGrown ? growUp : growDown}</span>
-                        </div>
-                      </div>
-                    </div>`;
-                }
-              }
-            });
+        // Calculate view growth
+        const viewGrowth = data._rawPreviousViews === 0 ? 100 :
+          ((data._rawViews - data._rawPreviousViews) / data._rawPreviousViews) * 100;
+        data.views = {
+          value: data._rawViews,
+          percent: Math.abs(Math.round(viewGrowth)),
+          isGrown: viewGrowth >= 0
+        };
+      });
 
-            // Handle window resize with debounce
-            let resizeTimeout;
-            window.addEventListener('resize', () => {
-              clearTimeout(resizeTimeout);
-              resizeTimeout = setTimeout(() => {
-                if (mapContainer.offsetWidth > 0) {
-                  map.resize();
-                }
-              }, 250);
-            });
+      // Wait for the container to be properly sized
+      const waitForContainerSize = () => {
+        const containerWidth = mapContainer.offsetWidth;
+        if (containerWidth <= 0) {
+          requestAnimationFrame(waitForContainerSize);
+          return;
+        }
 
-            // Store the map instance
-            this.chartInstances.worldMap = map;
+        // Set initial dimensions
+        const containerHeight = 500; // Increased height for better visibility
+        mapContainer.style.width = `${containerWidth}px`;
+        mapContainer.style.height = `${containerHeight}px`;
 
-            // Update countries list using the same data
-            const countriesList = document.getElementById('countries-list');
-            if (countriesList) {
-              const sortedCountries = Object.entries(dataSet)
-                .sort(([, a], [, b]) => b._rawVisitors - a._rawVisitors)
-                .slice(0, 10);
-
-              console.log('4. Final Countries List Data:', JSON.stringify(sortedCountries.map(([code, data]) => ({
-                code,
-                visitors: data._rawVisitors,
-                views: data._rawViews,
-                name: data.customName
-              })), null, 2));
-
-              countriesList.innerHTML = sortedCountries
-                .map(([code3, data]) => {
-                  return `
-                    <div class="flex justify-between items-center p-2 rounded hover:bg-base-200">
-                      <div class="flex items-center gap-2">
+        // Initialize the map
+        try {
+          // Initialize the map with explicit dimensions
+          const map = new Datamap({
+            element: mapContainer,
+            projection: 'mercator',
+            responsive: true,
+            width: containerWidth,
+            height: containerHeight,
+            fills: {
+              defaultFill: `color-mix(in oklab, var(--color-base-200) 60%, transparent)`,
+              MAJOR: `color-mix(in oklab, var(--color-neutral) 30%, transparent)`
+            },
+            data: dataSet,
+            geographyConfig: {
+              borderColor: `color-mix(in oklab, var(--color-base-content) 50%, transparent)`,
+              highlightFillColor: `color-mix(in oklab, var(--color-primary) 20%, transparent)`,
+              highlightBorderColor: `var(--color-primary)`,
+              popupTemplate: function(geo, data) {
+                if (!data) return '';
+                const growUp = `<span class="icon-[tabler--trending-up] text-success size-4"></span>`;
+                const growDown = `<span class="icon-[tabler--trending-down] text-error size-4"></span>`;
+                return `
+                  <div class="bg-base-100 rounded-lg overflow-hidden shadow-base-300/20 shadow-sm min-w-48 me-2">
+                    <div class="flex items-center gap-2 bg-base-200 p-2">
+                      <div class="flex items-center">
                         <span class="fi fi-${data.short} h-4 w-5 rounded-sm"></span>
-                        <span>${data.customName}</span>
                       </div>
-                      <div class="flex items-center gap-2">
-                        <span class="text-xs text-base-content/60">${data.views.value}</span>
-                        <span class="font-medium">${data.visitors.value}</span>
+                      <span class="text-sm font-medium text-base-content">${data.customName || geo.properties.name}</span>
+                    </div>
+                    <div class="p-2 space-y-1">
+                      <div class="flex items-center justify-between text-xs gap-2">
+                        <div class="text-base-content/80 text-nowrap">Visitors: <span class="font-medium">${data.visitors.value}</span></div>
+                        <span class="flex items-center gap-0.5 ${data.visitors.isGrown ? 'text-success' : 'text-error'}">${data.visitors.percent}%${data.visitors.isGrown ? growUp : growDown}</span>
+                      </div>
+                      <div class="flex items-center justify-between text-xs gap-2">
+                        <div class="text-base-content/80 text-nowrap">Views: <span class="font-medium">${data.views.value}</span></div>
+                        <span class="flex items-center gap-0.5 ${data.views.isGrown ? 'text-success' : 'text-error'}">${data.views.percent}%${data.views.isGrown ? growUp : growDown}</span>
                       </div>
                     </div>
-                  `;
-                })
-                .join('');
+                  </div>`;
+              }
             }
-          } catch (error) {
-            console.error('Error initializing map:', error);
-          } finally {
-            this._mapInitializing = false;
+          });
+
+          // Store the map instance
+          this.chartInstances.worldMap = map;
+
+          // Handle window resize with debounce
+          const resizeHandler = () => {
+            if (!this.chartInstances.worldMap || !mapContainer) return;
+
+            try {
+              const newWidth = mapContainer.offsetWidth;
+              if (newWidth <= 0) return;
+
+              // Update map dimensions
+              map.width = newWidth;
+              map.height = containerHeight;
+              map.resize();
+            } catch (error) {
+              console.error('Error resizing map:', error);
+              // Clean up if resize fails
+              if (this._resizeHandler) {
+                window.removeEventListener('resize', this._resizeHandler);
+                this._resizeHandler = null;
+              }
+            }
+          };
+
+          let resizeTimeout;
+          const debouncedResize = () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(resizeHandler, 250);
+          };
+
+          // Store the resize handler for cleanup
+          this._resizeHandler = debouncedResize;
+          window.addEventListener('resize', debouncedResize);
+
+          // Update countries list using the same data
+          const countriesList = document.getElementById('countries-list');
+          if (countriesList) {
+            const sortedCountries = Object.entries(dataSet)
+              .sort(([, a], [, b]) => b._rawVisitors - a._rawVisitors)
+              .slice(0, 10);
+
+            countriesList.innerHTML = sortedCountries
+              .map(([code3, data]) => {
+                return `
+                  <div class="flex justify-between items-center p-2 rounded hover:bg-base-200">
+                    <div class="flex items-center gap-2">
+                      <span class="fi fi-${data.short} h-4 w-5 rounded-sm"></span>
+                      <span>${data.customName}</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <span class="text-xs text-base-content/60">${data.views.value}</span>
+                      <span class="font-medium">${data.visitors.value}</span>
+                    </div>
+                  </div>
+                `;
+              })
+              .join('');
           }
-        }, 100);
-      } catch (error) {
-        console.error('Error processing map data:', error);
-        this._mapInitializing = false;
-      }
+
+          this._mapInitialized = true;
+        } catch (error) {
+          console.error('Error processing map data:', error);
+        } finally {
+          this._mapInitializing = false;
+        }
+      };
+
+      // Start waiting for container size
+      waitForContainerSize();
+    },
+
+    getCountryName(code) {
+      const countryMap = {
+        'US': 'United States',
+        'GB': 'United Kingdom',
+        'CA': 'Canada',
+        'AU': 'Australia',
+        'DE': 'Germany',
+        'FR': 'France',
+        'IT': 'Italy',
+        'ES': 'Spain',
+        'JP': 'Japan',
+        'CN': 'China',
+        'IN': 'India',
+        'BR': 'Brazil',
+        'RU': 'Russia',
+        'ZA': 'South Africa',
+        'MX': 'Mexico',
+        'NL': 'Netherlands',
+        'SE': 'Sweden',
+        'NO': 'Norway',
+        'DK': 'Denmark',
+        'FI': 'Finland',
+        'CH': 'Switzerland',
+        'AT': 'Austria',
+        'BE': 'Belgium',
+        'IE': 'Ireland',
+        'NZ': 'New Zealand',
+        'SG': 'Singapore',
+        'HK': 'Hong Kong',
+        'KR': 'South Korea',
+        'TW': 'Taiwan',
+        'TH': 'Thailand',
+        'ID': 'Indonesia',
+        'MY': 'Malaysia',
+        'PH': 'Philippines',
+        'VN': 'Vietnam',
+        'AE': 'United Arab Emirates',
+        'SA': 'Saudi Arabia',
+        'IL': 'Israel',
+        'TR': 'Turkey',
+        'EG': 'Egypt',
+        'NG': 'Nigeria',
+        'KE': 'Kenya',
+        'Unknown': 'Unknown'
+      };
+      return countryMap[code] || code;
     }
   }
 }
@@ -1115,4 +1116,4 @@ const getWeekNumber = (date) => {
   d.setUTCDate(d.getUTCDate() + 4 - dayNum);
   const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
   return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
-}; 
+};
